@@ -1,81 +1,66 @@
 #include <stdio.h>
 #include <errno.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <fcntl.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
 #include <pthread.h>
+#include <string.h>
 
-#include "codes.h"
+#include "rfs.h"
 extern int errno;
 
 
 int main (int argc, char **argv)
 {
-    int sock, fd, fd2;
+    int v_rfd;
+    int v_wfd;
     int len = 0;
-    int tot = -1, i;
-    char buff[24];
-    char name_buff[MAX_FILES][MAX_PATH];
+    char buff[1024];
+    //char name_buff[MAX_FILES][MAX_PATH];
     
-    if (argc!=3)
-    {
-	printf("parameters: host_name port_number\n");
-	exit(-1);
-    }
-    
-    sock = connect_to_server(argv[1], atoi(argv[2]));
-    if (sock==-1)
-    {
-	perror("connect");
-	exit(-1);
-    }
+    printf("c: %d, r: %d, w: %d, rl: %d, rd: %d\n",
+	   O_CREAT, O_RDONLY, O_WRONLY, O_REPLICATE, OP_REDIRECT);
+    /* Init the library */
+    rfs_init(argc, argv);
 
-    /*
-      Now you can use 'sock' to read/write messages from/to the server
-    */
-    
-    /* directory list */
-    tot = client_scandir(sock, (char *)name_buff);
-    printf("Returned %d files:\n", tot);
+    printf("File Read test\n");
+    do {
+      /* Open remote file */
+      if ((v_rfd = my_fopen("README", O_RDONLY)) < 0) {
+	perror("File open");
+	exit(1);
+      }
 
-    for (i = 0; i < tot; i++) {
-      printf("%s\n", name_buff[i]);
-    }
+      /* Read its contents */
+      if ((len = my_fread(v_rfd, buff, sizeof(buff))) < 0) {
+	perror("File read");
+	my_fclose(v_rfd);
+	exit(1);
+      }
 
-    /*open remote file */
-    fd = client_open(sock, "README", O_RDONLY);
+      buff[len] = '\0';
+      printf("***READ %d bytes:\n %s\n", len, buff);
 
-    /* read its content */
-    len = client_read(sock, fd, buff, sizeof(buff));
-    buff[len] = '\0';
-    printf("***READ %d bytes: %s\n", len, buff);
+      my_fclose(v_rfd);
 
-    /* try again */
-    len = client_read(sock, fd, buff, sizeof(buff));
-    buff[len] = '\0';
-    printf("***READ2 %d bytes: %s\n", len, buff);
-
+      printf("Press enter to repeat\n");
+    } while(getchar() == '\n');
+    getchar();
 
     /* open new file for writing */
-    /*
-      fd2 = client_open(sock, "write_file", O_WRONLY | O_CREAT);
+    printf("File write test\n");
+    do {
+      v_wfd = my_fopen("write_file", O_CREAT | O_WRONLY);
 
-    /* write to file */
-    /*    strncpy(buff, "This is a file created by RFS client\nwriten for OS\n",
-	  sizeof(buff));
-	  len = client_write(sock, fd2, buff, strlen(buff));
+      /* write to file */
+      strncpy(buff, "This is a file created by RFS client\nwriten for OS\n",
+	      sizeof(buff));
+      len = my_fwrite(v_wfd, buff, strlen(buff));
 	  
-    /* close */
-    /*    client_close(sock, fd2);
-    */
-    client_close(sock, fd);
+      /* close */
+      my_fclose(v_wfd);
 
-    /* End */
-    client_end(sock);
+      printf("Press enter to repeat\n");
+    } while (getchar() == '\n');
 
     return(0);
 }
