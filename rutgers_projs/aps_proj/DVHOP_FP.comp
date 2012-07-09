@@ -1,0 +1,26 @@
+TOS_MODULE DVHOP_FP;
+
+ACCEPTS{
+	char DVHOP_FP_START(void);
+	char DVHOP_FP_INIT(void);
+};
+
+HANDLES{
+	void DVHOP_FP_CLOCK_EVENT(void);
+	char DVHOP_FP_OUTPUT_COMPLETE(char success);
+	char DVHOP_FP_INPUT(const float *x, const float *y, char hops);
+	char DVHOP_FP_CORRECTION_INPUT(const float *fpx, const float *fpy, const float *fpfactor);
+	char DVHOP_FP_QUERY_INPUT(void *q_msg);
+};
+
+USES{
+	char DVHOP_FP_SUB_CLOCK_INIT(char interval, char scale);
+        char DVHOP_FP_SUB_OUTPUT_INIT();
+        char DVHOP_FP_OUTPUT(const float *x, const float *y, char hops);
+        char DVHOP_FP_CORRECTION_OUTPUT(const float *fpx, const float *fpy, const float *fpfactor);
+	char DVHOP_FP_QUERY_REPLY(void *reply_msg);
+};
+
+SIGNALS{
+};
+

@@ -1,0 +1,57 @@
+
+blink.desc --  Example application that handles clock events to update
+the LEDs like a counter
+
+wave.desc - slightly larger example that utilizes TOS tasks within an
+asynchronous interface to a photo sensor.
+
+chirp.desc -- example appliation that sends out periodic radio messages
+containg sensor readings.
+
+uart_chirp.desc -- same as chirp except it sends all data out over a
+UART instead of the radio.
+
+connect.desc  -- an appliation that does ad-hoc netowking. It determines
+a spanning tree and sends back sensor reading over that tree to the
+base station.  This version is for use on the mobile RENE motes.
+
+connect_base.desc -- same as connect except it include a messaging
+layer capable of being used while connected to a UART.  If the node is
+to be a base station, then it also has to have -DBASE_STATION used at
+compile time.  This code can be used on a mobile node if messages are
+to travers a UART (say it's attached to a RS232 based sensor.
+
+LOGGER_TEST.desc -- A simple test of the logging facility.  It will
+periodically take samples from the ADC, time stamp them, and write them
+to the log.  It handles an active message which will cause it to go and
+retreive data from the log and send it out onto the UART.
+
+cnt_to_leds.desc -- a demonstration application that is indended to
+show how to use description files to modify application behavior.
+It has the same behavior as blink.
+
+cnt_to_rfm.desc -- Using the same application level code as cnt_to_leds,
+this application send the counter value to the RFM.
+
+sens_to_leds.desc -- a demonstration applicaton that send sensor reading
+to the LEDS.
+
+sens_to_rfm.desci -- Using the same application level code as
+sens_to_leds, this application send the sensor value to the RFM.
+
+generic_base.desc -- This generic base station listens to packet and
+forwards ANYTHING that is recieved to the UART without modification.
+
+interp_base.desc -- This application include a tiny virtual machine that 
+runs on TinyOS.  
+
+
+mags.desc -- This application demonstrates how to do high
+sampling rate data aquisition.  It reads from the ADC at 800 smaples/sec
+and performs a low pass filter on the data that is arriving. If it
+detects that the sample data is changing significantly, it will signal
+an event has occurred.  This component was originally written for use
+with a magnetometer, but works with any analog sensor.
+
+
+

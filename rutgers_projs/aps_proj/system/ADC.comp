@@ -1,0 +1,58 @@
+/*									tab:4
+ *
+ *
+ * "Copyright (c) 2000 and The Regents of the University 
+ * of California.  All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the above copyright notice and the following
+ * two paragraphs appear in all copies of this software.
+ * 
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+ * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ * Authors:		Jason Hill
+ *
+ *
+ * This module is a hardware abstraction.  It exposes the functionality of the ADC
+ * to TinyOS applications.  It accepts a INIT command as well as a GET_DATA command.
+ * the GET_DATA command take a port number as an argument.  If the ADC is not currently 
+ * in use, it will begin a reading of the specified port. If the ADC is busy, it will 
+ * return failure.
+ * 
+ * When a read completes, it fires the DATA_READY event for the port that was requested.
+ * Each data port has a separate event associated with it.
+ *
+ *
+ *
+ *
+ */
+
+TOS_MODULE ADC;	
+
+
+ACCEPTS{
+	char ADC_INIT(void);
+	char ADC_GET_DATA(char port);
+};
+
+SIGNALS{
+	char ADC_DATA_READY_PORT_0(int data);
+	char ADC_DATA_READY_PORT_1(int data);
+	char ADC_DATA_READY_PORT_2(int data);
+	char ADC_DATA_READY_PORT_3(int data);
+	char ADC_DATA_READY_PORT_4(int data);
+	char ADC_DATA_READY_PORT_5(int data);
+	char ADC_DATA_READY_PORT_6(int data);
+	char ADC_DATA_READY_PORT_7(int data);
+};
+

@@ -1,0 +1,36 @@
+UART tools for PC-simulated motes.
+
+files:
+uartd.pl - daemon to listen to mote UART code
+uartc.pl - client to talk to daemon
+
+How to use:
+1. start uartd.pl
+2. connect to uartd using uartc.pl
+3. start mote code
+
+The only part of this order which is mandatory is step 1 - no uartc or
+mote can connect until the daemon is running.  The reason to connect uartc 
+first is to allow the data to begin to flow immediately if the mote starts
+outputting to its UART immediately.  uartd will fork off a separate 
+process for each client/mote pair.  To stop the simulation, send uartd a 
+SIGINT; it will kill all remaining child processes before exiting.  
+
+The client is basically just a proxy which passes characters typed on 
+STDIN to uartd over the socket.  uartd then passes the data from the 
+client to the mote via the other socket.  The same process also happens in 
+reverse when data originates at the mote.  
+
+The only special feature of the client at this point is sending a file to 
+the mote.  This file can be ASCII or binary as it is read in character 
+mode.  To send a file, type ^F and input the filename when prompted.  The 
+file will echo to the screen along with any data received from the mote.  
+
+This is the first release.  Extensions and/or feature suggestions are 
+encouraged.  
+
+This is intended to be used with the mote UART code I modified to use the 
+socket at the byte level (originally it was implemented at the packet 
+level).  Receiving from the mote does work with the packet-level code 
+though, if anyone has reason to use it.
+

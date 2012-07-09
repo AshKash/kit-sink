@@ -1,0 +1,29 @@
+TOS_MODULE SEND_DV_FP;
+JOINTLY IMPLEMENTED_BY SEND_DV_FP;
+
+ACCEPTS{
+	char SEND_DV_FP_INIT(void);
+	char SEND_DV_FP_OUTPUT(const float *x, const float *y, char hops);
+	char SEND_DV_FP_CORRECTION_OUTPUT(const float *fpx, const float *fpy, const float *fpfactor);
+	char SEND_DV_FP_QUERY_REPLY(void *reply_msg);
+};
+
+SIGNALS{
+	char SEND_DV_FP_COMPLETE(char success);
+	char SEND_DV_FP_INPUT(const float *x, const float *y, char hops);
+	char SEND_DV_FP_CORRECTION_INPUT(const float *fpx, const float *fpy, const float *fpfactor);
+	char SEND_DV_FP_QUERY_INPUT(void *q_msg);
+};
+
+HANDLES{
+	char SEND_DV_FP_SUB_MSG_SEND_DONE(TOS_MsgPtr msg);
+	TOS_MsgPtr INT_READING(TOS_MsgPtr msg);
+	TOS_MsgPtr CORRECTION_READING(TOS_MsgPtr msg);
+	TOS_MsgPtr GOT_QUERY(TOS_MsgPtr msg);
+};
+
+USES{
+	char SEND_DV_FP_SUB_INIT(void);
+	char SEND_DV_FP_SUB_SEND_MSG(char addr, char type, TOS_MsgPtr data);
+};
+

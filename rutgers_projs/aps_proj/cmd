@@ -1,0 +1,1 @@
+avr-gcc -Xlinker -M -o main.exe  -m avr85xx -mmcu=at90s8535 system/sched.o DVHOP_FP.o SEND_DV_FP.o system/AM.o system/CLOCK.o system/MAIN.o system/PACKETOBJ.o system/RFM.o system/SEC_DED_RADIO_BYTE.o system/least_squares.o > img.file -lm

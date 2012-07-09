@@ -1,0 +1,43 @@
+This is the mote gateway package.
+
+
+server - listens for client connections. Once a client has connected,
+the client will register itself with the server by giving its mote-id.
+The server simply relays all am packets the client sends to the uart. 
+The server also does synchronisation as a new thread is created for every
+new client that connects.
+
+Architecture:
+The server is multi-threaded with one thread per client. one exclusive thread
+is created that continuously reads the serial port and sends any received data 
+to the corresponding client. when a thread gets data to be sent to the serial,
+it first grabs a lock and then transmits the packet to ensure data integrity.
+All common functions are in the form of a library.
+
+client - this is a virtual mote capable of generating am packets. Clients 
+must link against the library and use the API. See the client.c for a sample. 
+In general, clients first have to connect to the server, this automatically
+registers the client with its mote-id. mote-d is a 8bit identifier and it must
+be unique (the server refuses to regiser 2 mote clients with same id)
+
+Registering the am handler
+I have provided an API to register am handlers on the client side. The client
+must use the API and designate a function that is capable of handling
+packets with the particular am_type
+
+Problems yet to be solved
+inefficient am_type handling: right now, the server simply relays all am packets
+from the serial to the client with that address. in case of broadcasts, the 
+data is sent to all connected clients. the clients then see the packet and
+decide what to do next. the am_type registration is purely on the client side.
+in future, this can be moved to the server so that data is not unneccessarily
+sent to clients which have no interests in packets of a given type.
+
+flow control: server does not do any type of flow control over the uart. this
+is because, the mote hardware does not support any hardware flow control.
+right now, the server sends a packet to the serial and waits for a given amount
+of time before sending another packet. XON/XOFF is pretty easy to implement,
+except that i was unable to send/receive individual bytes from the mote, only
+am packets could be sent.
+ 
+server must be rewritten to use AIO instead of one thread per client??

@@ -1,0 +1,13 @@
+#!/usr/bin/perl 
+
+use strict;
+
+
+system("cpp system/include/AM_DISPATCH.mapping 2> /dev/null | grep ^AM_ | grep -v NULL_FUNC > /tmp/aabb31232161436");
+open(FILE, "/tmp/aabb31232161436") or die "file not found";
+while(<FILE>){
+    /\w+\s+(\w+)\s+(\d+)/;
+    print "#define ". $1 . "__AM_DISPATCH " . $2 . "\n";
+}
+#system("rm /tmp/aabb31232161436");
+exit(0);

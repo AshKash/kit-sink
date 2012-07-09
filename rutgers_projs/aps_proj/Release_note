@@ -1,0 +1,15 @@
+Here is the list of modifications that have been made since the original tos4.3 release which occurred on Feb. 8, 2001
+
+
+VERSION 4.3.01 02/12/2001 (cvs tag TOS_4_3_01)
+
+Added files: 
+RFM_TO_LEDS.c  RFM_TO_LEDS.comp  RFM_TO_LEDS.desc rfm_to_leds.desc router.desc router_base.desc
+
+Changed the type of group to 'unsigned char' from 'char' in system/include/MSG.h
+
+VERSION 4.3.02 02/14/2001 (cvs tag TOS_4_3_02)
+
+
+Fixed system/UART_PACKET.c line 44 which was declaring TOS_MsgPtr instead of 
+TOS_Msg.

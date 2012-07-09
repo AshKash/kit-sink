@@ -1,0 +1,103 @@
+/* 
+ *
+ * Copyright (c) 2001 Rutgers University and Richard P. Martin.
+ * All rights reserved.
+ * 
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the following conditions are met:
+ *
+ *    1. Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *
+ *    2. Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *
+ *    3. All advertising materials mentioning features or use of this
+ *       software must display the following acknowledgment:
+ *           This product includes software developed by 
+ *           Rutgers University and its contributors.
+ *
+ *    4. Neither the name of the University nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ * 
+ * IN NO EVENT SHALL RUTGERS UNIVERSITY BE LIABLE TO ANY PARTY FOR DIRECT, 
+ * INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF RUTGERS
+ * UNIVERSITY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  
+ * RUTGERS UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND RUTGERS UNIVERSITY HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ *
+ *
+ * Author:                      Richard P. Martin 
+ * Version:                     $Id: SLIP.comp,v 1.1.1.1 2002/03/08 23:52:37 ashwink Exp $
+ * Creation Date:               Sat Jul 14 12:37:10 2001
+ * Filename:                    SLIP.comp
+ * History:
+ * $Log: SLIP.comp,v $
+ * Revision 1.1.1.1  2002/03/08 23:52:37  ashwink
+ *
+ * APS Code includes:
+ * 	mote code
+ * 	mote-gw
+ * 	tcl/tk demo files
+ *
+ * Revision 1.1.1.1  2001/10/04 04:12:06  rmartin
+ * hopefully this is correct
+ *
+ * Revision 1.1  2001/08/06 20:22:16  rmartin
+ * transmit from UART-> radio is working.
+ *
+ */
+
+/* this is a generic SLIP driver for the UART
+ * It relpaces the PACKETOBJ module with talking with SLIP connected 
+ * device over the serial line. 
+ *
+ * On the TX side, it accepts TOS messages and encodes them 
+ * as SLIP packets and sends them out the UART
+ *
+ * on the RX side, it de-encapsulates the SLIP messages and then 
+ * sends them up to a higher layer 
+ * 
+ * it includes the length field as functions for now for SLIP to 
+ * work. 
+ */
+
+TOS_MODULE SLIP;
+
+ACCEPTS{
+  char SLIP_INIT(void);
+  char SLIP_START(void);
+  char SLIP_POWER(char mode);
+  char SLIP_TX_PACKET(TOS_MsgPtr data,int len);
+};
+
+SIGNALS{
+  TOS_MsgPtr SLIP_RX_PACKET_DONE(TOS_MsgPtr packet, int len);
+  char SLIP_XXX_PACKET_DONE(TOS_MsgPtr packet);
+};
+
+HANDLES{
+  char SLIP_RX_BYTE_READY(char data, char error);
+  char SLIP_TX_BYTE_READY(char success);
+  char SLIP_BYTE_TX_DONE();
+};
+
+USES{
+  char SLIP_SUB_INIT();
+  char SLIP_SUB_POWER(char state);
+  char SLIP_SUB_TX_BYTE(char byte);
+};
+
+INTERNAL{
+  char rx_and_reset();
+};
+
+

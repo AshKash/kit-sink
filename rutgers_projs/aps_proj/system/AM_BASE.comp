@@ -1,0 +1,324 @@
+/*
+ *
+ *
+ * "Copyright (c) 2000 and The Regents of the University
+ * of California.  All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the above copyright notice and the following
+ * two paragraphs appear in all copies of this software.
+ *
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+ * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ * Authors:  Jason Hill
+ * Date:     Oct. 3, 2000
+ *
+ *
+ * This module performs the Active Messages dispatching and address checking.  
+ * When the user application send out a packet, this module will fill in
+ * the address, group_id, and the handler number before forwarding the packet down
+ * to the packet controller.  
+ * 
+ * In additiona to sending data out over the network, it also will
+ * send any pakcet addressed to 0x7e to the UART.
+ * 
+ * When a packet arrives, this component check that the address is either the local
+ * address or the broadcast address.  It also checks the group id.  Finally it signals 
+ * the correct AM_MSG_HANDLER event for the message type that arrived.
+ * 
+ * The AM_POWER command can be used to put the communication stack into a low_power mode.
+ */
+
+TOS_MODULE AM_BASE;
+
+ACCEPTS{
+	char AM_SEND_MSG(char addr,char type, TOS_MsgPtr data);
+	char AM_POWER(char mode);
+	char AM_INIT(void);
+};
+
+
+SIGNALS{ 
+	char AM_MSG_SEND_DONE(TOS_MsgPtr msg);
+	TOS_MsgPtr AM_MSG_HANDLER_0(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_1(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_2(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_3(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_4(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_5(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_6(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_7(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_8(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_9(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_10(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_11(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_12(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_13(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_14(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_15(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_16(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_17(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_18(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_19(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_20(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_21(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_22(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_23(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_24(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_25(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_26(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_27(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_28(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_29(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_30(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_31(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_32(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_33(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_34(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_35(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_36(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_37(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_38(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_39(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_40(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_41(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_42(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_43(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_44(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_45(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_46(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_47(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_48(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_49(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_50(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_51(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_52(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_53(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_54(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_55(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_56(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_57(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_58(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_59(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_60(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_61(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_62(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_63(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_64(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_65(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_66(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_67(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_68(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_69(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_70(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_71(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_72(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_73(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_74(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_75(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_76(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_77(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_78(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_79(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_80(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_81(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_82(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_83(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_84(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_85(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_86(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_87(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_88(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_89(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_90(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_91(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_92(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_93(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_94(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_95(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_96(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_97(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_98(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_99(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_100(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_101(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_102(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_103(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_104(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_105(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_106(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_107(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_108(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_109(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_110(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_111(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_112(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_113(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_114(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_115(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_116(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_117(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_118(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_119(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_120(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_121(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_122(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_123(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_124(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_125(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_126(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_127(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_128(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_129(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_130(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_131(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_132(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_133(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_134(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_135(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_136(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_137(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_138(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_139(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_140(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_141(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_142(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_143(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_144(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_145(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_146(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_147(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_148(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_149(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_150(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_151(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_152(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_153(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_154(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_155(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_156(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_157(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_158(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_159(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_160(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_161(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_162(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_163(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_164(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_165(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_166(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_167(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_168(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_169(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_170(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_171(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_172(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_173(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_174(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_175(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_176(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_177(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_178(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_179(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_180(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_181(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_182(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_183(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_184(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_185(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_186(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_187(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_188(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_189(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_190(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_191(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_192(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_193(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_194(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_195(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_196(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_197(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_198(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_199(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_200(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_201(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_202(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_203(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_204(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_205(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_206(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_207(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_208(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_209(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_210(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_211(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_212(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_213(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_214(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_215(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_216(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_217(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_218(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_219(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_220(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_221(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_222(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_223(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_224(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_225(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_226(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_227(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_228(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_229(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_230(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_231(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_232(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_233(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_234(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_235(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_236(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_237(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_238(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_239(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_240(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_241(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_242(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_243(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_244(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_245(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_246(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_247(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_248(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_249(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_250(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_251(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_252(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_253(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_254(TOS_MsgPtr data);
+	TOS_MsgPtr AM_MSG_HANDLER_255(TOS_MsgPtr data);
+};
+
+HANDLES{
+	char AM_TX_PACKET_DONE(TOS_MsgPtr msg);
+	TOS_MsgPtr AM_RX_PACKET_DONE(TOS_MsgPtr packet);
+};
+
+USES{
+	char AM_SUB_TX_PACKET(TOS_MsgPtr data);
+	void AM_SUB_POWER(char mode);
+	char AM_UART_SUB_INIT(void);
+	char AM_UART_SUB_TX_PACKET(TOS_MsgPtr data);
+	void AM_UART_SUB_POWER(char mode);
+	char AM_SUB_INIT(void);
+};
+

@@ -1,0 +1,16 @@
+This program is run with:
+
+java ConnectionManager
+
+This module forwards messages between simulated motes.  Each mote sends 
+it's packets to this module which forwareds it to those motes that
+are "in range"  the connection graph is determined by 
+what entries have been added to the connection manager's list with the
+ void add_conn(int a, int b) function, where a and b are the id's of two 
+motes.  
+
+As is, there is a connection between all motes 1-10.
+
+You can change ConnectionManager.java as necessary to create the topology you
+want.
+

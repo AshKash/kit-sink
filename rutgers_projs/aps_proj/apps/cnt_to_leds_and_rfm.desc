@@ -1,0 +1,74 @@
+/*									tab:4
+ * cnt_to_leds.desc: component description of basic command application
+ *
+ * "Copyright (c) 2000 and The Regents of the University 
+ * of California.  All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the above copyright notice and the following
+ * two paragraphs appear in all copies of this software.
+ * 
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+ * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ * Authors:  Jason Hill and David Culler
+ * Date:     Jan 29, 2001
+ * History:  1/30/2001 added documentation
+ *
+ * This application demonstrates the following:
+ *   1. Composing an application from components
+ *   2. Use of TOS commands to cause actions
+ *   3. Use of TOS frame to hold component state
+ *   4. Simple use of TOS events
+ *
+ *   The application consists of five components described by the 
+ * 'include modules' statement below.  Each of these modules consists of
+ * a .comp file, describing its interface, and a .c file, describing its
+ * behavior, found on the tinyOS search path (currently . then ./system).
+ * MAIN is a generic prelude system component used in most applications.
+ * CLOCK is a system component that accepts an INIT command to set its 
+ * event frequency and signals a periodic clock event once initialized.
+ * LED is a system component that accepts commands to operate the LEDS.
+ * COUNTER is the "guts" of the application.  
+ *   It accepts INIT and START commands from main to initialize its operation.
+ *   It uses a TOS_FRAME to hold a counter state variable.
+ *   It has two fairly generic subordinates: a clock component and an 
+ *   output component.
+ *   On each clock event, it initiates a output command.
+ *   Each command returns a status indicating success (0 => not accepted)
+ *   COUNTER is prepared to deal with an asynchronous output device, but
+ *   it is not used for this application.
+ * INT_TO_LEDS is a simple output device 
+ * 
+ * The interfaces are wired together by the net list below.
+ * COUNTER is wired to MAIN "above" and CLOCK and INT_TO_LEDS "below".
+ * INT_TO_LEDS is also wired to LEDS.
+ */
+
+include modules{
+MAIN;
+COUNTER;
+INT_TO_LEDS;
+INT_TO_RFM;
+CLOCK;
+};
+
+MAIN:MAIN_SUB_INIT COUNTER:COUNTER_INIT 
+MAIN:MAIN_SUB_START COUNTER:COUNTER_START
+
+COUNTER:COUNTER_CLOCK_EVENT CLOCK:CLOCK_FIRE_EVENT
+COUNTER:COUNTER_SUB_CLOCK_INIT CLOCK:CLOCK_INIT
+
+COUNTER:COUNTER_SUB_OUTPUT_INIT INT_TO_LEDS:INT_TO_LEDS_INIT INT_TO_RFM:INT_TO_RFM_INIT
+COUNTER:COUNTER_OUTPUT INT_TO_LEDS:INT_TO_LEDS_OUTPUT INT_TO_RFM:INT_TO_RFM_OUTPUT
+COUNTER:COUNTER_OUTPUT_COMPLETE INT_TO_RFM:INT_TO_RFM_COMPLETE
+

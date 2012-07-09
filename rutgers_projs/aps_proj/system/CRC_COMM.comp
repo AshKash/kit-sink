@@ -1,0 +1,15 @@
+//Module for searching sending and receiving active
+//messages.
+
+TOS_MODULE CRC_COMM;
+IMPLEMENTED_BY CRC_COMM;
+
+ACCEPTS{
+    	char COMM_INIT(void);
+        void COMM_POWER(char mode);
+        char COMM_SEND_MSG(char addr, char type, char* data);
+};
+SIGNALS{
+         char COMM_MSG_REC(char type, char* data);
+         char COMM_MSG_SEND_DONE(char success);
+};

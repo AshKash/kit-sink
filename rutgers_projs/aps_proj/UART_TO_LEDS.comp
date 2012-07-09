@@ -1,0 +1,21 @@
+TOS_MODULE UART_TO_LEDS;
+
+ACCEPTS{
+	char UART_TO_LEDS_INIT(void);
+	char UART_TO_LEDS_START(void);
+};
+
+SIGNALS{
+};
+
+HANDLES{
+        char UART_TO_LEDS_NOP1(char);
+        char UART_TO_LEDS_NOP2(void);
+        char UART_TO_LEDS_RX_BYTE_READY(char data, char error);
+};
+
+USES{
+        char UART_TO_LEDS_LED_OUTPUT(int);
+	char UART_TO_LEDS_SUB_LEDS_INIT(void);
+	char UART_TO_LEDS_SUB_UART_INIT(void);
+};

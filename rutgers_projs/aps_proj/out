@@ -1,0 +1,60 @@
+Makefile:76: Makefile.objs: No such file or directory
+./tools/desc2objs apps/aps_dv-fp.desc > Makefile.objs
+./tools/mksuper_desc apps/aps_dv-fp.desc > super.h
+./tools/mk_amdisp > am_dispatch.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5   -c -o system/sched.o system/sched.c
+system/sched.c: In function `TOS_post':
+system/sched.c:206: warning: array subscript has type `char'
+./tools/mkheader DVHOP_FP.comp > DVHOP_FP.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5 -o DVHOP_FP.o DVHOP_FP.c
+In file included from DVHOP_FP.h:3,
+                 from DVHOP_FP.c:14:
+super.h:301:7: warning: extra tokens at end of #endif directive
+./tools/mkheader SEND_DV_FP.comp > SEND_DV_FP.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5 -o SEND_DV_FP.o SEND_DV_FP.c
+In file included from SEND_DV_FP.h:3,
+                 from SEND_DV_FP.c:3:
+super.h:301:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/AM.comp > system/AM.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5 -o system/AM.o system/AM.c
+In file included from system/AM.h:3,
+                 from system/AM.c:38:
+super.h:301:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/CLOCK.comp > system/CLOCK.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5 -o system/CLOCK.o system/CLOCK.c
+In file included from system/CLOCK.h:3,
+                 from system/CLOCK.c:21:
+super.h:301:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/MAIN.comp > system/MAIN.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5 -o system/MAIN.o system/MAIN.c
+In file included from system/MAIN.h:3,
+                 from system/MAIN.c:21:
+super.h:301:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/PACKETOBJ.comp > system/PACKETOBJ.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5 -o system/PACKETOBJ.o system/PACKETOBJ.c
+In file included from system/PACKETOBJ.h:3,
+                 from system/PACKETOBJ.c:22:
+super.h:301:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/RFM.comp > system/RFM.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5 -o system/RFM.o system/RFM.c
+In file included from system/RFM.h:3,
+                 from system/RFM.c:34:
+super.h:301:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/SEC_DED_RADIO_BYTE.comp > system/SEC_DED_RADIO_BYTE.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5 -o system/SEC_DED_RADIO_BYTE.o system/SEC_DED_RADIO_BYTE.c
+In file included from system/SEC_DED_RADIO_BYTE.h:3,
+                 from system/SEC_DED_RADIO_BYTE.c:24:
+super.h:301:7: warning: extra tokens at end of #endif directive
+system/SEC_DED_RADIO_BYTE.c:34: warning: const declaration for `TOS_LOCAL_ADDRESS' follows non-const
+system/SEC_DED_RADIO_BYTE.c: In function `RADIO_PACKET_OVER_COMMAND':
+system/SEC_DED_RADIO_BYTE.c:103: warning: control reaches end of non-void function
+./tools/desc2hdrs DVHOP_FP.h SEND_DV_FP.h system/AM.h system/CLOCK.h system/MAIN.h system/PACKETOBJ.h system/RFM.h system/SEC_DED_RADIO_BYTE.h  > All_headers.c
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x13 -DMY_LOCAL_ADDRESS=5   -c -o All_headers.o All_headers.c
+In file included from DVHOP_FP.h:3,
+                 from All_headers.c:1:
+super.h:301:7: warning: extra tokens at end of #endif directive
+avr-gcc -Xlinker -M -o main.exe  -m avr85xx -mmcu=at90s8535 system/sched.o DVHOP_FP.o SEND_DV_FP.o system/AM.o system/CLOCK.o system/MAIN.o system/PACKETOBJ.o system/RFM.o system/SEC_DED_RADIO_BYTE.o  > img.file
+/usr/local/lib/gcc-lib/avr/3.0/../../../../avr/bin/ld: region text is full (main.exe section .text)
+DVHOP_FP.o: In function `calculate_unit_vectors':
+DVHOP_FP.o(.text+0x128): undefined reference to `sqrt'
+make: *** [main.exe] Error 1

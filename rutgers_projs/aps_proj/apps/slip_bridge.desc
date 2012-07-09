@@ -1,0 +1,110 @@
+/* 
+ *
+ * Copyright (c) 2001 Rutgers University and Richard P. Martin.
+ * All rights reserved.
+ * 
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the following conditions are met:
+ *
+ *    1. Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *
+ *    2. Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *
+ *    3. All advertising materials mentioning features or use of this
+ *       software must display the following acknowledgment:
+ *           This product includes software developed by 
+ *           Rutgers University and its contributors.
+ *
+ *    4. Neither the name of the University nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ * 
+ * IN NO EVENT SHALL RUTGERS UNIVERSITY BE LIABLE TO ANY PARTY FOR DIRECT, 
+ * INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF RUTGERS
+ * UNIVERSITY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  
+ * RUTGERS UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND RUTGERS UNIVERSITY HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ *
+ *
+ * Author:                      Richard P. Martin 
+ * Version:                     $Id: slip_bridge.desc,v 1.1.1.1 2002/03/08 23:52:37 ashwink Exp $
+ * Creation Date:               Wed Jul 18 21:43:59 2001
+ * Filename:                    slip_bridge.desc
+ * History:
+ * $Log: slip_bridge.desc,v $
+ * Revision 1.1.1.1  2002/03/08 23:52:37  ashwink
+ *
+ * APS Code includes:
+ * 	mote code
+ * 	mote-gw
+ * 	tcl/tk demo files
+ *
+ * Revision 1.2  2002/01/29 02:54:55  xili
+ * purposely set the AM msg number of SLIP_BRIDGE_RX to match IPV4_SIMPLE_RX so that normal mote can communicate with both its normal neighbours and the bridge mote
+ *
+ * Revision 1.1.1.1  2001/10/04 04:12:07  rmartin
+ * hopefully this is correct
+ *
+ * Revision 1.1  2001/08/06 20:22:25  rmartin
+ * transmit from UART-> radio is working.
+ *
+ */
+
+/* this TOS program creates a SLIP bridge */ 
+
+/* It's intended use is to test if the slip driver is working 
+ * correctly 
+ * It also uses the LEDS to print out what's transmitting or receiving 
+ */ 
+
+include modules{
+MAIN;
+SLIP_BRIDGE;
+SLIP;
+UART;
+GENERIC_COMM;
+LEDS;
+};
+
+MAIN:MAIN_SUB_INIT SLIP_BRIDGE:SLIP_BRIDGE_INIT 
+MAIN:MAIN_SUB_START SLIP_BRIDGE:SLIP_BRIDGE_START
+
+SLIP_BRIDGE:SLIP_BRIDGE_SUB_SLIP_INIT SLIP:SLIP_INIT
+SLIP_BRIDGE:SLIP_BRIDGE_SUB_SLIP_POWER SLIP:SLIP_POWER
+
+SLIP_BRIDGE:SLIP_BRIDGE_RX_SLIP SLIP:SLIP_RX_PACKET_DONE
+SLIP_BRIDGE:SLIP_BRIDGE_TX_SLIP SLIP:SLIP_TX_PACKET
+SLIP_BRIDGE:SLIP_BRIDGE_TX_SLIP_DONE SLIP:SLIP_TX_PACKET_DONE
+
+SLIP_BRIDGE:SLIP_BRIDGE_SUB_RADIO_INIT GENERIC_COMM:COMM_INIT
+SLIP_BRIDGE:SLIP_BRIDGE_SUB_RADIO_POWER GENERIC_COMM:COMM_POWER
+SLIP_BRIDGE:SLIP_BRIDGE_TX_RADIO GENERIC_COMM:COMM_SEND_MSG
+SLIP_BRIDGE:SLIP_BRIDGE_TX_RADIO_DONE GENERIC_COMM:COMM_MSG_SEND_DONE
+
+SLIP_BRIDGE:SLIP_BRIDGE_RX_RADIO AM:AM_MSG_HANDLER_32
+
+SLIP_BRIDGE:SLIP_BRIDGE_SUB_LED_INIT LEDS:LEDS_INIT
+SLIP_BRIDGE:SLIP_BRIDGE_SUB_TOG_RED LEDS:RED_LED_TOGGLE
+SLIP_BRIDGE:SLIP_BRIDGE_SUB_TOG_GREEN LEDS:GREEN_LED_TOGGLE
+SLIP_BRIDGE:SLIP_BRIDGE_SUB_TOG_YELLOW LEDS:YELLOW_LED_TOGGLE
+
+SLIP:SLIP_SUB_INIT UART:UART_INIT        
+SLIP:SLIP_SUB_POWER UART:UART_PWR 
+SLIP:SLIP_SUB_TX_BYTE UART:UART_TX_BYTES
+
+UART:UART_RX_BYTE_READY SLIP:SLIP_RX_BYTE_READY
+UART:UART_TX_BYTE_READY SLIP:SLIP_TX_BYTE_READY
+UART:UART_BYTE_TX_DONE SLIP:SLIP_BYTE_TX_DONE
+
+
+
+

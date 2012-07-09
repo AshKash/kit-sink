@@ -1,0 +1,22 @@
+TOS_MODULE AD_HOC_POS;
+
+ACCEPTS{
+	char AD_HOC_POS_START(void);
+	char AD_HOC_POS_INIT(void);
+};
+
+HANDLES{
+	void AD_HOC_POS_CLOCK_EVENT(void);
+	char AD_HOC_POS_OUTPUT_COMPLETE(char success);
+	char AD_HOC_POS_INPUT(int x, int y, int dist, int strength);
+};
+
+USES{
+	char AD_HOC_POS_SUB_CLOCK_INIT(char interval, char scale);
+        char AD_HOC_POS_SUB_OUTPUT_INIT();
+        char AD_HOC_POS_OUTPUT(int x, int y, int dist);
+};
+
+SIGNALS{
+};
+

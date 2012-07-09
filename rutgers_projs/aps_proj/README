@@ -1,0 +1,112 @@
+
+This directory contains the tree of components used for programming
+the UCB "mote" wireless network sensor device (NSD).  It is set up to allow
+NSD applications to be debugged on a PC and then recompiled for the NSD.
+
+Tools you will need: perl, gcc, java, nm, atmel tools (installed in /usr/local/atmel)
+
+An NSD application is described  at top-level by a graph of
+components.  Currently this graph can be constructed as a textual list of components, which is then processed to form a flat list of components and the wiring between component
+ports.  This description is contained in a .desc file (e.g,
+apps/blink.desc), which can be edited directly.  The components
+themselves are .c and .comp files contained in this directory and using
+the TOS macros from tos.h.  The header files for the components are generated at compile time from the .comp files.
+
+The Makefiles are set up to generate a lot of stuff from the root .desc
+file and .comp files. 
+ 
+  make -f makefilePC builds the PC debugging version.
+  make               builds the NSD image
+  make install       programs the image into the NSD.
+                     This must be run as root.
+
+Tools:
+ tools/mksuper_desc processes the .desc file and produces super.h
+
+ tools/desc2objs generates the list of OBJs for the application specified
+in the .desc file
+
+ tools/upload programs the NSD over the parallel port (run as root)
+
+An application consists of a main, a scheduler (sched.o), an AM
+dispatcher, and the list of component objects.
+
+Components:
+
+Applications formed as collection of AM handlers and a top-level main
+
+AM handler sets (use or build one)
+	AM_BEACON.c   
+	AM_BOUNCER.c  
+	AM_ECHO.c     
+	AM_LIGHT.c
+	AM_ROUTE.c
+	AM_temp.c     
+
+"Main" level object
+	MAIN.c 
+
+Top-level Applications (use/build one):		  	
+	base_station.c
+	recmain.c
+	sendmsg.c
+
+Scheduler
+	sched.c
+
+Active Message Layers (use one)
+	AM.c	      - stand alone NSD
+	AM_BASE.c     - base station NSD with UART forwarding
+
+Radio Packet Transport Layer (use one)
+	CRCPACKETOBJ.c	-packet layer component that checks for CRC validity
+	PACKETOBJ.c	-raw 30 byte packet
+	RED_PACKETOBJ.c -redundant packet, transmits three copies of the data.
+	PACKETOBJ_SIGNAL.c -includes receive signal strength into the data packet.
+
+UART Packet Transport Layer
+	UART_PACKET.c	-sends packets to the UART
+
+Radio Byte Engine (use one)
+	SED_DED_RADIO_BYTE.c - Perform forward error correction encoding and decoding
+	SEC_DED_RADIO_BYTE_SIGNAL.c - includes receive signal strength.
+	FOUR_B_RADIO_BYTE.c - 4b/6b encoding
+	RADIO_BYTE.c	    - manchester encoding
+
+UART Byte Engine
+	UART.c
+
+Lower level device components
+	CLOCK.c		- signal periodic events
+	PHOTO.c		- access photo sensor on basic sensor pack
+	TEMP.c	        - temperature sensor on basic sensor pack
+	RFM.c		- RFM radio interface
+	RFM_LOW_POWER.c - Low power implementation of the RFM component.
+	ADC.c		- Provides access to the internal ADC
+	I2C_OBJ.c	- Implements the I2C protocol on I2C bus2
+	LEDS.c		- Controls the system LESs
+	LOGGER.c	- Writes data to a log in the EE-prom.
+---------------------------------------------------------
+.comp structural descriptions consist of five parts:
+1. list of commands it ACCEPTS
+2. list of events it SIGNALS
+3. list of commands it USES
+4. list of events it HANDLES
+5. list of INTERNAL methods - not used to compose components but automatically placed in header files
+
+The use of the intermediate signal names may seem unnecessary where
+1-1 connections are made, but it generalizes to multiple outputs driving
+multiple inputs.  
+
+Mapping from components to files:
+
+A component of name FOO is implemented by file FOO.c The associated include file FOO.comp provides signatures that are 1-1 with the component ports.  
+
+Each ACCEPTS and HANDLES port is a function that may be called.  The include file provides a type declaration.  This name is mapped to the function
+provided at the IN ports of the connected modules.  (In the one-to-many case an intermediate fan-out function is created automatically.)
+
+Each SIGNALS and USES port is a TOS_COMMAND or TOS event handler function that may be called.
+
+Hierarchy of Components
+
+You can create components that are a collection or group of components.  These collections can then be included in other applications as simple components. An example of this is the GENERIC_COMM component.  It includes a pre-assembled collection of Messaging, Packet, Byte, and Bit level radio components.  It is created by adding the IMPLEMENTED_BY GENERIC_COMM; macro to the .comp file. This tells the compile time tools to look in the GENERIC_COMM.desc file to pull out the real component definition.  Additionally, you can use the JOINTLY IMPLEMENTED_BY directive to specify that a components in implements by a combination of a .c file and a component graph.  (see PHOTO.comp)

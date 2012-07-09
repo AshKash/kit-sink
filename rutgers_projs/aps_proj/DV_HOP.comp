@@ -1,0 +1,26 @@
+TOS_MODULE DV_HOP;
+
+ACCEPTS{
+	char DV_HOP_START(void);
+	char DV_HOP_INIT(void);
+};
+
+HANDLES{
+	void DV_HOP_CLOCK_EVENT(void);
+	char DV_HOP_OUTPUT_COMPLETE(char success);
+	char DV_HOP_INPUT(int x, int y, char hops);
+	char DV_HOP_CORRECTION_INPUT(int fpx, int fpy, int fpfactor);
+	char DV_HOP_QUERY_INPUT(void *q_msg);
+};
+
+USES{
+	char DV_HOP_SUB_CLOCK_INIT(char interval, char scale);
+        char DV_HOP_SUB_OUTPUT_INIT();
+        char DV_HOP_OUTPUT(int x, int y, char hops);
+        char DV_HOP_CORRECTION_OUTPUT(int fpx, int fpy, int fpfactor);
+	char DV_HOP_QUERY_REPLY(void *reply_msg);
+};
+
+SIGNALS{
+};
+

@@ -1,0 +1,23 @@
+TOS_MODULE SEND_COORD;
+JOINTLY IMPLEMENTED_BY SEND_COORD;
+
+ACCEPTS{
+	char SEND_COORD_INIT(void);
+	char SEND_COORD_OUTPUT(int x, int y, int dist);
+};
+
+SIGNALS{
+	char SEND_COORD_COMPLETE(char success);
+	char SEND_COORD_INPUT(int x, int y, int dist, int strength);
+};
+
+HANDLES{
+	char SEND_COORD_SUB_MSG_SEND_DONE(TOS_MsgPtr msg);
+	TOS_MsgPtr INT_READING(TOS_MsgPtr msg);
+};
+
+USES{
+	char SEND_COORD_SUB_INIT(void);
+	char SEND_COORD_SUB_SEND_MSG(char addr, char type, TOS_MsgPtr data);
+};
+

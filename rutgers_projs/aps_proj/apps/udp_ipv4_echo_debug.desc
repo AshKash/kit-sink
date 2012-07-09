@@ -1,0 +1,133 @@
+/* 
+ *
+ * Copyright (c) 2001 Rutgers University and Richard P. Martin.
+ * All rights reserved.
+ * 
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the following conditions are met:
+ *
+ *    1. Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *
+ *    2. Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *
+ *    3. All advertising materials mentioning features or use of this
+ *       software must display the following acknowledgment:
+ *           This product includes software developed by 
+ *           Rutgers University and its contributors.
+ *
+ *    4. Neither the name of the University nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ * 
+ * IN NO EVENT SHALL RUTGERS UNIVERSITY BE LIABLE TO ANY PARTY FOR DIRECT, 
+ * INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF RUTGERS
+ * UNIVERSITY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  
+ * RUTGERS UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND RUTGERS UNIVERSITY HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+ *
+ *
+ * Author:                      Richard P. Martin 
+ * Version:                     $Id: udp_ipv4_echo_debug.desc,v 1.1.1.1 2002/03/08 23:52:37 ashwink Exp $
+ * Creation Date:               Tue Aug 21 22:25:59 2001
+ * Filename:                    udp_ipv4_echo.desc
+ * History:
+ * $Log: udp_ipv4_echo_debug.desc,v $
+ * Revision 1.1.1.1  2002/03/08 23:52:37  ashwink
+ *
+ * APS Code includes:
+ * 	mote code
+ * 	mote-gw
+ * 	tcl/tk demo files
+ *
+ * Revision 1.1  2002/01/29 02:31:13  xili
+ * added UART module to the udp so we can use it to debug, rename the corresponding IPV4 module to IPV4_SIMPLE_DEBUG
+ *
+ * Revision 1.3  2002/01/09 23:52:55  xili
+ * temporary working code for IP assignment
+ *
+ * Revision 1.2  2001/10/17 00:16:32  xili
+ * work with UDP_ECHO
+ *
+ * Revision 1.1.1.1  2001/10/04 04:12:08  rmartin
+ * hopefully this is correct
+ *
+ * Revision 1.3  2001/09/19 04:31:05  rmartin
+ * Added byteswap routines
+ *
+ * Fixed some init routines. More init routines will be needed
+ * Also, this version compiles for the 1st time.
+ *
+ * Revision 1.2  2001/09/17 04:23:27  rmartin
+ * Lots of fixes, but still broken.
+ *
+ * a useable description file
+ *
+ * Revision 1.1  2001/09/06 04:21:57  rmartin
+ * checking in so I don't lose them like the tos-ipv4.h
+ *
+ * description file
+ *
+ */
+
+/* this TOS program implements a UDP echo server */ 
+
+include modules{
+MAIN;
+UDP_ECHO;
+UDP_IPV4_MOD;
+IPV4_SIMPLE_DEBUG;
+GENERIC_COMM;
+LEDS;
+UART;
+};
+
+MAIN:MAIN_SUB_INIT UDP_ECHO:UDP_ECHO_INIT 
+MAIN:MAIN_SUB_START UDP_ECHO:UDP_ECHO_START
+
+UDP_ECHO:UDP_ECHO_SUB_LED_INIT LEDS:LEDS_INIT
+UDP_ECHO:UDP_ECHO_SUB_TOG_RED LEDS:RED_LED_TOGGLE
+UDP_ECHO:UDP_ECHO_SUB_TOG_GREEN LEDS:GREEN_LED_TOGGLE
+UDP_ECHO:UDP_ECHO_SUB_TOG_YELLOW LEDS:YELLOW_LED_TOGGLE
+
+UDP_ECHO:UDP_ECHO_SUB_INIT_IP_ADDR UDP_IPV4_MOD:UDP_IPV4_MOD_INIT_IP_ADDR
+UDP_ECHO:UDP_ECHO_SUB_SET_IP_ADDR UDP_IPV4_MOD:UDP_IPV4_MOD_SET_IP_ADDR
+UDP_ECHO:UDP_ECHO_SUB_SET_DEST UDP_IPV4_MOD:UDP_IPV4_MOD_SET_DEST
+UDP_ECHO:UDP_ECHO_SUB_SET_UDP_PORT UDP_IPV4_MOD:UDP_IPV4_MOD_SET_LOCAL_PORT
+UDP_ECHO:UDP_ECHO_SUB_SET_UDP_REMOTE_PORT UDP_IPV4_MOD:UDP_IPV4_MOD_SET_REMOTE_PORT
+
+UDP_ECHO:UDP_ECHO_SUB_INIT UDP_IPV4_MOD:UDP_IPV4_MOD_INIT
+UDP_ECHO:UDP_ECHO_SUB_POWER UDP_IPV4_MOD:UDP_IPV4_MOD_POWER
+UDP_ECHO:UDP_ECHO_TX UDP_IPV4_MOD:UDP_IPV4_MOD_TX_PACKET
+UDP_ECHO:UDP_ECHO_RX UDP_IPV4_MOD:UDP_IPV4_MOD_RX_PACKET_DONE
+UDP_ECHO:UDP_ECHO_TX_DONE UDP_IPV4_MOD:UDP_IPV4_MOD_TX_PACKET_DONE
+
+UDP_IPV4_MOD:UDP_IPV4_MOD_SUB_SET_IP_ADDR IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_SET_LOCAL_ADDR
+UDP_IPV4_MOD:UDP_IPV4_MOD_SUB_SET_NET_MASK IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_SET_NET_MASK
+UDP_IPV4_MOD:UDP_IPV4_MOD_SUB_INIT IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_INIT
+UDP_IPV4_MOD:UDP_IPV4_MOD_SUB_POWER IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_POWER
+UDP_IPV4_MOD:UDP_IPV4_MOD_SUB_TX_PACKET IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_TX_PACKET
+UDP_IPV4_MOD:UDP_IPV4_MOD_RX IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_RX_PACKET_DONE
+UDP_IPV4_MOD:UDP_IPV4_MOD_TX_DONE IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_TX_PACKET_DONE
+UDP_IPV4_MOD:UDP_IPV4_MOD_SUB_GET_SOURCE IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_GET_LOCAL_ADDR
+UDP_IPV4_MOD:UDP_IPV4_MOD_SUB_SET_GATEWAY IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_SET_GATEWAY
+
+IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_SUB_INIT GENERIC_COMM:COMM_INIT
+IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_SUB_POWER GENERIC_COMM:COMM_POWER
+IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_SUB_TX_PACKET GENERIC_COMM:COMM_SEND_MSG
+IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_RX AM:AM_MSG_HANDLER_32
+IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_TX_DONE GENERIC_COMM:COMM_MSG_SEND_DONE
+
+IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_SUB_UART_INIT UART:UART_INIT
+IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_SUB_UART_TX_BYTE UART:UART_TX_BYTES
+
+UART:UART_TX_BYTE_READY IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_UART_TX_BYTE_READY
+UART:UART_RX_BYTE_READY IPV4_SIMPLE_DEBUG:IPV4_SIMPLE_DEBUG_UART_RX_BYTE_READY

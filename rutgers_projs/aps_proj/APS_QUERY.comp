@@ -1,0 +1,22 @@
+TOS_MODULE APS_QUERY;
+
+ACCEPTS{
+	char APS_QUERY_INIT(void);
+	char APS_QUERY_START(void);
+};
+
+SIGNALS{
+};
+
+HANDLES{
+	void APS_QUERY_CLOCK_EVENT(void);
+	char APS_QUERY_SUB_MSG_SEND_DONE(TOS_MsgPtr msg);
+	TOS_MsgPtr GOT_QUERY_REPLY(TOS_MsgPtr msg);
+};
+
+USES{
+        char APS_QUERY_SUB_CLOCK_INIT(char interval, char scale);
+	char APS_QUERY_SUB_INIT(void);
+	char APS_QUERY_SUB_SEND_MSG(char addr, char type, TOS_MsgPtr data);
+};
+

@@ -1,0 +1,43 @@
+This directory contains the mote-gw package, mostly unmodified except for
+a few fixes and debug code inserted. Read the README-mote-gw for an overview
+of what it is suppossed to do.
+
+At the lowest level is the server, which listens on the specified port for
+am packets and simply forwards it to the uart. Some primitive form of
+flow control is employed so clients dont send massive amounts of data.
+Some times the sync is lost, and incomming pakets are shifted by a constant
+factor, to fix this send a HUP signal to the server process. Caveats: This is 
+again very primitive, it tries to find the LOCAL_GROUP field in the packet
+and synchronises on that. Make sure the LOCAL_GROUP on the MOTE_GW, and the
+DV_HOP programs are the same as in the server, this is defined in the Makefile.
+Packet lengths are defined in the mote-gw.h file, make sure this is same as
+the one defined in MSG.h (take into consideration the fact that size of int
+can be different in the mote and on the PC, so this is not the same as a
+sizeof(am_packet))
+
+The client is the aps-query.c file. This connects to the server and expects
+input from the user. The program forms a am packet out of the user input
+and sends it to the server. Similarly, when a packet is received, it
+interprets the am packet and writes it to screen in a special text format.
+QUERY_HANDLER and REPLY_HANDLER are defines in system/include/aps_msgs.h
+these must be the same as the ones found in the SEND_COORD_DV.desc file.h.
+BYTEORDERING BUG!!! no byteordering conversion is done, so the PC running
+the aps-query must be a x86, which has the same byteordering as the mote.
+
+
+The GUI which interacts with the client through stdin and stdout is the
+tcl program which sends the query in the format expected by aps-query.c.
+When aps-query.c prints out the reply, the GUI is updated automatically.
+The start-dem.sh is a script that arranges the redirection between the tcl
+program and the client program, read the script to make sure things are ok.
+The GUI does an initial broadcast when it comes up, this just gets the
+coordinates from all nearby motes. When a particular mote is clicked, more
+information is gathered.
+To see if more motes have joined, click Rescan.
+To update values for the selected mote, clic Update Values
+To Send the query to the selected mote, click send query.
+Refresh will delete all state and contents of the map and start over again
+by sending a broadcast.
+X and Y cannot be changed for non landmarks, the only other modifiable field
+is Restart_APS which will restart the APS algorithm on a non landmark node.
+

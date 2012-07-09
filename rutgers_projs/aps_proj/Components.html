@@ -1,0 +1,129 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>TinyOS System Components</title>
+</head>
+
+<body>
+
+<h1>TinyOS System Components</h1>
+<p>AM handler sets -- Application level component (use or build multiple)&nbsp;</p>
+<p>AM_BEACON.c -- Application that periodically broadcasts out identity
+information.&nbsp; On each clock interrupt, it sends out a predetermined packet
+of information.&nbsp;&nbsp;</p>
+<p>AM_BOUNCER.c -- Equivalent to a 'ping' handler.&nbsp; Accepts a packet coming
+in from the network and responds with a packet sent back to the original sender.</p>
+<p>AM_ECHO.c -- A component that forwards data through a node. Essentially, this
+is a router for a source based routing algorithm.&nbsp; The packet already
+contains the route to the destination. This handler receives the packet and retransmits
+it out to the next hop on the list.&nbsp; The handler also modifies the list so
+that the packet contains the return address by the time it arrives at the recipient.&nbsp;</p>
+<p>AM_LIGHT.c -- A component that I have no idea what it does. It probably
+accepts a messages request to check the light sensor and send back the result.</p>
+<p>AM_ROUTE.c -- A multi-hop routing application designed to discover a minimum
+depth spanning tree and forward the use the tree to send sensor readings back to
+a central base station.&nbsp; Each node listens for data that it needs to
+retransmit on behalf of other nodes.&nbsp; Distant nodes use intermediate nodes
+as stepping stones for their data.&nbsp; Each re-transmission brings the data
+closer to the base station.</p>
+<p>AM_temp.c&nbsp; -- A component that I have no idea what it does. It probably
+accepts a messages request to check the light sensor and send back the result.</p>
+<p>&quot;Main&quot; level object&nbsp;</p>
+<p>MAIN.c&nbsp; Required component that initializes the system and starts the
+scheduler. All applications must include this component.&nbsp; Additionally,
+currently, the node's ID number is encoded in this file.</p>
+<p>sched.c&nbsp; System Scheduler, must be included in all applications.&nbsp;
+This is a simple fifo scheduler that is used to schedule the tasks.&nbsp; When a
+component calls POST_TASK, the scheduler places that task in a FIFO queue.&nbsp;
+When there is nothing else for the CPU to do, a task is pulled off the front of
+the FIFO queue and executed to completion.</p>
+<p>Active Message Layers (use one)&nbsp;</p>
+<p>AM.c - stand alone NSD AM layer.&nbsp; When a packet arrives the this module
+checks the address of the packet and then dispatches the message to the
+appropriate message handler.&nbsp; In the event that the handler is not present
+on the device, the packet is dropped.&nbsp; This layer checks that either the
+address is equal to the local address or it is equal to the broadcast address
+(0xff).</p>
+<p>AM_BASE.c - base station NSD with UART forwarding.&nbsp; This component
+behaves the same as the AM.c component EXCEPT that if a packet is sent to the
+address 0x7e, it is directed to the UART instead of the RADIO.&nbsp; The address
+0x7e is permanently assigned to the UART of a computer attached to a base
+station.&nbsp; This component that both a Radio Packet Transport layer component
+and a UART Packet Transport component are present.</p>
+<p>Radio Packet Transport Layer (use one)&nbsp;</p>
+<p>PACKETOBJ.c -raw 30 byte packet.&nbsp; This component takes a pointer to a 30
+byte array to be sent down to the byte level component below it.&nbsp; It hands
+the bytes down to the byte level component one at a time.&nbsp; As the byte
+level component completes the transmission of a byte, a subsequent byte is
+handed down.&nbsp; Additionally, as bytes arrive up from the network, this
+component accepts the bytes one at a time until all 30 have arrived.&nbsp; Once
+a full packet is sent/received the component fires the packet_send_done or
+packet_receive_done event.</p>
+<p>CRCPACKETOBJ.c -packet layer component that checks for CRC validity.&nbsp;
+This component performs the same function as the basic PACKETOBJ.c component except
+that it transmits and additional two bytes.&nbsp; These two bytes are a CRC
+calculation performed over the packet. On the receiving end, the CRC is
+recalculated and compared with the CRC value that was received.&nbsp; If they do
+not match, the packet is dropped.&nbsp; If they do match the component fires the
+packet_recieved_event.&nbsp;&nbsp;</p>
+<p>REDPACKET redundancy&nbsp; packet - This packet level component takes in 10
+BYTE PACKETS and then sends the data out in triplicate.&nbsp; The ten bytes are
+transmitted 3 times to form a 30 byte packet.&nbsp; Upon arrival the three
+copies are used to perform error correction. In the event that two of the three
+copies are the same (on a byte-by-byte basis), majority vote wins.&nbsp; In the
+event that all three copies are different, then the packet is dropped.</p>
+<p>UART Packet Transport Layer&nbsp;</p>
+<p>UART_PACKET.c -sends packets to the UART&nbsp;&nbsp; this packet level
+component is almost identical to the PACKETOBJ.c component except it is designed
+to be used with the UART.c byte level component.</p>
+<p>Radio Byte Engine (use one)&nbsp; -- all devices in the network must use the
+same radio encoding component.</p>
+<p>FOUR_B_RADIO_BYTE.c - 4b/6b encoding - A byte level component used&nbsp; with
+the RFM component. This component accepts bytes from the packet layer componet,
+encodes them for transmission, and passes the bits down to the RFM component one
+at a time.&nbsp; This component uses a 4b/6b encoding scheme. Each 8bit byte is
+transformed into 12 bits for transmission. This is done in order to satisfy the
+radio's DC-balance requirement.&nbsp; As bits arrive from the radio, this
+component first checks to see if a valid start symbol arrives from the
+network.&nbsp; One a start symbol is found, the component collects the bits
+together into a byte worth, decodes the byte and then sends the decoded byte up
+to the packet layer.</p>
+<p>RADIO_BYTE.c - manchester encoding&nbsp; This performs the same function as
+the FOUR_B_RADIO_BYTE except it uses a Manchester encoding scheme that takes in
+a 8-bit symbol and produces a 16 bit symbol, once again, this is done in order
+to satisfy the radio's dc-balance requirement.</p>
+<p>UART Byte Engine&nbsp;</p>
+<p>UART.c --This component takes bytes one at a time and transmitts them over
+the UART.&nbsp; When the component is ready to handle another byte, it fires the
+tx_done event. When a byte arrives from the UART, the component fires the
+byte_arrival event. </p>
+<p>Lower level device components </p>
+<p>CLOCK.c - signals periodic events.&nbsp; It initialized with the interval
+with witch to fire the event and then periodically fires the CLOCK_EVENT at that
+rate. The possible initialization values are:</p>
+<ol>
+  <li>0x0 - disable the event</li>
+  <li>0x1 - fire once every 1/256 of a second</li>
+  <li>0x2</li>
+  <li>0x3</li>
+  <li>0x4</li>
+  <li>0x5</li>
+  <li>0x6</li>
+  <li>0x7</li>
+</ol>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>PHOTO.c - access photo sensor </p>
+<p>RFM.c - RFM radio interface</p>
+<p>RFM_LOW_POWER.c - low power interface to RFM radio. </p>
+<p>Temp.c - temperature sensor </p>
+<p>MOTE_I2C_obj.c </p>
+
+</body>
+
+</html>

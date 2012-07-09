@@ -1,0 +1,39 @@
+/*
+ *  NM.comp - pin definitions for the null modem
+ */
+
+TOS_MODULE NM;
+
+ACCEPTS{
+	char NM_INIT(void);
+	char NM_START(void);
+};
+
+SIGNALS{
+};
+
+HANDLES{
+	TOS_MsgPtr NM_RX_RADIO(TOS_MsgPtr data);
+	char NM_RADIO_TX_DONE(TOS_MsgPtr msg);
+	char NM_RX_UART(char data, char error);
+	char NM_UART_TX_DONE(char succ);
+};
+
+USES{
+        char NM_LEDS_INIT();
+        char NM_LEDS_GREEN_ON();
+        char NM_LEDS_GREEN_OFF();
+        char NM_LEDS_GREEN_TOGGLE();
+        char NM_LEDS_YELLOW_ON();
+        char NM_LEDS_YELLOW_OFF();
+        char NM_LEDS_YELLOW_TOGGLE();
+        char NM_LEDS_RED_ON();
+        char NM_LEDS_RED_OFF();
+        char NM_LEDS_RED_TOGGLE();
+	char NM_TX_RADIO(char addr, char type, TOS_MsgPtr data);
+	char NM_TX_UART(char data);
+	char NM_UART_INIT();
+	char NM_RADIO_INIT();
+	char NM_NOP();
+};
+
