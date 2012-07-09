@@ -1,0 +1,656 @@
+Index: acct_mgr/ldap_store.py
+===================================================================
+--- acct_mgr/ldap_store.py	(revision 0)
++++ acct_mgr/ldap_store.py	(revision 583)
+@@ -0,0 +1,178 @@
++
++from trac.core import *
++from trac.config import Option
++import crypt, md5, sha, base64
++
++from api import IPasswordStore
++import ldap
++
++class LdapAuthStore(Component):
++    """This store is basically a SessionAuth store (in db.py) but fetches information 
++    from LDAP/AD so that the fullname and email are set automatically. The user's 
++    password is also stored in trac's DB but is never used and authentication is
++    performed by attempting to do a simple_bind to the LDAP server.
++    Please configure all the sections correctly!
++    """
++
++    implements(IPasswordStore)
++    
++    ldap_user = Option('account-manager', 'ldap_user', 
++                       doc='LDAP user to use for binding')
++    ldap_pass = Option('account-manager', 'ldap_pass', 
++                       doc='Password of LDAP user')
++    ldap_uri = Option('account-manager', 'ldap_uri', 
++                      doc='URI of the LDAP server')
++    ldap_basedn = Option('account-manager', 'ldap_basedn', 
++                         doc='Base DN used while searching')
++    
++    ldap_fullname_attr = Option('account-manager', 'ldap_fullname_attr',
++                                doc='LDAP attribute that represents a user\'s full name',
++                                default='CN')
++    ldap_email_attr = Option('account-manager', 'ldap_email_attr',
++                             doc='LDAP attribute that represents a user\'s email address',
++                             default='mail')
++    ldap_filter = Option('account-manager', 'ldap_filter',
++                         doc='What to search for, the \%s is replaced with the '
++                         'user id of the account being added',
++                         default='sAMAccountName=%s')
++
++    def __init__(self):
++        pass
++    
++    def get_users(self):
++        """Returns an iterable of the known usernames
++        """
++        db = self.env.get_db_cnx()
++        cursor = db.cursor()
++        cursor.execute("SELECT DISTINCT sid FROM session_attribute "
++                       "WHERE authenticated=1 AND name='name'")
++        for sid, in cursor:
++            yield sid
++ 
++    def has_user(self, user):
++        db = self.env.get_db_cnx()
++        cursor = db.cursor()
++        exists = False
++        cursor.execute("SELECT COUNT(*) FROM session_attribute "
++                   "WHERE authenticated=1 AND name='name' "
++                   "AND sid=%s", (user,))
++        
++        if cursor.fetchone()[0] != 0:
++            exists = True
++        self.env.log.info('LdapAuthStore: has_user %s, %d' % (user, exists))
++
++        return exists
++    
++    def set_password(self, username, password):
++        """Sets the password for the username.  This should create the user account
++        if it doesn't already exist.
++        Returns True if a new account was created, False if an existing account
++        was updated.
++        """
++        db = self.env.get_db_cnx()
++        cursor = db.cursor()
++
++        # Set name/email from LDAP
++        try: 
++            (name, email) = self._setuserinfo(username)
++        except Exception, e:
++            raise TracError('User information not available. Ldap Error: %s' % e)
++
++        cursor.execute("REPLACE INTO session(sid, authenticated, last_visit) "
++                       "VALUES(%s, 1, 0)", (username,))
++        cursor.execute("REPLACE INTO session_attribute(sid, authenticated, name, value) "
++                       "VALUES(%s, 1, 'name', %s)", (username, name))
++        cursor.execute("REPLACE INTO session_attribute(sid, authenticated, name, value) "
++                       "VALUES(%s, 1, 'email', %s)", (username, email))
++
++        db.commit()
++        self.env.log.info('LdapAuthStore: set_password %s, %s, %s' % (username, name, email))
++        return True
++
++    # Fetch user name and email from LDAP and fill it in the DB
++    def _setuserinfo(self, username):
++
++        attrs = [str(self.ldap_fullname_attr), str(self.ldap_email_attr)]
++        ldap_filter = self.ldap_filter % username
++
++        #self.env.log.info('LdapAuthStore: %s, %s, %s, %s' % (self.ldap_fullname_attr, self.ldap_email_attr, ldap_filter, str(attrs)))
++        #self.env.log.info('LdapAuthStore: %s' % (self.ldap_basedn))
++
++        con = ldap.initialize(self.ldap_uri)
++        con.simple_bind_s(self.ldap_user, self.ldap_pass)
++
++        ldap_users = con.search_s( self.ldap_basedn, ldap.SCOPE_ONELEVEL, 
++                                   ldap_filter, attrs )
++        if len(ldap_users) == 0:
++            try:
++                con.unbind_s()
++            except:
++                pass
++            raise TracError('LdapAuthStore: User %s Not found' % username)
++
++        udict = ldap_users[0][1]
++        mail = cn = ac = None
++        if 'mail' in udict:
++            mail = udict['mail'][0].lower()
++        if 'cn' in udict:
++            cn = udict['cn'][0]
++
++        try:
++            con.unbind_s()
++        except:
++            pass
++        return (cn, mail)
++
++    def check_password(self, user, password):
++        """Checks if the password is valid for the user.
++        Talks to the LDAP server to authenticate given user/password
++        """
++        valid = False
++        try:
++            con = ldap.initialize(self.ldap_uri)
++            con.simple_bind_s(user, password)
++            valid = True
++        except ldap.INVALID_CREDENTIALS:
++            pass
++
++        finally:
++            try:
++                con.unbind_s()
++            except:
++                pass
++
++        if valid:
++            return valid
++
++        # see if user exists in db (only for trac_admin)
++        if user == 'trac_admin':
++            db = self.env.get_db_cnx()
++            cursor = db.cursor()
++            db_pass = cursor.execute("SELECT value FROM session_attribute "
++                                     "WHERE sid=%s "
++                                     "AND name='password'", 
++                                     (user,)).fetchone()
++            if db_pass and len(db_pass) > 0:
++                valid = db_pass[0] == password
++
++        return valid
++
++    def delete_user(self, user):
++        """Deletes the user account.
++        Returns True if the account existed and was deleted, False otherwise.
++        """
++        if not self.has_user(user):
++            return False
++
++        if user == 'trac_admin':
++            raise TracError('Cannot delete special user: %s' % user)
++
++        db = self.env.get_db_cnx()
++        cursor = db.cursor()
++        cursor.execute("DELETE FROM session_attribute "
++                       "WHERE authenticated=1 AND name='password' "
++                       "AND sid=%s", (user,))
++        # TODO cursor.rowcount doesn't seem to get # deleted
++        # is there another way to get count instead of using has_user?
++        db.commit()
++        return True
+Index: acct_mgr/admin.py
+===================================================================
+--- acct_mgr/admin.py	(revision 566)
++++ acct_mgr/admin.py	(working copy)
+@@ -193,7 +193,13 @@
+                 if delete_enabled:
+                     sel = req.args.get('sel')
+                     sel = isinstance(sel, list) and sel or [sel]
++
+                     for account in sel:
++                        if not account :
++                            error = TracError('')
++                            error.message = 'Please select at least one user'
++                            raise error
++
+                         self.account_manager.delete_user(account)
+                 else:
+                     data['deletion_error'] = 'The password store does not ' \
+Index: acct_mgr/api.py
+===================================================================
+--- acct_mgr/api.py	(revision 566)
++++ acct_mgr/api.py	(working copy)
+@@ -97,7 +97,7 @@
+     stores = ExtensionPoint(IPasswordStore)
+     change_listeners = ExtensionPoint(IAccountChangeListener)
+     force_passwd_change = BoolOption('account-manager', 'force_passwd_change',
+-                                     True, doc="Forge the user to change "
++                                     True, doc="Force the user to change "
+                                      "password when it's reset.")
+ 
+     # Public API
+@@ -144,8 +144,22 @@
+         return valid
+ 
+     def delete_user(self, user):
++        if user == 'trac_admin':
++            raise TracError('Cannot delete special user: %s' % user)
++
+         db = self.env.get_db_cnx()
+         cursor = db.cursor()
++
++        # Do this first or else the email will be lost in db!
++        self._notify('deleted', user)
++
++        # Delete from password store 
++        store = self.find_user_store(user)
++        if store:
++            if hasattr(store, 'delete_user'):
++                self.log.info('Deleted user: %s' % user)
++                store.delete_user(user)
++
+         # Delete session attributes 
+         cursor.execute("DELETE FROM session_attribute where sid=%s", (user,))
+         # Delete session 
+@@ -153,13 +167,6 @@
+         # Delete any custom permissions set for the user 
+         cursor.execute("DELETE FROM permission where username=%s", (user,))
+         db.commit()
+-        db.close()
+-        # Delete from password store 
+-        self.log.debug('deleted user: %s' % user)
+-        store = self.find_user_store(user)
+-        if hasattr(store, 'delete_user'):
+-            if store and store.delete_user(user):
+-                self._notify('deleted', user)
+ 
+     def supports(self, operation):
+         try:
+Index: acct_mgr/web_ui.py
+===================================================================
+--- acct_mgr/web_ui.py	(revision 566)
++++ acct_mgr/web_ui.py	(working copy)
+@@ -13,6 +13,7 @@
+ import os
+ import random
+ import string
++import re
+ 
+ from trac import perm, util
+ from trac.core import *
+@@ -57,47 +58,37 @@
+             error.message = 'Another account with that name already exists.'
+             raise error
+ 
+-    password = req.args.get('password')
+-    if not password:
+-        error.message = 'Password cannot be empty.'
+-        raise error
++#     password = req.args.get('password')
++#     if not password:
++#         error.message = 'Password cannot be empty.'
++#         raise error
+ 
+-    if password != req.args.get('password_confirm'):
+-        error.message = 'The passwords must match.'
+-        raise error
++#     if password != req.args.get('password_confirm'):
++#         error.message = 'The passwords must match.'
++#         raise error
+ 
+-    try:
+-        mgr.set_password(user, password)
+-    except TracError, e:
+-        e.acctmge = acctmgr
+-        raise e
+-
+     db = env.get_db_cnx()
+     cursor = db.cursor()
+-    cursor.execute("SELECT count(*) FROM session "
+-                   "WHERE sid=%s AND authenticated=1",
++    cursor.execute("REPLACE INTO session "
++                   "(sid, authenticated, last_visit) "
++                   "VALUES (%s, 1, 0)",
+                    (user,))
+-    exists, = cursor.fetchone()
+-    if not exists:
+-        cursor.execute("INSERT INTO session "
+-                       "(sid, authenticated, last_visit) "
+-                       "VALUES (%s, 1, 0)",
+-                       (user,))
+ 
+     for key in ('name', 'email'):
+         value = req.args.get(key)
+         if not value:
+             continue
+-        cursor.execute("UPDATE session_attribute SET value=%s "
+-                       "WHERE name=%s AND sid=%s AND authenticated=1",
+-                       (value, key, user))
+-        if not cursor.rowcount:
+-            cursor.execute("INSERT INTO session_attribute "
+-                           "(sid,authenticated,name,value) "
+-                           "VALUES (%s,1,%s,%s)",
+-                           (user, key, value))
++        cursor.execute("REPLACE INTO session_attribute "
++                       "(sid,authenticated,name,value) "
++                       "VALUES (%s,1,%s,%s)",
++                       (user, key, value))
+     db.commit()
+ 
++    try:
++        mgr.set_password(user, "setinldap")
++    except TracError, e:
++        e.acctmgr = acctmgr
++        raise e
+ 
+ class SingleUserNofification(NotifyEmail):
+     """Helper class used for account email notifications which should only be
+@@ -106,7 +97,16 @@
+     _username = None
+ 
+     def get_recipients(self, resid):
+-        return ([resid],[])
++        #recipients = self._recipients.split()
++        #recipients = self.config.get('account-manager', 'account_changes_notify_addresses').split()
++        recipients = []
++        db = self.env.get_db_cnx()
++        cursor = db.cursor()
++        cursor.execute("SELECT value FROM session_attribute "
++                       "WHERE sid=%s and name='email'", (resid,))
++        
++        recipients.append(cursor.fetchone()[0])
++        return ([recipients],[])
+ 
+     def get_smtp_address(self, addr):
+         """Overrides `get_smtp_address` in order to prevent CCing users
+@@ -448,10 +448,11 @@
+         return auth.LoginModule.authenticate(self, req)
+     authenticate = if_enabled(authenticate)
+ 
+-    match_request = if_enabled(auth.LoginModule.match_request)
++    def match_request(self, req):
++        return re.match('/(login|logout|login2)/?$', req.path_info)
+ 
+     def process_request(self, req):
+-        if req.path_info.startswith('/login') and req.authname == 'anonymous':
++        if re.match('/(login|login2)/?$', req.path_info) and req.authname == 'anonymous':
+             data = {
+                 'referer': self._referer(req),
+                 'reset_password_enabled': AccountModule(self.env).reset_password_enabled
+@@ -478,9 +479,13 @@
+     def _redirect_back(self, req):
+         """Redirect the user back to the URL she came from."""
+         referer = self._referer(req)
+-        if referer and not referer.startswith(req.base_url):
+-            # don't redirect to external sites
+-            referer = None
++        if referer:
++            if not referer.startswith(req.base_url):
++                # don't redirect to external sites
++                referer = None
++            if (re.match('.*/login', referer)):
++                referer = None
++        
+         req.redirect(referer or self.env.abs_href())
+ 
+     def _referer(self, req):
+Index: acct_mgr/notification.py
+===================================================================
+--- acct_mgr/notification.py	(revision 566)
++++ acct_mgr/notification.py	(working copy)
+@@ -60,6 +60,13 @@
+ 
+     def get_recipients(self, resid):
+         recipients = self._recipients.split()
++        db = self.env.get_db_cnx()
++        cursor = db.cursor()
++        cursor.execute("SELECT value FROM session_attribute "
++                       "WHERE sid=%s and name='email'", (resid,))
++        _rcpts = cursor.fetchone()
++        if _rcpts and len(_rcpts) > 0:
++            recipients.append(_rcpts[0])
+         return (recipients,[])
+ 
+     def notify(self, username, action):
+Index: acct_mgr/templates/register.html
+===================================================================
+--- acct_mgr/templates/register.html	(revision 566)
++++ acct_mgr/templates/register.html	(working copy)
+@@ -16,7 +16,7 @@
+ 
+   <body>
+     <div id="content" class="register">
+-      <h1>Register an account</h1>
++      <h1>Register a LDAP/AD account</h1>
+ 
+       <div class="system-message" py:if="registration_error">
+         <h2>Error</h2>
+@@ -32,33 +32,7 @@
+               <input type="text" name="user" class="textwidget" size="20" value="${acctmgr.username}" />
+             </label>
+           </div>
+-          <div>
+-            <label>Password:
+-              <input type="password" name="password" class="textwidget" size="20" />
+-            </label>
+-          </div>
+-          <div>
+-            <label>Confirm Password:
+-              <input type="password" name="password_confirm"
+-                     class="textwidget" size="20" />
+-            </label>
+-          </div>
+         </fieldset>
+-        <fieldset>
+-          <legend>Optional</legend>
+-          <div>
+-            <label>Name:
+-              <input type="text" name="name" class="textwidget" size="20"  value="${acctmgr.name}"/>
+-            </label>
+-          </div>
+-          <div>
+-            <label>Email:
+-              <input type="text" name="email" class="textwidget" size="20"  value="${acctmgr.email}"/>
+-            </label>
+-            <p py:if="reset_password_enabled">Entering your email address will
+-            enable you to reset your password if you ever forget it.</p>
+-          </div>
+-        </fieldset>
+         <input type="submit" value="Create account" />
+       </form>
+     </div>
+Index: acct_mgr/templates/reset_password_email.txt
+===================================================================
+--- acct_mgr/templates/reset_password_email.txt	(revision 566)
++++ acct_mgr/templates/reset_password_email.txt	(working copy)
+@@ -7,6 +7,6 @@
+ Password: ${account.password}
+ 
+ -- 
+-${project.name} <${project.url}>
++$project.name <${project.url or abs_href()}>
+ ${project.descr}
+ 
+Index: acct_mgr/templates/verify_email.txt
+===================================================================
+--- acct_mgr/templates/verify_email.txt	(revision 566)
++++ acct_mgr/templates/verify_email.txt	(working copy)
+@@ -4,6 +4,24 @@
+ Username: $account.username
+ Verification Token: $account.token
+ 
++About Agilo
++Agilo is a simple and easy to use web-based tool to support teams working
++with  Scrum. Agilo supports all the Roles and main Ceremonies of the Scrum
++framework and allows the roles to share and interact effectively with a
++minimum effort.
++
++Agilo is based on  Trac a very wide spread ticket tracking system. You can
++find more information on Trac on the TracGuide.
++
++About Trac
++Trac is a minimalistic approach to web-based management of software
++projects. Its goal is to simplify effective tracking and handling of
++software issues, enhancements and overall progress.
++
++All aspects of Trac have been designed with the single goal to help
++developers write great software while staying out of the way and imposing
++as little as possible on a team's established process and culture.
++
+ -- 
+-${project.name} <${project.url}>
++$project.name <${project.url or abs_href()}>
+ ${project.descr}
+Index: acct_mgr/templates/user_changes_email.txt
+===================================================================
+--- acct_mgr/templates/user_changes_email.txt	(revision 566)
++++ acct_mgr/templates/user_changes_email.txt	(working copy)
+@@ -1,6 +1,25 @@
++This is to notify you of the following actions:
+ ${account.action} for user ${account.username}
+ 
++About Agilo
++Agilo is a simple and easy to use web-based tool to support teams working 
++with  Scrum. Agilo supports all the Roles and main Ceremonies of the Scrum 
++framework and allows the roles to share and interact effectively with a 
++minimum effort.
++
++Agilo is based on  Trac a very wide spread ticket tracking system. You can 
++find more information on Trac on the TracGuide.
++
++About Trac
++Trac is a minimalistic approach to web-based management of software 
++projects. Its goal is to simplify effective tracking and handling of 
++software issues, enhancements and overall progress.
++
++All aspects of Trac have been designed with the single goal to help 
++developers write great software while staying out of the way and imposing 
++as little as possible on a team's established process and culture. 
++
+ --
+-${project.name} <${project.url}>
++$project.name <${project.url or abs_href()}>
+ ${project.descr}
+ 
+Index: acct_mgr/templates/admin_users.html
+===================================================================
+--- acct_mgr/templates/admin_users.html	(revision 566)
++++ acct_mgr/templates/admin_users.html	(working copy)
+@@ -10,89 +10,25 @@
+   </head>
+ 
+   <body>
+-    <h2>Manage User Accounts</h2>
+-
+-    <form id="addaccount" class="addnew" method="post" py:if="create_enabled">
+-      <fieldset>
+-        <div class="system-message"
+-             py:if="registration_error"><p>${registration_error}</p></div>
+-
+-        <legend>Add Account:</legend>
+-        <div class="field">
+-          <label>Username: <input type="text" name="user" class="textwidget" value="${acctmgr.username}" /></label>
+-        </div>
+-        <div class="field">
+-          <label>Password: <input type="password" name="password" class="textwidget" /></label>
+-        </div>
+-        <div class="field">
+-          <label>Confirm password: <input type="password" name="password_confirm" class="textwidget" /></label>
+-        </div>
+-        <div class="field">
+-          <label>Name: <input type="text" name="name" class="textwidget" value="${acctmgr.name}" /></label>
+-        </div>
+-        <div class="field">
+-          <label>Email: <input type="text" name="email" class="textwidget" value="${acctmgr.email}" /></label>
+-        </div>
+-        <p class="help">Add a new user account.</p>
+-        <div class="buttons">
+-          <input type="submit" name="add" value=" Add " />
+-        </div>
+-      </fieldset>
+-    </form>
+-
+-    <form id="changepassword" class="addnew" method="post" py:if="password_change_enabled">
+-      <fieldset>
+-        <div class="system-message"
+-             py:if="password_change_error"><p>${password_change_error}</p></div>
+-
+-        <legend>Change Password:</legend>
+-        <div class="field">
+-          <label>Username: <input type="text" name="change_user" class="textwidget" value="${acctmgr.change_username}" /></label>
+-        </div>
+-        <div class="field">
+-          <label>Password: <input type="password" name="change_password" class="textwidget" /></label>
+-        </div>
+-        <div class="field">
+-          <label>Confirm password: <input type="password" name="change_password_confirm" class="textwidget" /></label>
+-        </div>
+-        <p class="help">Change a user's password.</p>
+-        <div class="buttons">
+-          <input type="submit" name="change" value=" Change " />
+-        </div>
+-      </fieldset>
+-    </form>
+-
+-    <py:choose>
+-    <div class="system-message"
+-         py:when="not listing_enabled">
+-      <p>This password store does not support listing users</p>
+-    </div>
+-    <form method="post" py:otherwise="" py:strip="not delete_enabled">
+-      <div class="system-message"
+-           py:if="deletion_error"><p>${deletion_error}</p></div>
+-      <table class="listing" id="accountlist">
+-        <thead>
+-          <tr>
+-            <th class="sel" py:if="delete_enabled">&nbsp;</th>
+-            <th>Account</th><th>Name</th><th>Email</th><th>Last Login</th>
+-          </tr>
+-        </thead>
+-        <tbody>
+-          <tr py:for="account in accounts">
+-            <td py:if="delete_enabled">
+-              <input type="checkbox" name="sel" value="${account.username}" />
+-            </td>
+-            <td>${account.username}</td>
+-            <td>${account.name}</td>
+-            <td>${account.email}</td>
+-            <td>${account.last_visit}</td>
+-          </tr>
+-        </tbody>
+-      </table>
+-      <div class="buttons" py:if="delete_enabled">
+-        <input type="submit" name="remove" value="Remove selected accounts" />
+-      </div>
+-    </form>
+-    </py:choose>
++      <h2>User Accounts</h2>
++      List of all user accounts:
++    <table class="listing" id="accountlist">
++      <thead>
++        <tr>
++          <th>Account</th><th>Name</th><th>Email</th><th>Last Login</th>
++        </tr>
++      </thead>
++      <tbody>
++        <tr py:for="account in accounts">
++          <td>${account.username}</td>
++          <td>${account.name}</td>
++          <td>${account.email}</td>
++          <td>${account.last_visit}</td>
++        </tr>
++      </tbody>
++    </table>
++    <p>
++    To Add/Remove a user account, please use the Agilo:Teams form.
++    </p>
+   </body>
+ </html>
+Index: setup.py
+===================================================================
+--- setup.py	(revision 566)
++++ setup.py	(working copy)
+@@ -31,13 +31,14 @@
+         'trac.plugins': [
+             'acct_mgr.admin = acct_mgr.admin',
+             'acct_mgr.api = acct_mgr.api',
+-            'acct_mgr.db = acct_mgr.db',
+-            'acct_mgr.htfile = acct_mgr.htfile',
+-            'acct_mgr.http = acct_mgr.http',
+-            'acct_mgr.pwhash = acct_mgr.pwhash',
+-            'acct_mgr.svnserve = acct_mgr.svnserve',
+-            'acct_mgr.web_ui = acct_mgr.web_ui',
++#            'acct_mgr.db = acct_mgr.db',
++#            'acct_mgr.htfile = acct_mgr.htfile',
++#            'acct_mgr.http = acct_mgr.http',
++#            'acct_mgr.pwhash = acct_mgr.pwhash',
++#            'acct_mgr.svnserve = acct_mgr.svnserve',
++#            'acct_mgr.web_ui = acct_mgr.web_ui',
+             'acct_mgr.notification = acct_mgr.notification',
++            'acct_mgr.ldap_store = acct_mgr.ldap_store',
+         ]
+     },
+ 

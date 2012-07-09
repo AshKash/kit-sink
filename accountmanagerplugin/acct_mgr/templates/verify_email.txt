@@ -1,0 +1,27 @@
+Please visit the following URL to confirm your email address.
+
+Verification URL: <$verify.link>
+Username: $account.username
+Verification Token: $account.token
+
+About Agilo
+Agilo is a simple and easy to use web-based tool to support teams working
+with  Scrum. Agilo supports all the Roles and main Ceremonies of the Scrum
+framework and allows the roles to share and interact effectively with a
+minimum effort.
+
+Agilo is based on  Trac a very wide spread ticket tracking system. You can
+find more information on Trac on the TracGuide.
+
+About Trac
+Trac is a minimalistic approach to web-based management of software
+projects. Its goal is to simplify effective tracking and handling of
+software issues, enhancements and overall progress.
+
+All aspects of Trac have been designed with the single goal to help
+developers write great software while staying out of the way and imposing
+as little as possible on a team's established process and culture.
+
+-- 
+$project.name <${project.url or abs_href()}>
+${project.descr}

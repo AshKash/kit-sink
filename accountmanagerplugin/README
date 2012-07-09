@@ -1,0 +1,69 @@
+= TracAccountManager =
+
+A user account management plugin for Trac.
+
+== Installation ==
+ 1. Run: python setup.py bdist_egg
+ 2. If necessary create a folder called "plugins" in your Trac environment.
+ 3. Copy the .egg file from the dist folder created by step 1 into the "plugins"
+    directory of your Trac environment.
+
+== Configuration ==
+Add one of the following sections to trac.ini to manage an Apache htpasswd or
+htdigest file.
+
+=== Htpasswd ===
+{{{
+[account-manager]
+password_format = htpasswd
+password_file = /path/to/trac.htpasswd
+}}}
+
+=== Htdigest ===
+{{{
+[account-manager]
+password_format = htdigest
+password_file = /path/to/trac.htdigest
+htdigest_realm = TracDigestRealm
+}}}
+
+Configuring ldap backend. Put this in your trac.ini and configure it:
+{{{
+[account-manager]
+ldap_basedn = OU=WWW,OU=Employees,OU=People,DC=www,DC=example,DC=com     # You need to get this from windows for your AD
+ldap_pass = the_ldap_password
+ldap_uri = ldap://your.ldap.server.name/
+ldap_user = ldap_user_to_login  # Anonymous binds might not work as windows ADs do not let you list users / emails with anonymous binds
+notify_actions = new,delete
+password_store = LdapAuthStore
+}}}
+
+LDAP changes added by Ashwin (reverse chronological order):
+
+ * Rework add/remove feature. 
+
+ * Reworked to make use of Agilo's team member add/remove facilities
+
+ * Do not allow non LDAP users to be added
+ * trac_admin cannot be deleted
+ * Cannot set name/email (must be fetched from LDAP)
+
+ * Adding decent templates for emails.
+
+ * Fix password in trac.ini
+ * Fix notification issue with user not present
+
+ * trac_admin can login via /login2. trac_admin is a special admin user who can never be deleted.
+
+ * Refactor code and handle exceptions and LDAP misconfigurations nicely
+ * We now have a new /login2 entry point that can be used to manually login 
+ * Still need to make is work since the check_password routine talks to LDAP and not to DB
+
+ * Added LdapAuthStore. 
+ * Please enable this and configure it (in Accounts/Configuration) if you want to use it. Currently, the domain LDAP server needs a valid AD user and pass to do a bind and fetch emails and names
+ * When you add a new user, his email and fullname will be fetched from LDAP and filled in the DB. 
+ * Auth has not been tested.
+ * Please use mod_autenntlm with apache.
+
+ * Add accountmanager
+
