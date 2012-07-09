@@ -1,0 +1,9 @@
+Type make colorsql to make the version that will use mysql
+type make psql to make the one that will use postgres.
+The two versions are very different, due to the inherent differences
+in the architectures of the two systems.
+This assumes, you have install the necessary database programs, libraries
+and the daemon is running.
+It also assumes you have created a database called 2d.
+You may have to cheange the username and passwords by editing the source.
+
