@@ -1,0 +1,25 @@
+TOS_MODULE TBF;
+
+ACCEPTS{
+	char TBF_START(void);
+	char TBF_INIT(void);
+};
+
+HANDLES{
+	void TBF_CLOCK_FIRE(void);
+	char TBF_OUTPUT_COMPLETE(char success);
+	char TBF_INPUT(void);
+	char TBF_SUB_MSG_SEND_DONE(TOS_MsgPtr msg);
+	TOS_MsgPtr TBF_BEACON(TOS_MsgPtr msg);
+	TOS_MsgPtr TBF_RECEIVE(TOS_MsgPtr msg);
+};
+
+USES{
+	char TBF_SUB_CLOCK_INIT(char interval, char scale);
+	char TBF_SUB_OUTPUT_INIT();
+	char TBF_OUTPUT(void);
+};
+
+SIGNALS{
+	char TBF_COMPLETE(char sucess);
+};
