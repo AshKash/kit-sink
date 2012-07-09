@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Kill adblock!</title>
+  <meta http-equiv="content-type" content="text/html; charset=us-ascii" />
+  <link media="screen" href="../style.css" type="text/css" rel="stylesheet" />
+</head>
+
+<body>
+<div id="wrap">
+
+<div id="top"></div>
+
+<div id="content">
+
+<div class="header">
+<h1><a href="#">Stop AdBlock Plus!</a></h1>
+<h2>Before it kills your revenue...</h2>
+</div>
+
+<!--
+<div class="breadcrumbs">
+<a href="#">Home</a> &middot; You are here
+</div>
+-->
+
+<div class="middle">
+
+<h1>What is AdBlock Plus?</h1>
+From their website:
+<blockquote>
+<em>
+Annoyed by adverts? Troubled by tracking? Bothered by banners? 
+Install Adblock Plus now to regain control of the internet and change the 
+way that you view the web. You can also choose from over forty filter 
+subscriptions  to automatically configure the add-on for purposes ranging from 
+removing online advertising to blocking all known malware domains.
+</em>
+</blockquote>
+
+<h2>Can we stop them?</h2>
+You as the content owner would also like to assert your copyright over the 
+material. Web site AD is critical to protect these revenues so content creators 
+have incentives to produce interesting content. 
+Obviously litigation will lead you nowhere! 
+
+<h2>Some ideas</h2>
+I have written a tool in Python to scan HTML, the AD material and the URLs 
+serving them are identified and partially encrypted. When the client makes 
+a request for the main document, the partially encrypted version of the document 
+is sent that will later be decrypted (via Javascript). The non encrypted parts 
+will contain links (or other information) to the advertisement, 
+all non-advertisement, non-script information inside the HTML body is encrypted. 
+When the browser renders the document, the content appears scrambled and 
+unintelligible. A typical browser (that is not using adblock) will then 
+attempt to download the ads as these are the only links in the document. 
+When a request to download the ad is made, a decryption key is sent as a 
+cookie (or other means). Eventually all ads will be downloaded and a page load 
+event is generated. A special javascript function will be called when this 
+event is triggered. This function will have access to the secret key that 
+was sent, using which the document is decrypted. After this, the entire 
+document tree is traversed and verified - that all the objects have been 
+loaded (one such mechanism is using checksums), otherwise the decrypted page 
+will not be rendered and instead an error message will be displayed. 
+
+<h2>Some Issues</h2>
+<ul>
+<li>What about the search engines indexing? - Can probably be solved by detecting 
+the search engine. Moreover, the page is partially encrypted.
+</li>
+<li>What about performance? - I am using RC4, 128bit keys the base64 
+encoding it and it pretty snappy.
+</li>
+<li>
+Can I use this with dynamic content? - This is easy, send me an email if you 
+are interested in doing this.
+</li>
+<li>
+Can I control which parts are encrypted? - Yes, if you hand code the
+&lt;div&gt; sections. The demo tool will not do this for you.
+</li>
+</ul>
+
+<h1>Demos</h1>
+<p>For the demo to work correctly, we need server side support (PHP), since I
+cannot get this from Rutgers, here is a <a href="staticdemo.html">
+static demo page</a>.
+</p>
+
+<p>Please contact me if you are interested with the tool</p>
+</div>
+
+<div class="right">
+<h1>Links</h1>
+<ul>
+<li><a href="http://ubuntucat.wordpress.com/2007/07/09/the-ethics-of-adblocking/">
+The Ethics of Adblocking &laquo; UbuntuCat</a></li>
+<li><a href="http://jacklewis.net/weblog/archives/2007/08/adblock_observi.php">
+JackLewis.net: AdBlock: observing the debate</a></li>
+<li><a href="http://www.orkpiraten.de/blog/archives/343-Is-the-use-of-Adblock-theft.html">
+Is the use of Adblock theft? - Orkpiraten</a></li>
+<li><a href="http://www.sourfizz.com/2007/09/16/is-it-wrong-to-block-web-site-ads/">
+Sourfizz &raquo; Is it Wrong to Block Web Site Ads?</a></li>
+<li><a href="http://whyfirefoxisblocked.com/index1.php">
+Why FireFox is Blocked</a></li>
+<li><a href="http://www.populartechnology.net/2005/03/why-adblock-is-bad-for-free-internet.html">
+Popular Technology.net: Why Adblock is bad for the "free" Internet</a></li>
+</ul>
+		
+</div>
+
+<div id="clear"></div>
+
+</div>
+
+<div id="bottom"></div>
+
+</div>
+
+<div id="footer">
+Page last updated: Some time ago...
+</div>
+
+</body>
+
+</html>

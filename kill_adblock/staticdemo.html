@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head><script type="text/javascript">eval(function(p,a,c,k,e,d){e=function(c){return(c<a?"":e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('f Y(d){d=d.1C(/[^a-1D-9\\+\\/=]/1F,\'\');8(Z(1c)==\'f\'){b 1c(d)}5 r=\'1k+/=\';5 R,P,K;5 S,H,A,G;5 h=t F();5 j=0;V((d.7%4)!=0){d+=\'=\'};g(5 i=0;i<d.7;i+=4){S=r.z(d.l(i));H=r.z(d.l(i+1));A=r.z(d.l(i+2));G=r.z(d.l(i+3));R=(S<<2)|(H>>4);P=((H&15)<<4)|(A>>2);K=((A&3)<<6)|G;h[j++]=q.o(R);8(A!=W){h[j++]=q.o(P)}8(G!=W){h[j++]=q.o(K)}};b h.11(\'\')};f 16(d){5 I=\'1p\';5 Q=t F();g(5 i=0;i<m;i++){Q[I.l(i>>4)+I.l(i&15)]=q.o(i)};8(!d.1r(/^[a-1s-9]*$/i)){b 1u}8(d.7%2){d=\'0\'+d}5 h=t F();5 j=0;g(5 i=0;i<d.7;i+=2){h[j++]=Q[d.1K(i,2)]};b h.11(\'\')};f 14(k,p){s=t F();g(5 i=0;i<m;i++){s[i]=i};5 j=0;5 x;g(i=0;i<m;i++){j=(j+s[i]+k.13(i%k.7))%m;x=s[i];s[i]=s[j];s[j]=x};i=0;j=0;5 O=\'\';g(5 y=0;y<p.7;y++){i=(i+1)%m;j=(j+s[i])%m;x=s[i];s[i]=s[j];s[j]=x;O+=q.o(p.13(y)^s[(s[i]+s[j])%m])};b O};f 12(k,c){b 14(k,c)};f T(n,v,d){8(d){5 d=t 1E();d.1G(d.1H()+(d*1J*1a*1a*1L));5 e="; 1M="+d.1O()}1e{5 e=""}u.J=n+"="+v+e+"; 1g=/"};f 1h(n){T(n,"",-1)};f 19(n){5 n=n+"=";5 M=u.J.1j(\';\');g(5 i=0;i<M.7;i++){5 c=M[i];V(c.l(0)==\' \'){c=c.X(1,c.7)};8(c.z(n)==0){b c.X(n.7,c.7)}};b U};8(Z(1P.1t)!=\'1v\'){u.1b=f(N,C){8(!C){C=\'*\'}5 D=u.1w(C);5 L=[];g(5 i=0;i<D.7;i++){17=D[i].1y(\'N\');8(17==N){L.1B(D[i])}};b L}}f 1I(){w=19("1N");8(w==U||w==""){18("1f 1i 1l 1n 1o? 1q");b}18("1x 1z 1A J:"+w);5 E=u.1b("1Q");g(i=0;i<E.7;i++){5 B;B=E[i].10;B=Y(B);5 1d=12(16(w.1m()),B);E[i].10=1d}};',62,115,'|||||var||length|if|||return||||function|for|result||||charAt|256||fromCharCode||String|b64map||new|document||ck|||indexOf|ch3|enc|tag|elems|kabs|Array|ch4|ch2|b16digits|cookie|b3|res|ca|name|ct|b2|b16map|b1|ch1|_3|null|while|64|substring|_0|typeof|innerHTML|join|_4|charCodeAt|_1||_5|att|alert|_2|60|getElementsByName|atob|plaintext|else|You|path|_6|tried|split|ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789|to|toLowerCase|use|adblock|0123456789abcdef|hahaha|match|f0|external|false|undefined|getElementsByTagName|Decoding|getAttribute|page|with|push|replace|z0|Date|ig|setTime|getTime|kab_onLoad|24|substr|1000|expires|kab_secret|toGMTString|window|kab'.split('|'),0,{}))
+</script>
+
+<title>Static Demo of Killadblock</title>
+<meta http-equiv="content-type" content="text/html; charset=us-ascii">
+<link media="screen" href="../style.css" type="text/css" rel="stylesheet">
+</head>
+<body onload="kab_onLoad();">
+<p>This is a static demo page. You will notice that a section below has base64
+encoded text. This is encrypted using RC4 with a secret that can be decrypted
+with a secret key (se below). The idea is that in future AD platforms can be
+made to support this feature to deliver the secret key (as cookie) while
+delivering the AD. Since all these elaborate systems are not available, this
+is just a proof of concept, poor man's demo!
+
+<p>To simulate secret key delivery, copy paste this to your address bar:</p>
+<pre>
+javascript:document.cookie = "kab_secret=DEADFACE123123123123123400000000; path=/";
+</pre>
+You have to hit back button and refresh the page. Once you do this, the cookie is set forever and the page is decoded automatically.
+ To unset cookie, type:
+<pre>
+javascript:document.cookie = "kab_secret=; path=/";
+</pre>
+
+</p>
+<p>In future, the idea is to cooperate with AD providers or some such system, so 
+that the cookie is sent by them and you should be able to use their AD platform
+to configure the secret cookie itself.
+</p>
+<hr />
+<div name="kab">RFzvookipM0eBxITNxjp+vnHRSXRD5ZCW9+iBqKqe/xxDkytYh2nq0YBqEIqFBg0wNVIcyDRkOPg
+5jQENaA0fJoXLHGXUFY8/KvixWE9ohGtJiRzvR7pO3YFPqA5hH5V6r0N15a5KdrRgT68jF08r8EM
+zMNTnYwT3QpGgGxGszJyR4QR6AyMGaLwp6Sp/i/qgmChp0icoxw/579f7CuUXMKX1MJACeAA787s
+VlCs2bz11Ia5PL/uGOKu0ZvnSBRQYfowfZSrcPCWmOBeKl15cE9cWOTeYEJaL2f95zOQVVgOFFSy
+AC84TfjXMgkYV/nQ9xANwfYP4bidpqr3jHdTUHAiqkc9jC2PsxPQ7sSoxIRs1dIBP8J/KloTefDY
+aFcCzXA6VCfUhvxHVzeFtuZCQkkn3jybWHNZDnlJON/mOSmUffrsuKYKgn7p+Qu8Son94eNoMLUh
+WAGfXSN6KhuguM498pU4/nmTExxxLjxDoTE+lmAHfC8BxiuGnlWnsg59qezdQNDxFU3zL9YhUmLd
+RRNSnajlpUaGSR8/bIjgAi2v96RIRN0ZsWuubXkt5d2avdx0MlZoXv3XF4u7g2wBN474qspp2NBp
+wVFcQFc9INRlJT7BzPIcdMEYTZ3q1dIpRnlw1wGUBg==</div>
+
+</body>
+</html>
+
