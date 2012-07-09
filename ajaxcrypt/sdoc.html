@@ -1,0 +1,57 @@
+<html>
+<head id="hd1">
+<script>
+var s1 = '<script src="http://p2pmsvmx.prin.am.thmulti.com/';
+var s2 = '"><\/script>';
+
+var x1 = '<script language="xml" src="http://p2pmsvmx.prin.am.thmulti.com/';
+var x2 = '"><\/script>';
+
+var _xxsecret="ashwin";
+function loadSdoc(doc, stype, slang) 
+{
+    //document.write(s1+doc+s2);
+    var schild = document.getElementById("hd1").appendChild(document.createElement("script"));
+    schild.onload = postLoadDoc;
+    schild.type = stype;
+    schild.language = slang;
+    schild.src = "http://p2pmsvmx.prin.am.thmulti.com/" + doc;
+    schild.setAttribute("id", "sc1");
+    inject1 = document.getElementById("sc1");
+    alert("done injectin" + inject1.innerHTML);
+    dbg  = "";
+    schild = document.getElementById("ob1");
+    for (i in schild) {
+        dbg += i + "=" + schild[i] + "<br>";
+        //alert(i);
+        //console.log(schild[i]);
+    }
+    dbg += "<br/><br/>";
+    ccnode=schild.contentDocument
+    for (i in ccnode) {
+        dbg += i + "=" + ccnode[i] + "<br>";
+    }
+        
+    document.write(dbg);
+    //alert(s1+doc+s2);
+}
+
+function postLoadDoc()
+{
+    alert('script loaded');
+    //document.getElementById('sp1').innerHTML += "   Decoded...";
+}
+
+</script>
+</head>
+
+<body id="bd1">
+hello 
+<a onclick='loadSdoc("doc1.js", "text/javascript", "javascript");'>doc 1</a>
+<a onclick='loadSdoc("doc1.xml", "text/plain", "xml");'>XML doc 1</a>
+<a onclick='loadSdoc("doc2.js", "text/javascript", "javascript");'>doc 2</a>
+
+<object id="ob1" data="http://p2pmsvmx.prin.am.thmulti.com/doc1.js"></object>
+<span id="sp1">unfilled</span>
+</body>
+</html>

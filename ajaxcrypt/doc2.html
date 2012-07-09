@@ -1,0 +1,34 @@
+<html>
+<head>
+<script>
+function sendData(val) {
+        if1 = document.getElementById("if1");
+        if1.src = "https://p2pmsvmx.prin.am.thmulti.com/sdoc2.html#secret_message_encrypted"+val;
+        if (if1.width == 400 ) {
+              if1.width = 399;
+         } else {
+              if1.width = 400;
+         }
+}
+function sendMany()
+{
+   if1 = document.getElementById("if1");
+
+   for (i=0; i <10; i++) {
+      sendData(i);
+   }
+if (if1.width == 400 ) {
+      if1.width = 399;
+ } else {
+      if1.width = 400;
+ }
+}
+
+</script>
+</head>
+
+<body>
+<iframe onresize="alert('XXX');" id="if1">unfilled iframe</iframe>
+<button onclick="sendData('hello');">Click</button>
+</body>
+</html>

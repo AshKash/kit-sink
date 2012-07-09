@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <script src="rc4.js">
+        </script>
+        <script>
+            function decrypt() {
+                //fetches BINARY FILES synchronously using XMLHttpRequest
+                var req = new XMLHttpRequest();
+                req.open('GET', "bank.enc.html" ,false);
+                req.overrideMimeType('text/plain; charset=x-user-defined');
+                req.send(null);
+                if (req.status != 200) return '';
+                pt=_rc4Decrypt("DEADFACE123123123123123400000000", req.responseText);
+                cont=document.getElementById("content");
+                cont.innerHTML = "ashwin: " + pt;
+            }           
+        </script>
+    </head>
+
+    <body onload="decrypt()">
+        <div id='content'>Empty</div>
+    </body>
+</html>
+
