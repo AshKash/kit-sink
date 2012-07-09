@@ -1,0 +1,24 @@
+The report is in rfs2_report.pdf. This is package was tested on paul,
+ece, pathfinder(internal use) and on aramis servers.
+
+To setup the server, do the following:
+Create /tmp/os_dfs on all machines where server runs. Then populate this 
+directory and put a README file. This already done on paul.
+Then run the server:
+./server <port to bind>
+
+The server asks for hostnames of all servers, enter and end with a "."
+For the first server simply enter a "."
+All servers must be started on the same port!!! Please make sure of this.
+
+To run the client:
+./client <server name> <server port>
+
+The client will print the README file and then create a file called
+"write_file" on the backend server.
+
+If these happen, then the test has succeeded.
+
+To run the perf_test, remove stale "big_file"s from the /tmp/os_dfs
+directory and restart servers. Run the test program as usual.
+
