@@ -1,0 +1,2 @@
+To run program, type:
+java -cp mp3Spider.jar org.gnu.mp3Spider.mp3Spider <Domain controller> <Domain Name> <Username> <Password> [<Out file>]

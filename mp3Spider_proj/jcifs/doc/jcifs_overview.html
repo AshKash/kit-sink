@@ -1,0 +1,266 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>JCIFS</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p align="center"><font size="6" face="Arial"><strong>JCIFS
+Overview</strong></font></p>
+
+<p align="center"><font size="3" face="Arial">Version 1.1 (1999.9.10)</font></p>
+
+<p align="center"><a
+href="mailto:norbert.hranitzky@mchp.siemens.de"><font size="3"
+face="Arial">Norbert Hranitzky</font></a></p>
+
+<hr size="1" noshade width="70%">
+
+<p align="center"><font color="#000000" size="2" face="Arial">[</font><a
+href="#What is JCIFS?"><font color="#000000" size="2"
+face="Arial">What is JCIFS?</font></a><font color="#000000"
+size="2" face="Arial">][</font><a href="#Functionalitity"><font
+color="#000000" size="2" face="Arial">Functionality</font></a><font
+color="#000000" size="2" face="Arial">][</font><a
+href="#License agreement"><font color="#000000" size="2"
+face="Arial">License agreement</font></a><font color="#000000"
+size="2" face="Arial">][</font><a href="#install"><font
+color="#000000" size="2" face="Arial">Installation</font></a><font
+color="#000000" size="2" face="Arial">][</font><a href="#Changes"><font
+color="#000000" size="2" face="Arial">Changes</font></a><font
+color="#000000" size="2" face="Arial">][</font><a
+href="#Known problems"><font color="#000000" size="2"
+face="Arial">Known Problems</font></a><font color="#000000"
+size="2" face="Arial">]</font></p>
+
+<p align="center"><font color="#000000" size="2" face="Arial">[</font><a
+href="jcifs_tutorial.html"><font color="#000000" size="2"
+face="Arial">JCIFS Tutorial</font></a><font color="#000000"
+size="2" face="Arial">][</font><a href="jcifs_shell.html"><font
+color="#000000" size="2" face="Arial">JCIFS Shell</font></a><font
+color="#000000" size="2" face="Arial">]</font><a
+href="api/index.html"><font color="#000000" size="2" face="Arial">[JCIFS
+API</font></a><font color="#000000" size="2" face="Arial">]</font></p>
+
+<p align="center">&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<h2><a name="What is JCIFS?">What is JCIFS?</a></h2>
+
+<p><font size="3" face="Arial">JCIFS is a CIFS client (<strong>C</strong>ommon
+<strong>I</strong>nternet <strong>F</strong>ile <strong>S</strong>ystem)
+in Java (&quot;100% pure java&quot;). </font><font face="Arial">The
+document &quot;</font><a
+href="http://anu.samba.org/cifs/docs/what-is-smb.html"><font
+face="Arial">Just what is SMB?</font></a><font face="Arial">&quot;
+by Richard Sharpe is a good introduction to SMB, the former name
+for CIFS.</font></p>
+
+<p align="center"><img src="arch.gif" width="458" height="297"></p>
+
+<dl>
+    <dt>&nbsp;</dt>
+</dl>
+
+<h2><a name="Functionalitity">Functionalitity</a></h2>
+
+<p><font size="3" face="Arial">JCIFS supports the disk service,
+the remote administration service (RAP) and the printer service
+defined by CIFS. JCIFS implements only the most recent version,
+NT LM 0.12, as used by Windows 95/98, Windows NT and Samba. The
+version used by Windows for Workgroups 3.1.1 is not supported.</font></p>
+
+<p><font face="Arial">JCIFS is a </font><a href="api/index.html"><font
+face="Arial">application programming interface (API)</font></a><font
+face="Arial">. There is a </font><a href="jcifs_shell.html"><font
+face="Arial">shell program</font></a><font face="Arial"> that
+exercises the API as and example, and for test </font><font
+size="3" face="Arial">purposes</font><font size="2" face="Arial">.</font></p>
+
+<p>&nbsp;</p>
+
+<h2><a name="License agreement"><font size="4" face="Arial">License
+agreement</font></a></h2>
+
+<p><font size="3" face="Arial">The source code is released under
+the GNU General Public License:</font></p>
+<div align="center"><center>
+
+<table border="0" width="70%">
+    <tr>
+        <td width="50%" bgcolor="#C8E3FF"><font size="2"
+        face="Arial">Copyright (C) 1999 </font><a
+        href="mailto:norbert.hranitzky@mchp.siemens.de"><font
+        size="2" face="Arial">Norbert Hranitzky</font></a><font
+        size="2" face="Arial"><br>
+        <br>
+        This program is free software; you can redistribute it
+        and/or modify it under the terms of the GNU General
+        Public License as published by the Free Software
+        Foundation; either version 2 of the License, or (at your
+        option) any later version.<br>
+        <br>
+        This program is distributed in the hope that it will be
+        useful, but WITHOUT ANY WARRANTY; without even the
+        implied warranty of MERCHANTABILITY or FITNESS FOR A
+        PARTICULAR PURPOSE. See the GNU General Public License
+        for more details.<br>
+        <br>
+        You should have received a copy of the GNU General Public
+        License along with this program; if not, write to the
+        Free Software Foundation, Inc., 675 Mass Ave, Cambridge,
+        MA 02139, USA.<br>
+        <br>
+        The full copyright text: </font><a
+        href="http://www.gnu.org/copyleft/gpl.html"><font
+        size="2" face="Arial">http://www.gnu.org/copyleft/gpl.html</font></a></td>
+    </tr>
+</table>
+</center></div>
+
+<p>&nbsp;</p>
+<div align="center"><center>
+
+<table border="0" width="70%">
+    <tr>
+        <td width="50%" bgcolor="#C8E3FF"><font size="2"
+        face="Arial">This product includes software developed by
+        the Cryptix Development Team</font><font size="3"
+        face="Arial"><br>
+        <br>
+        </font><font size="2" face="Arial">(</font><a
+        href="http://www.cryptix.org/"><font size="2"
+        face="Arial">http://www.cryptix.org/</font></a><font
+        size="2" face="Arial">)</font></td>
+    </tr>
+</table>
+</center></div>
+
+<h2><a name="install">Installation</a></h2>
+
+<ul>
+    <li><font size="3" face="Arial">Download and unzip the
+        archive: </font><a href="jcifs.zip"><font size="3"
+        face="Arial">jcifs.zip</font></a><font size="3"
+        face="Arial"> </font></li>
+    <li><font size="3" face="Arial">You need JDK 1.1 or JDK 1.2</font></li>
+</ul>
+
+<p><font size="3" face="Arial">The archive jcifs.zip contains the
+following files:</font></p>
+
+<ul>
+    <li><font size="3" face="Arial">bin/jcifs.jar - jar file
+        (non-debug mode)</font></li>
+    <li><font size="3" face="Arial">bin/jcifs_g.jar - jar file
+        (debug mode)</font></li>
+    <li><font size="3" face="Arial">bin/jcifssh.exe - exe-file
+        for starting the shell program</font></li>
+    <li><font size="3" face="Arial">bin/jcifsbat.bat - bat-file
+        for starting the shell program</font></li>
+    <li><font size="3" face="Arial">bin/jcifssh - shell-script
+        for starting the shell program</font></li>
+    <li><font size="3" face="Arial">doc - This directory contains
+        the documentation (tutorial and API)</font></li>
+    <li><font size="3" face="Arial">src - Sources<br>
+        src/org/gnu/jcifs - API<br>
+        src/org/gnu/jcifs/util - Help classes(Debug, Crypt)<br>
+        src/org/gnu/jcifs/i18n - Internationalisation<br>
+        src/org/gnu/jcifs/shell - Shell program (only for
+        testing)</font></li>
+</ul>
+
+<p><font size="3" face="Arial"><strong>Notes for the compilation</strong></font></p>
+
+<p><font size="3" face="Arial">If you want to compile the sources
+in the debug mode, you have to set the flag </font><font size="3"
+face="Courier New">debugOn</font><font size="3" face="Arial"> in
+the class </font><font size="3" face="Courier New">org.gnu.jcifs.Debug</font><font
+size="3" face="Arial"> .</font></p>
+
+<h2><a name="Changes">Changes</a></h2>
+
+<dl>
+    <dt>-<font face="Arial"> Version 1.1</font></dt>
+    <dd><font face="Arial">- cifs protocol handler<br>
+        - bug in the password encryption fixed<br>
+        - other small changes</font></dd>
+</dl>
+
+<h2><a name="Known problems">Known problems</a></h2>
+
+<p>&nbsp;</p>
+
+<ul>
+    <li><font size="3" face="Arial">The method </font><font
+        size="3" face="Courier New">setFileAttribute</font><font
+        size="3" face="Arial"> does not work for directories
+        (why?)</font></li>
+    <li><font size="3" face="Arial">The method </font><font
+        size="3" face="Courier">listFileInfo</font><font size="3"
+        face="Arial"> does not return the directories if the
+        server is Windows NT</font></li>
+    <li><font size="3" face="Arial">UNICODE in file names is not
+        supported </font></li>
+</ul>
+
+<p><font size="3" face="Arial">The software was tested with CIFS
+servers on Windows95/NT and Samba on UNIX/RM400 .</font><font
+size="3"> </font><font size="3" face="Arial">Unfortunately, a
+test suite isn't available (it would be very useful).</font></p>
+<!-- if this is a consideration to the team in general, I'll ask
+for one from Sun... dave -->
+<p>&nbsp;</p>
+
+<h2><font size="5">Bug reporting</font></h2>
+
+<p><font size="3" face="Arial"><br>
+For help, support questions, suggestions please send an </font><a
+href="mailto:Norbert.hranitzky@mchp.siemens.de"><font size="3"
+face="Arial">email</font></a><font size="3" face="Arial">, </font></p>
+
+<p>&nbsp;</p>
+
+<h2><a name="Used resources">Used resources</a></h2>
+
+<p><font size="3" face="Arial">JCIFS was implemented abased on
+the </font><a
+href="http://msdn.microsoft.com/workshop/networking/cifs/default.asp"><font
+size="3" face="Arial">CIFS specification</font></a><font size="3"
+face="Arial"> from Microsoft. </font></p>
+
+<p><font size="3" face="Arial">When I encountered uncertainties I
+consulted the </font><a href="http://www.samba.org"><font
+size="3" face="Arial">Samba</font></a><font size="3" face="Arial">
+sources and debug output.</font></p>
+
+<p><font size="3" face="Arial">The MD4 implementation is taken
+from the Cryptix-Crypto library. The algorithm for the password
+change was based on the Samba code.</font></p>
+
+<h2><font size="5">Acknowledgments</font></h2>
+
+<p><font color="#000000" size="3" face="Arial">Many thanks </font><a
+href="mailto:davecb@canada.sun.com"><font color="#000000"
+size="3" face="Arial">David Collier Brown</font></a><font
+color="#000000" size="3" face="Arial"> for the correction of this
+documents and for the remarks.</font></p>
+
+<hr size="1" noshade width="70%">
+
+<p align="center"><font size="1" face="Arial">Copyright (©)</font><font
+size="2" face="Arial"> 1999 </font><a
+href="mailto:Norbert.hranitzky@mchp.siemens.de"><font size="1"
+face="Arial">Norbert Hranitzky</font></a><font size="1"
+face="Arial"><br>
+</font></p>
+
+<p>&nbsp;</p>
+</body>
+</html>

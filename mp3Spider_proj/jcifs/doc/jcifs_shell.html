@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>JCIFS Shell</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p align="center"><font size="6" face="Arial"><strong>JCIFS Shell</strong></font></p>
+
+<p align="center"><a
+href="mailto:norbert.hranitzky@mchp.siemens.de"><font size="3"
+face="Arial">Norbert Hranitzky</font></a></p>
+
+<p align="center"><font color="#FF0000" size="2" face="Arial">Many
+thanks </font><a href="mailto:davecb@canada.sun.com"><font
+color="#FF0000" size="2" face="Arial">David Collier Brown</font></a><font
+color="#FF0000" size="2" face="Arial"> for the corrections and
+for the remarks.</font></p>
+
+<hr size="1" noshade width="70%">
+
+<p><font size="3" face="Arial">The shell program <strong>jcifssh</strong>
+is only for test purposes.</font></p>
+
+<p><font size="3" face="Arial">That's why you're here: the user
+interface isn't user friendly.</font></p>
+
+<pre><font size="3">	    </font><font color="#0000FF" size="3">jcifssh [-d debug] [-s file]</font></pre>
+
+<p><font size="3" face="Arial">Options</font><font size="2"
+face="Arial">:</font></p>
+
+<dl>
+    <dt><font size="3" face="Arial">-d debug</font></dt>
+    <dd><font size="3" face="Arial">Debug level(1 .. 5). The
+        debug informations are written into the file jcifs.log.</font></dd>
+    <dt><font size="3" face="Arial">-s file</font></dt>
+    <dd><font size="3" face="Arial">Start file: the commands in
+        this file are executed at start time.</font></dd>
+    <dt><font size="3" face="Arial">-p file</font></dt>
+    <dd><font size="3" face="Arial">This file contains the </font><a
+        href="jcifs_tutorial.html#System Properties"><font
+        size="3" face="Arial">system properties</font></a><font
+        size="3" face="Arial">.</font></dd>
+</dl>
+
+<p><font size="3" face="Arial">The start file has the following
+syntax:</font></p>
+
+<pre><font size="3">	</font><font color="#0000FF" size="3">cmd1
+	cmd2
+	.......</font></pre>
+
+<p>&nbsp;</p>
+
+<h2>Disk Service Commands</h2>
+
+<p><font size="3" face="Arial">First, you have to
+&quot;mount&quot; a directory:</font></p>
+
+<pre><font color="#0000FF" size="3" face="Arial">	</font><font
+color="#0000FF" size="3">	&gt; mount dn \\server\share -u <em>user</em> -p <em>password</em></font><font
+size="2" face="Arial">
+</font></pre>
+
+<p><font size="3" face="Arial">The string &quot;dn&quot; is the
+local name for the &quot;mounted&quot; directory. If the server
+is Windows 95, you can omit the user name. <br>
+<br>
+Now you can change to the &quot;mounted&quot; directory:<br>
+</font><font color="#0000FF" size="2" face="Courier New"><br>
+&gt;dn:</font><font size="2" face="Arial"><br>
+<br>
+</font><font size="3" face="Arial">The following commands are
+accepted: </font><font size="2" face="Arial"><br>
+</font></p>
+<div align="center"><center>
+
+<table border="0" cellpadding="3" cellspacing="3"
+bgcolor="#C6ECFF">
+    <tr>
+        <td align="center" colspan="2" bgcolor="#004080"><font
+        color="#FFFFFF" face="Arial"><strong>Disk commands</strong></font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">cd [<em>dir</em>]</font></td>
+        <td><font size="2" face="Arial">Change directory</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">pwd</font></td>
+        <td><font size="2" face="Arial">Show current directory</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">dir </font></td>
+        <td><font size="2" face="Arial">List directory</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">md <em>dir</em></font></td>
+        <td><font size="2" face="Arial">Create directory</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">rd <em>dir</em> </font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">Remove directory</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">ren <em>file file</em></font></td>
+        <td><font size="2" face="Arial">Rename directory or file</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">del <em>file</em></font></td>
+        <td><font size="2" face="Arial">Delete file</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">getb <em>file file</em></font></td>
+        <td><font size="2" face="Arial">Get file (binary)</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">gett <em>file file</em></font></td>
+        <td><font size="2" face="Arial">Get file (text)</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">putb <em>file file</em></font></td>
+        <td><font size="2" face="Arial">Put file (binary)</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">putt<em> file file</em></font></td>
+        <td><font size="2" face="Arial">Put file (text)</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">getattr <em>file</em></font></td>
+        <td><font size="2" face="Arial">Show file attributes</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">setattr <em>file</em>
+        (+|-)ahrs</font></td>
+        <td><font size="2" face="Arial">Set file attributes,
+        where the attributes are Archive Hidden Read-only and
+        System</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">vinfo</font></td>
+        <td><font size="2" face="Arial">Show disk informations</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">disks</font></td>
+        <td><font size="2" face="Arial">Show &quot;mounted&quot;
+        disks</font></td>
+    </tr>
+</table>
+</center></div>
+
+<p>&nbsp;</p>
+
+<h3>Remote Admin Service Commands</h3>
+
+<p><font size="2" face="Arial"><br>
+</font><font size="3" face="Arial">If you would like to use the
+administration interface: </font></p>
+
+<pre><font color="#0000FF" size="3">	&gt; connadm <em>session</em> <em>server</em> -u <em>user</em> -p <em>password</em>
+	&gt; <em>session</em>:
+	</font></pre>
+
+<p><font size="3" face="Arial">The following commands are
+accepted: </font><font size="2" face="Arial"><br>
+</font></p>
+<div align="center"><center>
+
+<table border="0" cellpadding="3" cellspacing="3"
+bgcolor="#C6ECFF">
+    <tr>
+        <td align="center" colspan="2" bgcolor="#004080"><font
+        color="#FFFFFF" face="Arial"><strong>RemoteAdmin Commands</strong></font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">connadm <em>session</em> <em>server</em>
+        [-u <em>user</em>] [-p <em>password</em>]</font></td>
+        <td><font size="2" face="Arial">Open remote admin
+        connection</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">close [<em>session</em>]</font></td>
+        <td><font size="2" face="Arial">Close connection</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">shares [<em>session</em>]</font></td>
+        <td><font size="2" face="Arial">Show all shares on the
+        server</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">winfo [<em>session</em>]</font></td>
+        <td><font size="2" face="Arial">Show workstation
+        informations</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">uinfo <em>user</em></font></td>
+        <td><font size="2" face="Arial">Show user informations</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">printq [<em>session</em>]</font></td>
+        <td><font size="2" face="Arial">List printers</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">sinfo [<em>session</em>]</font></td>
+        <td><font size="2" face="Arial">Show server informations</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">domains [<em>server</em>]</font></td>
+        <td><font size="2" face="Arial">List domains</font></td>
+    </tr>
+</table>
+</center></div>
+
+<h3>Print Service Commands</h3>
+
+<p>&nbsp;</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="3" cellspacing="3"
+bgcolor="#C6ECFF">
+    <tr>
+        <td align="center" colspan="2" bgcolor="#004080"><font
+        color="#FFFFFF" face="Arial"><strong>Print Service
+        Commands</strong></font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial">connprt <em>session</em>
+        <em>share</em> [-u <em>user</em> -p <em>password</em>]</font></td>
+        <td><font size="2" face="Arial">Open the printer
+        connection</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">close <em>[session]</em></font></td>
+        <td><font size="2" face="Arial">Close printer session</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">print <em>file</em></font></td>
+        <td><font size="2" face="Arial">Print local file </font></td>
+    </tr>
+</table>
+</center></div>
+
+<p>&nbsp;</p>
+
+<h3>Other Commands</h3>
+
+<p>&nbsp;</p>
+<div align="center"><center>
+
+<table border="0" cellpadding="3" cellspacing="3"
+bgcolor="#C6ECFF">
+    <tr>
+        <td align="center" colspan="2" bgcolor="#004080"><font
+        color="#FFFFFF" face="Arial"><strong>Other Commands</strong></font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">?</font></td>
+        <td><font size="2" face="Arial">Show help text</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">exit</font></td>
+        <td><font size="2" face="Arial">Exit program</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial">login</font></td>
+        <td><font size="2" face="Arial">Opens a login dialog box</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">setprop <em>key</em>=<em>val</em></font></td>
+        <td><font size="2" face="Arial">Sets the system property</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial">getprop <em>key</em></font></td>
+        <td><font size="2" face="Arial">Shows the system property</font></td>
+    </tr>
+</table>
+</center></div>
+
+<dl>
+    <dt>&nbsp;</dt>
+</dl>
+
+<hr size="1" noshade width="70%">
+
+<p align="center"><font size="3" face="Arial">[</font><a
+href="jcifs_overview.html"><font size="3" face="Arial">Overview</font></a><font
+size="3" face="Arial">][</font><a href="jcifs_tutorial.html"><font
+size="3" face="Arial">Tutorial</font></a><font size="3"
+face="Arial">][</font><a href="api/index.html"><font size="3"
+face="Arial">API</font></a><font size="3" face="Arial">]</font><font
+size="2" face="Arial"><br>
+</font></p>
+
+<hr size="1" noshade width="70%">
+
+<p align="center"><font size="1" face="Arial">Copyright (©)</font><font
+size="2" face="Arial"> 1999 </font><a
+href="mailto:Norbert.hranitzky@mchp.siemens.de"><font size="1"
+face="Arial">Norbert Hranitzky</font></a><font size="2"
+face="Arial"><br>
+</font></p>
+
+<p>&nbsp;</p>
+</body>
+</html>

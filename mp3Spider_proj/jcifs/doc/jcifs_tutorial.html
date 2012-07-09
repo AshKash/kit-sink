@@ -1,0 +1,766 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="GENERATOR" content="Microsoft FrontPage 2.0">
+<title>JCIFS Tutorial</title>
+</head>
+
+<body bgcolor="#FFFFFF">
+
+<p align="center"><font size="6" face="Arial"><strong>JCIFS
+Tutorial</strong></font></p>
+
+<p align="center"><a
+href="mailto:norbert.hranitzky@mchp.siemens.de"><font size="3"
+face="Arial">Norbert Hranitzky</font></a></p>
+
+<p align="center"><font face="Arial"><strong>1999.8.10</strong></font></p>
+<div align="center"><center>
+
+<table border="0">
+    <tr>
+        <td align="center" bgcolor="#008080"><font
+        color="#FFFFFF" size="4" face="Arial"><strong>Table of
+        Contents</strong></font></td>
+    </tr>
+    <tr>
+        <td bgcolor="#B8DCDC"><ul type="square">
+            <li><a href="#Intro"><font size="2" face="Arial">Introduction</font></a></li>
+            <li><a href="#Sessions"><font size="2" face="Arial">Sessions</font></a><ul>
+                    <li><a href="#Disk_Session"><font size="2"
+                        face="Arial">Disk Sessions</font></a></li>
+                    <li><a href="#RemoteAdmin_Sessions"><font
+                        size="2" face="Arial">RemoteAdmin
+                        Sessions</font></a></li>
+                    <li><a href="#Printer_Sessions"><font
+                        size="2" face="Arial">Printer Sessions</font></a></li>
+                    <li><a href="#Disk_Session"><font size="2"
+                        face="Arial">Closing a session</font></a></li>
+                    <li><a href="#Authentication"><font size="2"
+                        face="Arial">Authentication</font></a></li>
+                    <li><a href="#Name_resolution"><font size="2"
+                        face="Arial">Name resolution</font></a></li>
+                </ul>
+            </li>
+            <li><a href="#URL_ProtocolHandler"><font size="2"
+                face="Arial">URL Protocol Handler</font></a></li>
+            <li><a href="#Exception Handling"><font size="2"
+                face="Arial">Exception Handling</font></a></li>
+            <li><a href="#System Properties"><font size="2"
+                face="Arial">System Properties</font></a></li>
+            <li><a href="#Diagnose"><font size="2" face="Arial">Diagnosis</font></a></li>
+            <li><a href="#Examples"><font size="2" face="Arial">Examples</font></a></li>
+            <li><a href="api/index.html"><font size="2"
+                face="Arial">API - Javadoc</font></a></li>
+            <li><a href="#Resources On the Web"><font size="2"
+                face="Arial">Resources On the Web</font></a></li>
+        </ul>
+        </td>
+    </tr>
+</table>
+</center></div>
+
+<h1 align="left"><font color="#FF0000" size="2" face="Arial">Many
+thanks </font><a href="mailto:davecb@canada.sun.com"><font
+color="#FF0000" size="2" face="Arial">David Collier Brown</font></a><font
+color="#FF0000" size="2" face="Arial"> for the corrections and
+for the remarks.</font></h1>
+
+<p align="left">&nbsp;</p>
+
+<h1 align="left"><a name="Intro"><font color="#000000" size="5"><strong>Introduction</strong></font></a></h1>
+
+<p align="left"><font face="Arial">The scope of this is limited
+to describing the use of the JCIFS client API. A detailed
+description of the interfaces and the classes can be looked up in
+the </font><a href="api/index.html"><font face="Arial">javadoc
+documentation</font></a><font face="Arial">. </font></p>
+
+<h2><a name="Sessions">Sessions</a></h2>
+
+<p><font face="Arial">Before one can work with a CIFS file
+system, printer or administration interface, a connection to the
+server must be made.</font></p>
+
+<p><font face="Arial">The CifsSession interface provides the
+connection operations required for each of these services (file,
+printer and administration). The serveices themselves are
+provided by the CifsDisk, CifsPrinter and CifsRemoteAdmin
+interfaces.</font></p>
+
+<p align="center"><img src="diag-session.gif" width="610"
+height="229"></p>
+
+<p><font face="Arial">Every session has a user-defined local
+name. With the name, the session object can be determined any
+time.</font></p>
+
+<table border="0" cellspacing="0">
+    <tr>
+        <td><img src="diag-cifssessionmanager.gif" align="left"
+        hspace="1" width="286" height="450"></td>
+        <td valign="top" width="100%"><font face="Arial">The
+        administration of the connections (sessions) is the task
+        of the class </font><a
+        href="api/org/gnu/jcifs/CifsSessionManager.html"><font
+        face="Arial">CifsSessionManager</font></a><font
+        face="Arial">:</font><p><font face="Arial">The abstract
+        class CifsSessionManager offers:</font></p>
+        <ul>
+            <li><font face="Arial">factory methods to create new
+                sessions</font></li>
+            <li><font face="Arial">methods for searching session
+                object </font></li>
+<!-- ok, but for  what-->            <li><font face="Arial">methods to set authentication
+                attributes</font></li>
+            <li><font face="Arial">methods to control debugging </font></li>
+            <li><font face="Arial">method to install an URL
+                protocol handler</font></li>
+        </ul>
+        </td>
+    </tr>
+</table>
+
+<h3><a name="Disk_Session"><font size="4">Disk Session</font></a></h3>
+
+<p><font size="3" face="Arial">Every shared resource has a
+so-called &quot;share name&quot;. The JCIFS client API supports
+two formats for the share names:</font></p>
+
+<pre><font size="3" face="Arial">			UNC-Syntax: </font><font
+size="3"><strong>\\server\share</strong></font></pre>
+
+<pre><font size="3" face="Arial">			URL-Syntax: </font><font
+size="3"><strong>cifs://server/share</strong></font></pre>
+
+<p><font size="3" face="Arial">where </font><font size="3"
+face="Courier New"><strong>server </strong></font><font size="3"
+face="Arial">identifies the computer (NetBIOS name) and <strong>share</strong>
+represents the resource, typically a disk fileshare or printer.</font></p>
+
+<p><font size="3" face="Arial">If an user name and a password is
+required to access the resource, you must instantiate a </font><font
+size="3" face="Courier New">CifsLogin</font><font size="3"
+face="Arial"> object:</font></p>
+
+<pre><font size="3" face="Arial">			</font><font color="#0000FF"
+size="3">CifsLogin login = new CifsLogin(&quot;account&quot;,&quot;password&quot;);</font></pre>
+
+<table border="0" cellspacing="0">
+    <tr>
+        <td valign="top"><img src="diag-cifsdisk.gif"
+        align="left" hspace="0" width="188" height="252"></td>
+        <td valign="top"><font face="Arial">Now you must open a
+        connection to the resource, in thi case a disk:</font><pre><font
+size="3">  </font><a href="api/org/gnu/jcifs/CifsDisk.html"><font
+color="#0000FF" size="3">CifsDisk</font></a><font color="#0000FF"
+size="3"> disk ;
+  disk = CifsSessionManager.connectDisk(&quot;sessionname&quot;,
+                           &quot;\\\\pgtd2277\\tmp&quot;,login);</font></pre>
+        <p><font face="Arial">The string </font><font
+        face="Courier New">sessionname</font><font face="Arial">
+        is the logical name of the connection. This name can be
+        used every time to lookup the corresponding </font><font
+        size="3" face="Courier">CifsDisk</font><font size="2"
+        face="Arial"> </font><font size="3" face="Arial">object:</font></p>
+        <pre><font size="3">  </font><font color="#0000FF"
+size="3">disk = CifsSessionManager.lookupDiskSession(&quot;sessionname&quot;);</font></pre>
+        <p><font face="Arial">The interface </font><font
+        face="Courier New">CifsDisk</font><font face="Arial">
+        offers methods to delete, rename files, create
+        directories, etc..</font></p>
+        </td>
+    </tr>
+</table>
+
+<p align="left">&nbsp;</p>
+
+<h4 align="left">How to read or write a CIFS file?</h4>
+<div align="left">
+
+<table border="0" cellspacing="0">
+    <tr>
+        <td valign="top"><img src="diag-cifsinputstream.gif"
+        width="183" height="281"><p><img
+        src="diag-cifsoutputstream.gif" width="185" height="239"></p>
+        <p><img src="diag-cifsrandom.gif" width="176"
+        height="166"></p>
+        </td>
+        <td valign="top" width="100%"><font size="3" face="Arial">The
+        class </font><a
+        href="api/org/gnu/jcifs/CifsFileInputStream.html"><font
+        face="Arial">CifsFileInputStream</font></a><font
+        face="Arial"> </font><font size="3" face="Arial">can be
+        used where the class java.io.InputStream is expected.</font><font
+        size="4" face="Arial"><br>
+        </font><font face="Arial">There are three ways to open an
+        CifsFileInputStream :</font><p><!-- you nedd to say which one's the common case, right here, and
+ and what the other two are for as you get ot them. --> <font face="Arial">1.) <strong>Using
+        the disk object:</strong></font></p>
+        <pre><font face="Arial">
+</font><font color="#0000FF" size="3" face="Courier New">CifsDisk disk;
+</font><font color="#008000" size="3" face="Courier New">// ....open the connection
+// open file for read</font><font color="#0000FF" size="3"
+face="Courier New">
+CifsFileInputStream in = new CifsFileInputStream(disk,
+                         &quot;myfilename.txt&quot;);</font><font
+size="4" face="Arial">
+</font></pre>
+        <p><font face="Arial">2.) </font><font size="3"
+        face="Arial"><strong>Using the session name:</strong></font></p>
+        <pre><font face="Arial">
+</font><font color="#0000FF" size="3">CifsFileInputStream in = new CifsFileInputStream(&quot;sessionname&quot;,
+				&quot;myfilename.txt&quot;);</font></pre>
+        <p><font face="Arial">3.) <strong>Using a CifsFile
+        object:</strong></font></p>
+        <pre><font color="#0000FF">CifsFile cfile = new CifsFile(disk,&quot;myfilename.txt&quot;);</font></pre>
+        <pre><font color="#0000FF">CifsFileInputStream in = new CifsFileInputStream(cfile);</font></pre>
+        <p><font size="3" face="Arial">The same also applies to
+        the class </font><a
+        href="api/org/gnu/jcifs/CifsFileOutputStream.html"><font
+        size="3" face="Arial">CifsFileOutputStream</font></a><font
+        size="3" face="Arial">.</font></p>
+        <p><font face="Arial">The </font><a
+        href="api/org/gnu/jcifs/CifsRandomAccessFile.html"><font
+        face="Arial">CifsRandomAccessFile</font></a><font
+        face="Arial"> class allows reading and writing data from
+        and to any specified location in a file. This class does
+        not use any buffers, all read and write operations are
+        performed remote. Examples:</font></p>
+        <pre><font color="#008000" face="Arial">/</font><font
+color="#008000">/ Opens file for reading:</font><font
+color="#0000FF">
+CifsRandomAccessFile raccess = new CifsRandomAccessFile(disk,
+                                   &quot;myfile&quot;,&quot;r&quot;);</font></pre>
+        <pre><font color="#008000">// Opens file for reading and writing:</font><font
+color="#0000FF">
+CifsRandomAccessFile waccess = new CifsRandomAccessFile(disk,
+                                    &quot;myfile&quot;,&quot;rw&quot;);</font></pre>
+        </td>
+    </tr>
+</table>
+</div>
+
+<h3><a name="RemoteAdmin_Sessions"><font size="4">RemoteAdmin
+Sessions</font></a></h3>
+
+<table border="0" cellspacing="0">
+    <tr>
+        <td><img src="diag-cifsadmin.gif" width="225"
+        height="327"></td>
+        <td valign="top"><font size="3" face="Arial">The
+        RemoteAdmin service provides methods:</font><ul>
+            <li><font size="3" face="Arial">for listing the
+                shared resources on a server;</font></li>
+            <li><font size="3" face="Arial">for listing
+                informations about the server;</font></li>
+            <li><font size="3" face="Arial">for listing
+                informations about the users;</font></li>
+            <li><font size="3" face="Arial">for managing print
+                queues;</font></li>
+            <li><font size="3" face="Arial">for changing the
+                password</font></li>
+        </ul>
+        <p><font face="Arial">Before one can request the
+        information, a connection must be built up:</font></p>
+        <pre><font size="3">  </font><a
+href="api/org/gnu/jcifs/CifsRemoteAdmin.html"><font
+color="#0000FF" size="3">CifsRemoteAdmin</font></a><font
+color="#0000FF" size="3"> admin;
+  admin = CifsSessionManager.connectRemoteAdmin(&quot;sessionname&quot;,
+                           &quot;pgtd1234&quot;,login);</font></pre>
+        <p><font face="Arial">The main difference from the Disk
+        session is that the method </font><font
+        face="Courier New">connectRemoteAdmin</font><font
+        face="Arial"> expects only the NetBIOS name of the
+        server.</font></p>
+        </td>
+    </tr>
+</table>
+
+<h3><br>
+<a name="Printer_Sessions">Printer Sessions</a></h3>
+
+<table border="0" cellspacing="0">
+    <tr>
+        <td><img src="diag-cifsprinter.gif" width="226"
+        height="123"></td>
+        <td valign="top"><font size="3" face="Arial">The Printer
+        session provides a simple printer interface.</font><p><font
+        size="3" face="Arial">For example:</font></p>
+        <pre><font size="3">  </font><a
+href="api/org/gnu/jcifs/CifsPrinter.html"><font color="#0000FF"
+size="3">CifsPrinter</font></a><font color="#0000FF" size="3"> printer;
+  printer = CifsSessionManager.connectPrinter(&quot;sessionname&quot;,
+                        &quot;\\\\pgtd2277\\hp&quot;,login);</font></pre>
+        </td>
+    </tr>
+</table>
+
+<h3><a name="Closing">Closing a session</a></h3>
+
+<p><font face="Arial">There are two possibilities to close a
+session:</font></p>
+
+<pre><font size="3">	</font><font color="#008000" size="3">// </font><font
+color="#008000">if you have  the session reference</font></pre>
+
+<pre><font color="#0000FF" size="3">	session.disconnect();  </font></pre>
+
+<p><font color="#000000" size="3" face="Arial">or</font></p>
+
+<pre><font color="#0000FF" size="3">	</font><font color="#008000"
+size="3">// if you have the session name</font><font
+color="#0000FF" size="3">
+	CifsSessionManager.disconnectSession(&quot;sessionname&quot;);</font>
+                              </pre>
+
+<p>&nbsp;</p>
+
+<h3><a name="Authentication">Authentication</a></h3>
+
+<p><font size="3" face="Arial">The CIFS protocol provides two
+authentication methods: a share level and an user level
+authentication. A short quotation from the CIFS specification:</font></p>
+
+<ul>
+    <li><font size="2" face="Arial">A <i>share level</i> server
+        makes some directory on a disk device (or other resource)
+        available. An optional password may be required to gain
+        access. Thus any user on the network who knows the name
+        of the server, the name of the resource and the password
+        has access to the resource. Share level security servers
+        may use different passwords for the same shared resource
+        with different passwords allowing different levels of
+        access. </font></li>
+    <li><font size="2" face="Arial">A <i>user level</i> server
+        makes some directory on a disk device (or other resource)
+        available but in addition requires the client to provide
+        a user name and corresponding user password to gain
+        access. User level servers are preferred over share level
+        servers for any new server implementation, since
+        organizations generally find <i>user level</i> servers
+        easier to administer as employees come and go. User level
+        servers may use the account name to check access control
+        lists on individual files, or may have one access control
+        list that applies to all files in the directory.</font></li>
+</ul>
+
+<p><font size="3" face="Arial">The normal case for NT, Windows
+95/98 and Samba 2.x is user level security. Share level security
+is obsolescent.</font></p>
+
+<p><font size="3" face="Arial">If the resource is protected at
+user level, you must specify the user name and the password:</font></p>
+
+<pre><font size="3">	</font><font color="#0000FF" size="3">CifsLogin login = new CifsLogin(&quot;account&quot;,&quot;password&quot;);</font></pre>
+
+<p><font size="3" face="Arial">If the user name of the local
+process shall be used, you can omit the user name:</font></p>
+
+<pre><font size="3">	</font><font color="#0000FF" size="3">CifsLogin login = new CifsLogin(&quot;password&quot;);</font></pre>
+
+<p><font face="Arial">The authentication data can be set also
+globally:</font></p>
+
+<pre><font size="3" face="Arial">		</font><font color="#0000FF"
+size="3">CifsSessionManager.setAccount(&quot;account&quot;);
+	CifsSessionManager.setPassword(&quot;password&quot;);
+	disk = CifsSessionManager.connectDisk(&quot;sessionname&quot;,&quot;\\\\pgtd2277\\tmp&quot;);</font></pre>
+
+<p><font size="3" face="Arial">The autenthication data can be
+also entered in a dialog box:</font></p>
+
+<pre><font size="3">	</font><font color="#0000FF" size="3">boolean cancelled = CifsSessionManager.loginDialog(frame); </font></pre>
+
+<p><font face="Arial">If the password is missing at the time of
+the opening the session, JCIFS tries first without password. </font></p>
+
+<p><font face="Arial">If this fails, a dialog box can optionally
+be opened for you to enter the autentication data. To allow this
+dialog, the following flag must be set:</font></p>
+
+<pre><font size="3">	</font><font color="#0000FF" size="3">CifsSessionManager.setAllowLoginDialog(true); </font></pre>
+
+<p><font size="3" face="Arial">You don't have to be afraid, if
+the server supports encryption, the password is sent encrypted.</font></p>
+
+<p>&nbsp;</p>
+
+<h3><a name="Name_resolution"><font size="4" face="Arial">Name
+resolution</font></a></h3>
+
+<p><font size="3" face="Arial">There are five name resolution
+mechanism in JCIFS: cache, LMHOST file, DNS , WINS (Windows
+Internet Name Service) and system properties:</font></p>
+
+<p><font size="3" face="Arial">By default, the resolved names are
+held in a cache. This behaviour can be turned off by setting the
+system property </font><font size="3" face="Courier New">org.gnu.jcifs.resolve.cache=false.</font></p>
+
+<p><font size="3" face="Arial">The system property </font><font
+size="3" face="Courier New">org.gnu.jcifs.resolve.order </font><font
+size="3" face="Arial">defines the order of the name resolution
+mechanism. For example:</font></p>
+
+<blockquote>
+    <p><font color="#0000FF" size="2" face="Courier New">org.gnu.jcifs.resolve.order=dns,lmhosts,props,wins</font></p>
+</blockquote>
+
+<p><font size="3" face="Arial">The default order is:</font></p>
+
+<ol>
+    <li><font size="3" face="Arial">Cache </font></li>
+    <li><font size="3" face="Arial">DNS (</font><font size="3"
+        face="Courier New">dns</font><font size="3" face="Arial">)</font></li>
+    <li><font size="3" face="Arial">WINS (</font><font size="3"
+        face="Courier New">wins</font><font size="3" face="Arial">)</font></li>
+    <li><font size="3" face="Arial">System Property:: </font><font
+        size="3" face="Courier New">org.gnu.jcifs.resolve.name.<em>netbiosname</em>
+        (props)</font></li>
+    <li><font size="3" face="Arial">LMHOST file, if the property </font><font
+        size="3" face="Courier New">org.gnu.jcifs.resolve.lmhosts
+        </font><font size="3" face="Arial">is specified (</font><font
+        size="3" face="Courier New">lmhosts</font><font size="3"
+        face="Arial">)</font></li>
+</ol>
+
+<p><font size="3" face="Arial">To enable the WINS name
+resolution, the system property </font><font size="3"
+face="Courier New">org.gnu.jcifs.resolve.wins.server </font><font
+size="3" face="Arial">must be specified.</font></p>
+
+<p><font size="3" face="Arial">The LMHOST file has the same
+syntax as lmhosts files on Windows. The instructions </font><font
+size="3" face="Courier New">#INCLUDE, #BEGIN_ALTERNATE </font><font
+size="3" face="Arial">are ignored.</font></p>
+
+<pre><font color="#0000FF" size="3"># Comments and directives
+ip-address netbiosname #comment/directive
+ip-address netbiosname
+....</font></pre>
+
+<p><font size="3" face="Arial">For example:</font></p>
+
+<pre><font color="#0000FF" size="3"># My LMHOST file
+139.25.11.22  JAVAHOST  #Java Repository
+....</font></pre>
+
+<p><font size="3" face="Arial">The LMHOST file can be either a
+local or a remote file:</font></p>
+
+<p><font color="#0000FF" size="2" face="Courier New">org.gnu.jcifs.resolve.lmhosts=mylmhost.cfg<br>
+org.gnu.jcifs.resolve.lmhosts=http://server/config/mylmhost.cfg</font></p>
+
+<p>&nbsp;</p>
+
+<h2><a name="URL_ProtocolHandler">URL Protocol Handler </a></h2>
+
+<p><font size="3" face="Arial">The url protocol handler allow
+access to files by URL instead of UNC-name.</font></p>
+<!-- I hope that's true!  -->
+<p><font size="3" face="Arial">There are two possibilites to
+install the URL protocol handler :</font></p>
+
+<p><font size="3" face="Arial">1.) by the call</font></p>
+
+<p><font color="#0000FF" size="2" face="Courier New">URL.setURLStreamHandlerFactory(new
+CifsURLStreamHandlerFactory ());</font><font color="#000000"
+size="2" face="Courier New"> </font></p>
+
+<p><font color="#000000" size="2" face="Arial">2.) or by the
+call:</font></p>
+
+<p><font color="#0000FF" size="2" face="Courier New">CifsSessionManager</font><font
+color="#0000FF" size="3" face="Courier New">.</font><font
+color="#0000FF" size="2" face="Courier New">installCifsProtocolHandler();</font></p>
+
+<p><font size="3" face="Arial">The disadvantage of the first
+variant is that only one handler can be installed. The second
+variant changes the system property </font><font color="#000000"
+size="3" face="Courier New">java.protocol.handler.pkgs</font><font
+size="3" face="Arial"> to install the handler.</font></p>
+
+<p><font size="3" face="Arial">The protocol handler supports the
+following URL syntax:</font></p>
+
+<p><font color="#0000FF" size="2" face="courier">cifs://[user[:password]@]host/share/path</font></p>
+
+<p><font color="#000000" size="3" face="Arial">A short example:</font></p>
+
+<p><font color="#0000FF" size="2" face="courier">CifsSessionManager.installCifsProtocolHandler();</font></p>
+
+<p><font color="#0000FF" size="2" face="courier">URL url = new
+URL(&quot;cifs://user@myhost/share/myfile.txt&quot;);</font></p>
+
+<p><font color="#0000FF" size="2" face="courier">URLConnection
+con = url.openConnection();</font></p>
+
+<p><font color="#0000FF" size="2" face="courier">InputStream in =
+con.getInputStream();</font></p>
+
+<p><font color="#0000FF" size="2" face="courier">// read input
+stream</font></p>
+
+<p><font color="#0000FF" size="2" face="courier">......</font></p>
+
+<p>&nbsp;</p>
+
+<h2><a name="Exception Handling">Exception Handling</a></h2>
+
+<p><font size="3" face="Arial">Most methods can throw an </font><font
+size="3" face="Courier New">IOException</font><font size="3"
+face="Arial"> exception. However, the actual exception can be </font><a
+href="api/org/gnu/jcifs/CifsIOException.html"><font size="3"
+face="Arial">CifsIOException</font></a><font size="3"
+face="Arial">. If the error is reported by the server, you can
+get the SMB error class and error code:</font></p>
+
+<pre><font size="3">	</font><font color="#0000FF" size="3">try {
+	...
+	} catch(IOException e) {
+		if (e instanceof CifsIOException) {
+			CifsIOException ex = (CifsIOException)e;
+			if (ex.isSMBError()) {
+				int errorclass = ex.getErrorClass();
+				int errorcode  = ex.getErrorCode();
+			}
+		}
+	}</font><font size="3">
+</font></pre>
+
+<p><font size="3" face="Arial">The method </font><font size="3"
+face="Courier New">getErrorClass()</font><font size="3"
+face="Arial"> returns the error class (</font><font size="3"
+face="Courier New">ERROR_DOS,ERROR_SRV,ERROR_HW,ERROR_CMD</font><font
+size="3" face="Arial">) and the method </font><font size="3"
+face="Courier New">getErrorCode()</font><font size="3"
+face="Arial"> returns the error code ( </font><font size="3"
+face="Courier New">DOS_*, SRV_*, HW_*</font><font size="3"
+face="Arial">).</font></p>
+
+<p><font size="3" face="Arial">The error messages are localized
+(german and english).</font></p>
+
+<p>&nbsp;</p>
+
+<h2><a name="System Properties">System Properties</a></h2>
+
+<p><font size="3" face="Arial">JCIFS evaluates the following
+system properties:</font></p>
+<div align="center"><center>
+
+<table border="1" cellspacing="1" bgcolor="#C6ECFF"
+bordercolor="#000080">
+    <tr>
+        <td align="center" bgcolor="#004080"><font
+        color="#FFFFFF" size="2" face="Arial"><strong>Property
+        name</strong></font></td>
+        <td align="center" bgcolor="#004080"><font
+        color="#FFFFFF" size="2" face="Arial"><strong>Meaning</strong></font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial"><strong>org.gnu.jcifs.resolve.name</strong><em><strong>.netbios</strong></em><strong>=</strong><em><strong>ip-addr|dns-name</strong></em></font></td>
+        <td><font size="2" face="Arial">Maps a NetBIOS name to a
+        DNS name or IP address.<br>
+        For example:<br>
+        <br>
+        The server has the NetBIOS name </font><font
+        color="#0000A0" size="2" face="Courier New">mypc</font><font
+        size="2" face="Arial"> and the<br>
+        DNS name pgtd1111:<br>
+        <br>
+        </font><font color="#0000A0" size="2" face="Courier New">org.gnu.jcifs.resolve.name.mypc=pgtd1111</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial"><strong>org.gnu.jcifs.resolve.lmhosts=</strong><em><strong>lmhosts_url</strong></em></font></td>
+        <td><font size="2" face="Arial">Specifies the URL of the
+        LMHOST file</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial"><strong>org.gnu.jcifs.resolve.order=</strong><em><strong>props,wins,lmhosts,dns</strong></em></font></td>
+        <td><font size="2" face="Arial">Defines the NetBIOS name
+        resolution order:<br>
+        <em><strong>props</strong></em>: system property </font><font
+        size="2" face="Courier New">org.gnu.jcifs<strong>.</strong>resolve.name</font><font
+        size="2" face="Arial"><strong><br>
+        </strong><em><strong>lmhosts</strong></em>: LMHOST file<br>
+        <em><strong>dns</strong></em>: DNS server<br>
+        <em><strong>wins</strong></em>: WINS server</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial"><strong>org.gnu.jcifs.resolve.cache=true|false</strong></font></td>
+        <td><font size="2" face="Arial">Specifies if the name
+        cache is used or not<br>
+        <br>
+        Default: true.</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial"><strong>org.gnu.jcifs.resolve.wins.server=</strong><em><strong>ip-addr</strong></em></font></td>
+        <td><font size="2" face="Arial">Specifes the address of
+        the WINS server</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial"><strong>org.gnu.jcifs.socket.timeout=</strong><em><strong>timeout_in_sec</strong></em></font></td>
+        <td><font size="2" face="Arial">Socket timeout<br>
+        Default: 30 seconds</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial"><strong>org.gnu.jcifs.socket.tcpnodelay=true|false</strong></font></td>
+        <td><font size="2" face="Arial">Socket option TcpNoDelay
+        (Nagle-Algorithmus). <br>
+        Default: true</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial"><strong>org.gnu.jcifs.io.bufsize=</strong><em><strong>size_in_bytes</strong></em></font></td>
+        <td><font size="2" face="Arial">Specifies the size of the
+        read/write buffer<br>
+        Default: 8196 bytes</font></td>
+    </tr>
+    <tr>
+        <td valign="top"><font size="2" face="Arial"><strong>org.gnu.jcifs.netbios.callingname=</strong><em><strong>name</strong></em></font></td>
+        <td><font size="2" face="Arial">Specifies the NetBIOS
+        name of the caller<br>
+        Default: DNS name without the domain suffix</font></td>
+    </tr>
+</table>
+</center></div>
+
+<h2><a name="Diagnose">Diagnos</a>is</h2>
+
+<p><font size="3" face="Arial">The method </font><font
+color="#0000FF" size="3" face="Courier New">CifsServiceManager.setDebugLevel(level)
+</font><font size="3" face="Arial">sets the debug level. The
+debug option has an effect only if the flag </font><font size="3"
+face="Courier New">debugOn</font><font size="3" face="Arial"> is
+set in the class </font><font size="3" face="Courier New">org.gnu.jcifs.util.Debug</font><font
+size="3" face="Arial">.</font></p>
+
+<p><font size="3" face="Arial">The following debug levels can be
+specified:</font></p>
+<div align="center"><center>
+
+<table border="0" cellpadding="3" cellspacing="3"
+bgcolor="#C6ECFF">
+    <tr>
+        <td align="center" valign="top" bgcolor="#004080"><font
+        color="#FFFFFF" size="2" face="Arial"><strong>Level</strong></font></td>
+        <td align="center" bgcolor="#004080"><font
+        color="#FFFFFF" size="2" face="Arial"><strong>Meaning</strong></font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial"><strong>1</strong></font></td>
+        <td><font size="2" face="Arial"><strong>ERROR<br>
+        </strong>Only errors are logged</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial"><strong>2</strong></font></td>
+        <td><font size="2" face="Arial"><strong>WARNING<br>
+        </strong>The warnings are also logged</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial"><strong>3</strong></font></td>
+        <td><font size="2" face="Arial"><strong>INFO<br>
+        </strong>Additional informations (steps, methods)</font></td>
+    </tr>
+    <tr>
+        <td><font size="2" face="Arial"><strong>4</strong></font></td>
+        <td><font size="2" face="Arial"><strong>BUFFER<br>
+        </strong>The SMB - Messages are also logged.<br>
+        Caution at this level: large amounts of data can result</font></td>
+    </tr>
+</table>
+</center></div>
+
+<p><font size="3" face="Arial">The debug messages are logged to </font><font
+size="3" face="Courier New">System.err</font><font size="3"
+face="Arial">. The method </font><font color="#0000FF" size="3"
+face="Courier New">CifsServiceManager.setDebugFile(file)</font><font
+size="3" face="Courier New"> </font><font size="3" face="Arial">specifies
+a file for the output.</font></p>
+
+<p>&nbsp;</p>
+
+<h2><a name="Examples"><font size="5">Examples</font></a></h2>
+
+<p><font size="3" face="Arial">You'll find example code in the
+source </font><font size="3" face="Courier New">org.gnu.jcifs.shell.Main.java</font><font
+size="3" face="Arial">.</font></p>
+<!-- say what's there, breifly, and where it is (with an HREF ?).-->
+<p>&nbsp;</p>
+
+<h2><a name="Resources On the Web">Resources On the Web</a></h2>
+
+<dl>
+    <dt><a
+        href="http://www.microsoft.com/workshop/networking/cifs/default.asp"><font
+        size="2" face="Arial">CIFS: An Internet File System
+        Protocol</font></a></dt>
+    <dt><a href="http://www.cifs.com/"><font size="2"
+        face="Arial">CIFS Central</font></a></dt>
+    <dt><a href="http://www.samba.org/"><font size="2"
+        face="Arial">Samba Home Page</font></a></dt>
+    <dt><a
+        href="http://www.sunworld.com/swol-09-1996/swol-09-connectivity.html"><font
+        size="2" face="Arial">The Common Internet File System</font></a><font
+        size="2" face="Arial"> - What Microsoft has in store for
+        the Internet with CIFS</font></dt>
+    <dt><a href="http://www.thursby.com/cifs/"><font size="2"
+        face="Arial">Thursby Software CIFS World</font></a><font
+        size="2" face="Arial"> </font></dt>
+    <dt><a href="http://mailhost.cb1.com/~lkcl/cifs/cifs-ext.txt"><font
+        size="2" face="Arial">CIFS 1.0 Extensions</font></a><font
+        size="2" face="Arial"> - CIFS over TCP/IP and CIFS
+        Security (re-)negotiation</font></dt>
+    <dt><a
+        href="http://mailhost.cb1.com/~lkcl/cifs/comments1-draft-cifs-v1-0.1.txt"><font
+        size="2" face="Arial">Comments (1)</font></a><font
+        size="2" face="Arial"> - on CIFS v1 1.0 Draft Protocol,
+        by Luke (Samba Team)</font></dt>
+    <dt><a
+        href="http://mailhost.cb1.com/~lkcl/cifs/comments2-draft-cifs-v1-0.1.txt"><font
+        size="2" face="Arial">Comments (2)</font></a><font
+        size="2" face="Arial"> - on CIFS v1 1.0 Draft Protocol,
+        by Bruce Leverett (Transarc)</font></dt>
+    <dt><a
+        href="http://mailhost.cb1.com/~lkcl/cifs/keepalive-draft-cifs-v1-0.1.txt"><font
+        size="2" face="Arial">keepalive-draft-cifs-v1-0.1.txt</font></a><font
+        size="2" face="Arial"> - Keep-alive issue in CIFS v1 1.0
+        Draft Protocol</font></dt>
+    <dt><a
+        href="http://mailhost.cb1.com/~lkcl/cifs/priv-ports-draft-cifs-v1-0.1.txt"><font
+        size="2" face="Arial">priv-ports-draft-cifs-v1-0.1.txt</font></a><font
+        size="2" face="Arial"> - Priveleged ports suggestion for
+        NT TCP kernel</font></dt>
+    <dt><a
+        href="http://mailhost.cb1.com/~lkcl/cifs/virtual-circuits-draft-cifs-v1-0.1.txt"><font
+        size="2" face="Arial">virtual-circuits-draft-cifs-v1-0.1.txt</font></a><font
+        size="2" face="Arial"> - Virtual Circuits [thorny] issue
+        in CIFS v1 1.0 Draft Protocol</font></dt>
+    <dt>&nbsp;</dt>
+    <dt>&nbsp;</dt>
+</dl>
+
+<hr size="1" noshade width="70%">
+
+<p align="center"><font size="3" face="Arial">[</font><a
+href="jcifs_overview.html"><font size="3" face="Arial">Overview</font></a><font
+size="3" face="Arial">][</font><a href="jcifs_shell.html"><font
+size="3" face="Arial">Shell</font></a><font size="3" face="Arial">][</font><a
+href="api/index.html"><font size="3" face="Arial">API</font></a><font
+size="3" face="Arial">]</font><font size="2" face="Arial"><br>
+</font></p>
+
+<hr size="1" noshade width="70%">
+
+<p align="center"><font size="1" face="Arial">Copyright (©)</font><font
+size="2" face="Arial"> 1999 </font><a
+href="mailto:Norbert.hranitzky@mchp.siemens.de"><font size="1"
+face="Arial">Norbert Hranitzky</font></a></p>
+
+<p>&nbsp;</p>
+</body>
+</html>

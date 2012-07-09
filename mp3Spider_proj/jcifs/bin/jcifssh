@@ -1,0 +1,4 @@
+#!/bin/sh
+JCIFS_HOME=`dirname $0`
+cpath=$JCIFS_HOME/jcifs_g.jar:$CLASSPATH
+java -classpath $cpath $options org.gnu.jcifs.shell.Main $*

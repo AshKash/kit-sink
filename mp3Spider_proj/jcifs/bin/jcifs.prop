@@ -1,0 +1,30 @@
+#
+# JCIFS properties
+#
+
+#  NetBIOS name mapping
+#org.gnu.jcifs.resolve.name.<netbiosname>=ip-addr|dns-name
+
+# Calling NetBIOS name
+#org.gnu.jcifs.netbios.callingname=name
+
+# LMHOST file or URL
+#org.gnu.jcifs.resolve.lmhosts=lmhosts_url
+
+# Name resolving order
+#org.gnu.jcifs.resolve.order=props,wins,lmhosts,dns
+
+# Use name cache
+# org.gnu.jcifs.resolve.cache=true|false
+
+# Use WINS server (ex: 139.22.28.97)
+#org.gnu.jcifs.resolve.wins.server=ip-addr
+
+# Socket timeout
+#org.gnu.jcifs.socket.timeout=timeout_in_sec
+
+# Socket nodelay
+#org.gnu.jcifs.socket.tcpnodelay=true|false
+
+# IO buffer size (size_in_bytes)
+#org.gnu.jcifs.io.bufsize=size_in_bytes
