@@ -1,0 +1,59 @@
+Mote UART Simulation Infrastructure
+Currently, it is possible to connect a simulated mote to a virtual serial port – the Mote 
+simply connects to a server and uses the socket to send/receive messages thereby 
+simulating a virtual UART. While this is useful, there is no infrastructure to handle the 
+packets sent by the Mote. There are implementations of SLIP that work on the Mote and 
+these must also work in a simulated environment. I have created a set of programs that 
+provides this facility and enables the Linux kernel on the host machine to process all such 
+packets sent over the socket. This can be thought of as SLIP tunneling over TCP/IP.
+
+Linux TTY overview
+Most UNIX systems have the concept of a TTY pair. Using this, a TTY need not be a 
+physical device, but the data can be made to flow between two cooperating processes, 
+this is the mechanism that telnetd and the login program use to communicate.
+The idea is simple; telnetd opens a TTY pair getting a pair of FDs that represent the TTY 
+pair. When data is sent on one FD, the kernel forwards it to the other endpoint and vice 
+versa. While this might seem trivial, the uses are many. Since the FDs obey terminal 
+semantics, which many programs like mingetty and getty use, these programs continue to 
+work unmodified even over a telnet connection.
+
+The tty_server program
+There are programs like slattach that can attach SLIP protocols to a given TTY, we can 
+then use ifconfig to make the kernel recognize this TTY as a SLIP interface and suitable 
+endpoint addresses are assigned to both local and remote ends.
+The tty_server program is a single thread server implementation based on the select() 
+system call. It listens for incoming connections on a user defined port (7654) and then 
+does the following:
+
+?	Opens a TTY pair
+?	The master TTY is used by the program to send/receive data
+?	Associates the slave TTY with the kernel by setting the SLIP line discipline
+?	Calls ifconfig to add the TTY as a SLIP interface.
+?	Remote IP addresses are assigned based on the SLIP end point interface that was 
+created (for example, for sl0 the IP will be 10.1.2.1 and for sl10 it will be 
+10.1.2.11)
+
+The server handles multiple connections and tear downs and does all the required 
+activations and deactivations with no assistance from the user. In future versions, a 
+protocol can be implemented to assign the IP address.
+The program was tested to accept upto 256 simultaneous connections, this is the default 
+TTY pair limit on Linux.  Each connection transferred a continuous stream of data by 
+opening /dev/zero.
+The TTYs are capable of transferring raw binary data, this was verified by sending a 
+20MB binary file to the server and the TTY slave was redirected to a file.
+
+Port_fwd – port forwarding server
+This is a simple port forwarding server that accepts connections on TCP port 8765 and 
+opens a connection to the tty_server server on port 7654. Data streams on the two servers 
+are forwarded in both directions. This program can be used to distribute the load on the 
+tty_server server since it opens 3 FDs to handle each new connection and also the 
+maximum number of TTYs is a limited resource.
+
+
+RFM Server
+This is a replacement for the Java thread based server for simulating radio
+connectivity. In the current implementation, the server is not multi-threaded
+and transfers incomming data to all connected clients. The server knows 
+nothing about the AM packet formats (I dont think the Java version does either).
+
+
