@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+  
+    <title>ebt_vnat_kernel.c</title>
+<meta name="generator" content="emacs 23.1.50.1; htmlfontify 0.20">
+<style type="text/css"><!-- 
+body { font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #000000;  font-size: 10pt;  text-decoration: none; }
+span.default   { font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #000000;  font-size: 10pt;  text-decoration: none; }
+span.default a { font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.constant-face-0008   { color: #008b8b;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.constant-face-0008 a { color: #008b8b;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.function-name-face-0007   { color: #0000ff;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.function-name-face-0007 a { color: #0000ff;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.type-face-0006   { color: #228b22;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.type-face-0006 a { color: #228b22;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.keyword-face-0005   { color: #a020f0;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.keyword-face-0005 a { color: #a020f0;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.variable-name-face-0004   { color: #a0522d;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.variable-name-face-0004 a { color: #a0522d;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.string-face-0003   { color: #8b2252;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.string-face-0003 a { color: #8b2252;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.preprocessor-face-0002   { color: #7a378b;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.preprocessor-face-0002 a { color: #7a378b;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.comment-face-0001   { color: #b22222;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.comment-face-0001 a { color: #b22222;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.comment-delimiter-face-0000   { color: #b22222;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.comment-delimiter-face-0000 a { color: #b22222;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+ --></style>
+
+  </head><body>
+
+    <script type="text/javascript">
+      // <![CDATA[
+
+function getObj(name) {
+    if (document.getElementById) {
+        this.obj = document.getElementById(name);
+        this.style = document.getElementById(name).style;
+    }
+}
+function hfy_toggle_display(name) {
+    var x = new getObj("hfy_invis_" + name);
+    var flag = x.style.display == 'inline';
+    x.style.display = (flag) ? 'none' : 'inline'
+}
+
+      // ]]>
+    </script>
+
+<pre><span class="comment-delimiter-face-0000">/*</span><span class="comment-face-0001">
+ *  ebt_vnat
+ *
+ *	Authors: Ashwin Kashyap &lt;cybernytrix@yahoo.com&gt;
+ *
+ * This module rewrites ether frames on the bridge to include
+ * the 802.1q header. 
+
+ * 
+ </span><span class="comment-delimiter-face-0000">*/</span>
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;linux/netfilter_bridge/ebtables.h&gt;</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;linux/netfilter_bridge/ebt_nat.h&gt;</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;linux/module.h&gt;</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;linux/if_vlan.h&gt;</span>
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">VNAT_DEBUG</span>
+
+
+<span class="comment-delimiter-face-0000">/</span><span class="comment-delimiter-face-0000">/ </span><span class="comment-face-0001">stolen from 8021q/vlan_dev.c and ebt_snat.c
+</span><span class="keyword-face-0005">s</span><span class="keyword-face-0005">tatic</span> <span class="type-face-0006">in</span><span class="type-face-0006">t</span> <span class="function-name-face-0007">ebt_target_vnat</span>(<span class="keyword-face-0005">struct</span> <span class="type-face-0006">sk_buff</span> **<span class="variable-name-face-0004">pskb</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">hooknr</span>,
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">net_device</span> *<span class="variable-name-face-0004">in</span>, <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">net_device</span> *<span class="variable-name-face-0004">out</span>,
+   <span class="keyword-face-0005">const</span> <span class="type-face-0006">void</span> *<span class="variable-name-face-0004">data</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">datalen</span>)
+
+{
+	<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">info</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *) data;
+	<span class="keyword-face-0005">struct</span> <span class="type-face-0006">vlan_ethhd</span><span class="type-face-0006">r</span> *<span class="variable-name-face-0004">veth</span> = <span class="constant-face-0008">NULL</span>;
+	<span class="type-face-0006">unsigned</span> <span class="type-face-0006">shor</span><span class="type-face-0006">t</span> <span class="variable-name-face-0004">veth_TCI</span>;
+
+	printk(<span class="string-face-0003">"vid tagged %hd\n"</span>, info-&gt;vid);
+	
+	<span class="keyword-face-0005">if</span> (info-&gt;vid == (<span class="type-face-0006">uint16_t</span>)-1) {
+
+		veth = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">vlan_ethhdr</span> *)(*pskb)-&gt;mac.raw;
+		<span class="comment-delimiter-face-0000">// </span><span class="comment-face-0001">TODO: strip tag
+</span>		printk(<span class="string-face-0003">"vnat_strip_tag: %x, %x, %x\n"</span>,
+			(*pskb)-&gt;mac.raw,
+			(*pskb)-&gt;nh.raw,
+			(*pskb)-&gt;data);
+		<span class="keyword-face-0005">if</span> (veth-&gt;h_vlan_proto == __constant_htons(ETH_P_8021Q)) {
+
+			<span class="type-face-0006">uint16_</span><span class="type-face-0006">t</span> <span class="variable-name-face-0004">mark</span> = ntohs(veth-&gt;h_vlan_TCI);
+			<span class="comment-delimiter-face-0000">/* </span><span class="comment-face-0001">copy the information onto nfmark </span><span class="comment-delimiter-face-0000">*/</span>
+			<span class="keyword-face-0005">if</span> ((*pskb)-&gt;nfmark != mark) {
+				(*pskb)-&gt;nfmark = mark;
+				(*pskb)-&gt;nfcache |= NFC_ALTERED;
+			}
+
+
+			memmove((*pskb)-&gt;mac.raw + VLAN_HLEN, (*pskb)-&gt;mac.raw, 12);
+			(*pskb)-&gt;mac.raw += VLAN_HLEN;
+			(*pskb)-&gt;nh.raw += VLAN_HLEN;
+			(*pskb)-&gt;data += VLAN_HLEN;
+		}
+	} <span class="keyword-face-0005">else</span> {
+
+		<span class="comment-delimiter-face-0000">/* </span><span class="comment-face-0001">Make sure we have enough room </span><span class="comment-delimiter-face-0000">*/</span>
+
+		<span class="keyword-face-0005">if</span> (skb_headroom(*pskb) &lt; VLAN_HLEN) {
+			<span class="keyword-face-0005">struct</span> <span class="type-face-0006">sk_buf</span><span class="type-face-0006">f</span> *<span class="variable-name-face-0004">sk_tmp</span> = *pskb;
+			printk(<span class="string-face-0003">"%s: In if skb_headroom\n"</span>, __FUNCTION__);
+			*pskb = skb_realloc_headroom(sk_tmp, VLAN_HLEN);
+			kfree_skb(sk_tmp);
+
+			<span class="keyword-face-0005">if</span> (*pskb == <span class="constant-face-0008">NULL</span>) {
+				<span class="keyword-face-0005">return</span> EBT_DROP;
+			}
+		}
+		<span class="comment-delimiter-face-0000">// </span><span class="comment-face-0001">This actually pushes skb-&gt;data, returns new of skb-&gt;data
+</span>		<span class="comment-delimiter-face-0000">// </span><span class="comment-face-0001">TODO: make sure there is sufficient headroom to decrement mac.raw
+</span>		skb_push(*pskb, VLAN_HLEN);
+
+		(*pskb)-&gt;mac.raw -= VLAN_HLEN;
+		(*pskb)-&gt;nh.raw -= VLAN_HLEN;
+		veth = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">vlan_ethhdr</span> *) (*pskb)-&gt;mac.raw;
+
+		<span class="comment-delimiter-face-0000">/* </span><span class="comment-face-0001">Move the mac addresses to the beginning of the new header. </span><span class="comment-delimiter-face-0000">*/</span>
+		printk(<span class="string-face-0003">"vnat: proto_dbg: %x, %x\n"</span>, veth-&gt;h_vlan_encapsulated_proto, veth-&gt;h_vlan_proto);
+
+		memmove((*pskb)-&gt;mac.raw, (*pskb)-&gt;mac.raw + VLAN_HLEN, 12);
+
+		<span class="comment-delimiter-face-0000">/* </span><span class="comment-face-0001">first, the ethernet type </span><span class="comment-delimiter-face-0000">*/</span>
+		veth-&gt;h_vlan_proto = __constant_htons(ETH_P_8021Q);
+
+		<span class="comment-delimiter-face-0000">/* </span><span class="comment-face-0001">Now, construct the second two bytes. This field looks something
+
+		 * like:
+		 * usr_priority: 3 bits	 (high bits)
+		 * CFI		 1 bit
+		 * VLAN ID	 12 bits (low bits)
+		 </span><span class="comment-delimiter-face-0000">*/</span>
+		veth_TCI = info-&gt;vid;
+		veth_TCI |= info-&gt;qos &lt;&lt; 13;
+		veth-&gt;h_vlan_TCI = htons(veth_TCI);
+
+
+	}
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">ifdef</span> VNAT_DEBUG 
+	printk(<span class="string-face-0003">"%s: about to send skb: %p to dev: %s\n"</span>,
+		__FUNCTION__, *pskb, (*pskb)-&gt;dev-&gt;name);
+	printk(<span class="string-face-0003">"dst: %2hx.%2hx.%2hx.%2hx.%2hx.%2hx "</span>
+			<span class="string-face-0003">"src: %2hx.%2hx.%2hx.%2hx.%2hx.%2hx "</span>
+
+			<span class="string-face-0003">"misc: %4hx %4hx %4hx\n"</span>,
+	       veth-&gt;h_dest[0], veth-&gt;h_dest[1], veth-&gt;h_dest[2], veth-&gt;h_dest[3], veth-&gt;h_dest[4], veth-&gt;h_dest[5],
+	       veth-&gt;h_source[0], veth-&gt;h_source[1], veth-&gt;h_source[2], veth-&gt;h_source[3], veth-&gt;h_source[4], veth-&gt;h_source[5],
+
+	       veth-&gt;h_vlan_proto, veth-&gt;h_vlan_TCI, veth-&gt;h_vlan_encapsulated_proto);
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">endif</span>
+	<span class="comment-delimiter-face-0000">/</span><span class="comment-delimiter-face-0000">/</span><span class="comment-face-0001">return EBT_DROP; // for DEBUGGING
+</span>	<span class="keyword-face-0005">r</span><span class="keyword-face-0005">eturn</span> info-&gt;target;
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">in</span><span class="type-face-0006">t</span> <span class="function-name-face-0007">ebt_target_vnat_check</span>(<span class="keyword-face-0005">const</span> <span class="type-face-0006">char</span> *<span class="variable-name-face-0004">tablename</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">hookmask</span>,
+
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry</span> *<span class="variable-name-face-0004">e</span>, <span class="type-face-0006">void</span> *<span class="variable-name-face-0004">data</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">datalen</span>)
+{
+	<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">info</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *) data;
+
+	<span class="keyword-face-0005">if</span> (datalen != EBT_ALIGN(<span class="keyword-face-0005">sizeof</span>(<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span>))) {
+		printk(<span class="string-face-0003">"ebt_vnat: Bad Align\n"</span>);
+
+		<span class="keyword-face-0005">return</span> -EINVAL;
+	}
+	<span class="keyword-face-0005">if</span> (BASE_CHAIN &amp;&amp; info-&gt;target == EBT_RETURN) {
+		printk(<span class="string-face-0003">"ebt_vnat: Bad Align\n"</span>);
+		<span class="keyword-face-0005">return</span> -EINVAL;
+	}
+	CLEAR_BASE_CHAIN_BIT;
+	<span class="keyword-face-0005">if</span> ( (strcmp(tablename, <span class="string-face-0003">"nat"</span>) ||
+
+	   (hookmask &amp; ~((1 &lt;&lt; NF_BR_PRE_ROUTING) | (1 &lt;&lt; NF_BR_LOCAL_OUT)))) &amp;&amp;
+	   (strcmp(tablename, <span class="string-face-0003">"broute"</span>) || hookmask &amp; ~(1 &lt;&lt; NF_BR_BROUTING)) ) {
+		printk(<span class="string-face-0003">"Wrong chain for vnat\n"</span>);
+
+		<span class="keyword-face-0005">return</span> -EINVAL;
+	}
+	<span class="keyword-face-0005">if</span> (INVALID_TARGET) {
+		printk(<span class="string-face-0003">"ebt_vnat: Bad target\n"</span>);
+		<span class="keyword-face-0005">return</span> -EINVAL;
+	}
+	printk(<span class="string-face-0003">"ebt_vnat: check ok, added with vlan id: %d, qos: %d\n"</span>, info-&gt;vid, info-&gt;qos);
+
+	<span class="keyword-face-0005">return</span> 0;
+}
+
+
+
+<span class="keyword-face-0005">static</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_targe</span><span class="type-face-0006">t</span> <span class="variable-name-face-0004">vnat</span> =
+{
+	{<span class="constant-face-0008">NULL</span>, <span class="constant-face-0008">NULL</span>}, EBT_VNAT_TARGET, ebt_target_vnat, ebt_target_vnat_check,
+	<span class="constant-face-0008">NULL</span>, THIS_MODULE
+};
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">in</span><span class="type-face-0006">t</span> <span class="function-name-face-0007">__init</span> init(<span class="type-face-0006">void</span>)
+{
+	printk(<span class="string-face-0003">"ebt_vnat loaded ok\n"</span>);
+
+	<span class="keyword-face-0005">return</span> ebt_register_target(&amp;vnat);
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">__exit</span> fini(<span class="type-face-0006">void</span>)
+{
+	ebt_unregister_target(&amp;vnat);
+}
+
+module_init(init);
+module_exit(fini);
+EXPORT_NO_SYMBOLS;
+
+
+MODULE_LICENSE(<span class="string-face-0003">"GPL"</span>);
+</pre>
+
+ </body></html>

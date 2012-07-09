@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Ebtables ebt_vnat patches</title>
+<meta http-equiv="Content-Language" content="English" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="../style.css" media="screen" />
+</head>
+<body>
+<p>
+Visit the <a href="http://ebtables.sourceforge.net/">Ebtables project page</a>
+for more details on this project. Many wireless Access Points ship with
+support for multiple SSIDs (for e.g. one for guest and one for corporate). 
+For security reasons, it is important to mark these packets so that upstream 
+switches can handle them differently. The following implements the ebt_vnat
+module that can be instructed to add a <a href="http://ebtables.sourceforge.net/">
+VLAN</a> tag so that these traffic classes can be handled differently.
+</p>
+<p>Unfortunately I have lost the original patch files and I was able to dig this out
+from my email messages to Bart:
+</p>
+
+<a href="ebt_vnat_kernel.c">ebt_vnat_kernel.c:</a>
+<iframe style="background:white;" height="350px" width="100%" src="ebt_vnat_kernel.html"></iframe>
+<a href="ebt_vnat_user.c">ebt_vnat_user.c:</a>
+<iframe style="background:white;" height="350px" width="100%" src="ebt_vnat_user.html"></iframe>
+
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+  
+    <title>ebt_vnat_user.c</title>
+<meta name="generator" content="emacs 23.1.50.1; htmlfontify 0.20">
+<style type="text/css"><!-- 
+body { font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #000000;  font-size: 10pt;  text-decoration: none; }
+span.default   { font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #000000;  font-size: 10pt;  text-decoration: none; }
+span.default a { font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.negation-char-face-0009   { font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #000000;  font-size: 10pt;  text-decoration: none; }
+span.negation-char-face-0009 a { font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  color: #000000;  font-size: 10pt;  text-decoration: underline; }
+span.function-name-face-0007   { color: #0000ff;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.function-name-face-0007 a { color: #0000ff;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.variable-name-face-0004   { color: #a0522d;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.variable-name-face-0004 a { color: #a0522d;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.type-face-0006   { color: #228b22;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.type-face-0006 a { color: #228b22;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.keyword-face-0005   { color: #a020f0;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.keyword-face-0005 a { color: #a020f0;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.string-face-0003   { color: #8b2252;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.string-face-0003 a { color: #8b2252;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.preprocessor-face-0002   { color: #7a378b;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.preprocessor-face-0002 a { color: #7a378b;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.comment-face-0001   { color: #b22222;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.comment-face-0001 a { color: #b22222;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+span.comment-delimiter-face-0000   { color: #b22222;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: none; }
+span.comment-delimiter-face-0000 a { color: #b22222;  font-family: Courier New;  font-stretch: normal;  font-weight: 500;  font-style: normal;  font-size: 10pt;  text-decoration: underline; }
+ --></style>
+
+  </head><body>
+
+    <script type="text/javascript">
+      // <![CDATA[
+
+function getObj(name) {
+    if (document.getElementById) {
+        this.obj = document.getElementById(name);
+        this.style = document.getElementById(name).style;
+    }
+}
+function hfy_toggle_display(name) {
+    var x = new getObj("hfy_invis_" + name);
+    var flag = x.style.display == 'inline';
+    x.style.display = (flag) ? 'none' : 'inline'
+}
+
+      // ]]>
+    </script>
+
+<pre><span class="comment-delimiter-face-0000">/*</span><span class="comment-face-0001">
+ *
+ * vnat code added by Ashwin Kashyap &lt;cybernytrix@yahoo.com&gt;
+ *
+ </span><span class="comment-delimiter-face-0000">*/</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;stdio.h&gt;</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;stdlib.h&gt;</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;string.h&gt;</span>
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;netinet/ether.h&gt;</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;getopt.h&gt;</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">"../include/ebtables_u.h"</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">include</span> <span class="string-face-0003">&lt;linux/netfilter_bridge/ebt_nat.h&gt;</span>
+
+<span class="keyword-face-0005">s</span><span class="keyword-face-0005">tatic</span> <span class="type-face-0006">in</span><span class="type-face-0006">t</span> <span class="variable-name-face-0004">to_source_supplied</span>, <span class="variable-name-face-0004">to_dest_supplied</span>, <span class="variable-name-face-0004">to_vlan_supplied</span>, <span class="variable-name-face-0004">strip_tag_supplied</span>, <span class="variable-name-face-0004">vlan_qos_supplied</span>;
+
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">NAT_S</span> <span class="string-face-0003">'1'</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">NAT_D</span> <span class="string-face-0003">'1'</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">NAT_V</span> <span class="string-face-0003">'1'</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">NAT_S_TARGET</span> <span class="string-face-0003">'2'</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">NAT_D_TARGET</span> <span class="string-face-0003">'2'</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">NAT_V_TARGET</span> <span class="string-face-0003">'2'</span>
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">NAT_V_STRIP</span>  <span class="string-face-0003">'3'</span>
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">NAT_V_QOS</span>    <span class="string-face-0003">'4'</span>
+<span class="keyword-face-0005">s</span><span class="keyword-face-0005">tatic</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">optio</span><span class="type-face-0006">n</span> <span class="variable-name-face-0004">opts_s</span>[] =
+{
+        { <span class="string-face-0003">"to-source"</span>     , required_argument, 0, NAT_S },
+        { <span class="string-face-0003">"to-src"</span>        , required_argument, 0, NAT_S },
+        { <span class="string-face-0003">"snat-target"</span>   , required_argument, 0, NAT_S_TARGET },
+
+        { 0 }
+};
+
+<span class="keyword-face-0005">static</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">optio</span><span class="type-face-0006">n</span> <span class="variable-name-face-0004">opts_d</span>[] =
+{
+        { <span class="string-face-0003">"to-destination"</span>, required_argument, 0, NAT_D },
+        { <span class="string-face-0003">"to-dst"</span>        , required_argument, 0, NAT_D },
+        { <span class="string-face-0003">"dnat-target"</span>   , required_argument, 0, NAT_D_TARGET },
+
+        { 0 }
+};
+
+<span class="keyword-face-0005">static</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">optio</span><span class="type-face-0006">n</span> <span class="variable-name-face-0004">opts_v</span>[] =
+{
+        { <span class="string-face-0003">"to-vlan"</span>       , required_argument, 0, NAT_V },
+        { <span class="string-face-0003">"vlan-qos"</span>      , required_argument, 0, NAT_V_QOS },
+        { <span class="string-face-0003">"strip-tag"</span>     , no_argument      , 0, NAT_V_STRIP },
+
+        { <span class="string-face-0003">"vnat-target"</span>   , required_argument, 0, NAT_V_TARGET },
+        { 0 }
+};
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">print_help_s</span>()
+{
+        printf(
+        <span class="string-face-0003">"snat options:\n"</span>
+        <span class="string-face-0003">" --to-src address       : MAC address to map source to\n"</span>
+
+        <span class="string-face-0003">" --snat-target target   : ACCEPT, DROP, RETURN or CONTINUE\n"</span>);
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">print_help_d</span>()
+{
+        printf(
+        <span class="string-face-0003">"dnat options:\n"</span>
+        <span class="string-face-0003">" --to-dst address       : MAC address to map destination to\n"</span>
+
+        <span class="string-face-0003">" --dnat-target target   : ACCEPT, DROP, RETURN or CONTINUE\n"</span>);
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">print_help_v</span>()
+{
+        printf(
+        <span class="string-face-0003">"vnat options:\n"</span>
+        <span class="string-face-0003">" --to-vlan tag          : Vlan ID to be tagged with\n"</span>
+
+        <span class="string-face-0003">" --strip-tag            : Gets rid of the tag if present\n"</span>
+        <span class="string-face-0003">" --vlan-qos             : Vlan priority\n"</span>
+        <span class="string-face-0003">" --vnat-target target   : ACCEPT, DROP, RETURN or CONTINUE\n"</span>);
+
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">init_s</span>(<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+        to_source_supplied = 0;
+        natinfo-&gt;target = EBT_ACCEPT;
+
+        <span class="keyword-face-0005">return</span>;
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">init_d</span>(<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+        to_dest_supplied = 0;
+        natinfo-&gt;target = EBT_ACCEPT;
+
+        <span class="keyword-face-0005">return</span>;
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">init_v</span>(<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+        to_vlan_supplied = 0;
+        strip_tag_supplied = 0;
+
+        vlan_qos_supplied = 0;
+        natinfo-&gt;qos = 0;
+        natinfo-&gt;target = EBT_ACCEPT;
+        <span class="keyword-face-0005">return</span>;
+}
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">OPT_SNAT</span>         0x01
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">OPT_SNAT_TARGET</span>  0x02
+<span class="keyword-face-0005">s</span><span class="keyword-face-0005">tatic</span> <span class="type-face-0006">in</span><span class="type-face-0006">t</span> <span class="function-name-face-0007">parse_s</span>(<span class="type-face-0006">int</span> <span class="variable-name-face-0004">c</span>, <span class="type-face-0006">char</span> **<span class="variable-name-face-0004">argv</span>, <span class="type-face-0006">int</span> <span class="variable-name-face-0004">argc</span>,
+
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> *<span class="variable-name-face-0004">flags</span>,
+   <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> **<span class="variable-name-face-0004">target</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)(*target)-&gt;data;
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ether_add</span><span class="type-face-0006">r</span> *<span class="variable-name-face-0004">addr</span>;
+
+
+        <span class="keyword-face-0005">switch</span> (c) {
+        <span class="keyword-face-0005">case</span> NAT_S:
+                check_option(flags, OPT_SNAT);
+                to_source_supplied = 1;
+                <span class="keyword-face-0005">if</span> (<span class="negation-char-face-0009">!</span>(addr = ether_aton(optarg)))
+                        print_error(<span class="string-face-0003">"Problem with specified --to-source mac"</span>);
+
+                memcpy(natinfo-&gt;mac, addr, ETH_ALEN);
+                <span class="keyword-face-0005">break</span>;
+        <span class="keyword-face-0005">case</span> NAT_S_TARGET:
+                check_option(flags, OPT_SNAT_TARGET);
+                <span class="keyword-face-0005">if</span> (FILL_TARGET(optarg, natinfo-&gt;target))
+
+                        print_error(<span class="string-face-0003">"Illegal --snat-target target"</span>);
+                <span class="keyword-face-0005">break</span>;
+        <span class="keyword-face-0005">default</span>:
+                <span class="keyword-face-0005">return</span> 0;
+        }
+        <span class="keyword-face-0005">return</span> 1;
+}
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">OPT_VNAT</span>        0x01
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">OPT_VNAT_STRIP</span>  0x02
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">OPT_VNAT_TARGET</span> 0x03
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">OPT_VNAT_QOS</span>    0x04
+<span class="keyword-face-0005">s</span><span class="keyword-face-0005">tatic</span> <span class="type-face-0006">in</span><span class="type-face-0006">t</span> <span class="function-name-face-0007">parse_v</span>(<span class="type-face-0006">int</span> <span class="variable-name-face-0004">c</span>, <span class="type-face-0006">char</span> **<span class="variable-name-face-0004">argv</span>, <span class="type-face-0006">int</span> <span class="variable-name-face-0004">argc</span>,
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> *<span class="variable-name-face-0004">flags</span>,
+   <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> **<span class="variable-name-face-0004">target</span>)
+
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)(*target)-&gt;data;
+        <span class="type-face-0006">uint16_</span><span class="type-face-0006">t</span> <span class="variable-name-face-0004">vid</span>, <span class="variable-name-face-0004">qos</span>;
+
+        <span class="keyword-face-0005">switch</span> (c) {
+        <span class="keyword-face-0005">case</span> NAT_V:
+                check_option(flags, OPT_VNAT);
+
+                check_option(flags, OPT_VNAT_STRIP);
+                to_vlan_supplied = 1;
+                <span class="keyword-face-0005">if</span> (sscanf(optarg, <span class="string-face-0003">"%hu"</span>, &amp;vid) != 1 || vid &gt; 4094)
+                        print_error(<span class="string-face-0003">"Problem with specified "</span>
+
+                                    <span class="string-face-0003">"vlan id, must be between 0 and 4094"</span>);
+                natinfo-&gt;vid = vid;
+                <span class="keyword-face-0005">break</span>;
+        <span class="keyword-face-0005">case</span> NAT_V_TARGET:
+                check_option(flags, OPT_VNAT_TARGET);
+
+                <span class="keyword-face-0005">if</span> (FILL_TARGET(optarg, natinfo-&gt;target))
+                        print_error(<span class="string-face-0003">"Illegal --vnat-target target"</span>);
+                <span class="keyword-face-0005">break</span>;
+        <span class="keyword-face-0005">case</span> NAT_V_STRIP:
+                check_option(flags, OPT_VNAT);
+
+                check_option(flags, OPT_VNAT_STRIP);
+                strip_tag_supplied = 1;
+                natinfo-&gt;vid = -1;
+                
+        <span class="keyword-face-0005">case</span> NAT_V_QOS:
+                check_option(flags, OPT_VNAT_QOS);
+
+                vlan_qos_supplied = 1;
+                <span class="keyword-face-0005">if</span> (sscanf(optarg, <span class="string-face-0003">"%hu"</span>, &amp;qos) != 1 || vid &gt; 7)
+                        print_error(<span class="string-face-0003">"Problem with specified "</span>
+                                    <span class="string-face-0003">"vlan qos, must be between 0 and 7"</span>);
+
+                natinfo-&gt;qos = qos;
+                <span class="keyword-face-0005">break</span>;
+        <span class="keyword-face-0005">default</span>:
+                <span class="keyword-face-0005">return</span> 0;
+        }
+        <span class="keyword-face-0005">return</span> 1;
+}
+
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">OPT_DNAT</span>        0x01
+<span class="preprocessor-face-0002">#</span><span class="preprocessor-face-0002">define</span> <span class="variable-name-face-0004">OPT_DNAT_TARGET</span> 0x02
+
+<span class="keyword-face-0005">s</span><span class="keyword-face-0005">tatic</span> <span class="type-face-0006">in</span><span class="type-face-0006">t</span> <span class="function-name-face-0007">parse_d</span>(<span class="type-face-0006">int</span> <span class="variable-name-face-0004">c</span>, <span class="type-face-0006">char</span> **<span class="variable-name-face-0004">argv</span>, <span class="type-face-0006">int</span> <span class="variable-name-face-0004">argc</span>,
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> *<span class="variable-name-face-0004">flags</span>,
+   <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> **<span class="variable-name-face-0004">target</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)(*target)-&gt;data;
+
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ether_add</span><span class="type-face-0006">r</span> *<span class="variable-name-face-0004">addr</span>;
+
+        <span class="keyword-face-0005">switch</span> (c) {
+        <span class="keyword-face-0005">case</span> NAT_D:
+                check_option(flags, OPT_DNAT);
+                to_dest_supplied = 1;
+                <span class="keyword-face-0005">if</span> (<span class="negation-char-face-0009">!</span>(addr = ether_aton(optarg)))
+
+                        print_error(<span class="string-face-0003">"Problem with specified "</span>
+                                    <span class="string-face-0003">"--to-destination mac"</span>);
+                memcpy(natinfo-&gt;mac, addr, ETH_ALEN);
+                <span class="keyword-face-0005">break</span>;
+
+        <span class="keyword-face-0005">case</span> NAT_D_TARGET:
+                check_option(flags, OPT_DNAT_TARGET);
+                <span class="keyword-face-0005">if</span> (FILL_TARGET(optarg, natinfo-&gt;target))
+                        print_error(<span class="string-face-0003">"Illegal --dnat-target target"</span>);
+
+                <span class="keyword-face-0005">break</span>;
+        <span class="keyword-face-0005">default</span>:
+                <span class="keyword-face-0005">return</span> 0;
+        }
+        <span class="keyword-face-0005">return</span> 1;
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">final_check_s</span>(<span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>,
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>, <span class="keyword-face-0005">const</span> <span class="type-face-0006">char</span> *<span class="variable-name-face-0004">name</span>,
+
+   <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">hookmask</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">time</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+        <span class="keyword-face-0005">if</span> (BASE_CHAIN &amp;&amp; natinfo-&gt;target == EBT_RETURN)
+                print_error(<span class="string-face-0003">"--snat-target RETURN not allowed on base chain"</span>);
+
+        CLEAR_BASE_CHAIN_BIT;
+        <span class="keyword-face-0005">if</span> ((hookmask &amp; ~(1 &lt;&lt; NF_BR_POST_ROUTING)) || strcmp(name, <span class="string-face-0003">"nat"</span>))
+                print_error(<span class="string-face-0003">"Wrong chain for snat"</span>);
+        <span class="keyword-face-0005">if</span> (time == 0 &amp;&amp; to_source_supplied == 0)
+
+                print_error(<span class="string-face-0003">"No snat address supplied"</span>);
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">final_check_d</span>(<span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>,
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>, <span class="keyword-face-0005">const</span> <span class="type-face-0006">char</span> *<span class="variable-name-face-0004">name</span>,
+   <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">hookmask</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">time</span>)
+
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+        <span class="keyword-face-0005">if</span> (BASE_CHAIN &amp;&amp; natinfo-&gt;target == EBT_RETURN)
+                print_error(<span class="string-face-0003">"--dnat-target RETURN not allowed on base chain"</span>);
+
+        CLEAR_BASE_CHAIN_BIT;
+        <span class="keyword-face-0005">if</span> (((hookmask &amp; ~((1 &lt;&lt; NF_BR_PRE_ROUTING) | (1 &lt;&lt; NF_BR_LOCAL_OUT)))
+           || strcmp(name, <span class="string-face-0003">"nat"</span>)) &amp;&amp;
+           ((hookmask &amp; ~(1 &lt;&lt; NF_BR_BROUTING)) || strcmp(name, <span class="string-face-0003">"broute"</span>)))
+
+                print_error(<span class="string-face-0003">"Wrong chain for dnat"</span>);
+        <span class="keyword-face-0005">if</span> (time == 0 &amp;&amp; to_dest_supplied == 0)
+                print_error(<span class="string-face-0003">"No dnat address supplied"</span>);
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">final_check_v</span>(<span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>,
+
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>, <span class="keyword-face-0005">const</span> <span class="type-face-0006">char</span> *<span class="variable-name-face-0004">name</span>,
+   <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">hookmask</span>, <span class="type-face-0006">unsigned</span> <span class="type-face-0006">int</span> <span class="variable-name-face-0004">time</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+        <span class="keyword-face-0005">if</span> (BASE_CHAIN &amp;&amp; natinfo-&gt;target == EBT_RETURN)
+
+                print_error(<span class="string-face-0003">"--vnat-target RETURN not allowed on base chain"</span>);
+        CLEAR_BASE_CHAIN_BIT;
+        <span class="keyword-face-0005">if</span> ((hookmask &amp; ~(1 &lt;&lt; NF_BR_PRE_ROUTING)) || strcmp(name, <span class="string-face-0003">"nat"</span>))
+
+                print_error(<span class="string-face-0003">"Wrong chain for vnat"</span>);
+        <span class="keyword-face-0005">if</span> (time == 0 
+            &amp;&amp; ((to_vlan_supplied == 0 
+                &amp;&amp; (strip_tag_supplied == 0 || vlan_qos_supplied == 1))
+
+            || (to_vlan_supplied == 1 &amp;&amp; strip_tag_supplied == 1)))
+                print_error(<span class="string-face-0003">"You must specify only one of --to-vlan or --strip-tag. "</span>
+                <span class="string-face-0003">"You cannot specify --vlan-qos with --strip-tag"</span>);
+
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">print_s</span>(<span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>,
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+        printf(<span class="string-face-0003">"--to-src "</span>);
+
+        printf(<span class="string-face-0003">"%s"</span>, ether_ntoa((<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ether_addr</span> *)natinfo-&gt;mac));
+        printf(<span class="string-face-0003">" --snat-target %s"</span>, TARGET_NAME(natinfo-&gt;target));
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">print_d</span>(<span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>,
+
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+        printf(<span class="string-face-0003">"--to-dst "</span>);
+        printf(<span class="string-face-0003">"%s"</span>, ether_ntoa((<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ether_addr</span> *)natinfo-&gt;mac));
+
+        printf(<span class="string-face-0003">" --dnat-target %s"</span>, TARGET_NAME(natinfo-&gt;target));
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">print_v</span>(<span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_entry</span> *<span class="variable-name-face-0004">entry</span>,
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">target</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)target-&gt;data;
+
+
+        <span class="keyword-face-0005">if</span> (natinfo-&gt;vid == (<span class="type-face-0006">uint16_t</span>)-1) {
+                <span class="comment-delimiter-face-0000">// </span><span class="comment-face-0001">We are stripping
+</span>                printf(<span class="string-face-0003">"--strip-tag "</span>);
+        } <span class="keyword-face-0005">else</span> {
+                printf(<span class="string-face-0003">"--to-vlan %hd"</span>, natinfo-&gt;vid);
+
+                printf(<span class="string-face-0003">" --vlan-qos %hd"</span>, natinfo-&gt;qos);
+        }
+        printf(<span class="string-face-0003">" --vnat-target %s"</span>, TARGET_NAME(natinfo-&gt;target));
+}
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">in</span><span class="type-face-0006">t</span> <span class="function-name-face-0007">compare</span>(<span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">t1</span>,
+
+   <span class="keyword-face-0005">const</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_entry_target</span> *<span class="variable-name-face-0004">t2</span>)
+{
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo1</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)t1-&gt;data;
+        <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_inf</span><span class="type-face-0006">o</span> *<span class="variable-name-face-0004">natinfo2</span> = (<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span> *)t2-&gt;data;
+
+
+        <span class="keyword-face-0005">return</span> <span class="negation-char-face-0009">!</span>memcmp(natinfo1-&gt;mac, natinfo2-&gt;mac, <span class="keyword-face-0005">sizeof</span>(natinfo1-&gt;mac)) 
+
+                &amp;&amp; natinfo1-&gt;target == natinfo2-&gt;target
+                &amp;&amp; natinfo1-&gt;vid == natinfo2-&gt;vid
+                &amp;&amp; natinfo1-&gt;qos == natinfo2-&gt;qos;
+}
+
+<span class="keyword-face-0005">static</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_targe</span><span class="type-face-0006">t</span> <span class="variable-name-face-0004">snat_target</span> =
+
+{
+        EBT_SNAT_TARGET,
+        <span class="keyword-face-0005">sizeof</span>(<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span>),
+        print_help_s,
+        init_s,
+        parse_s,
+        final_check_s,
+        print_s,
+        compare,
+        opts_s,
+
+};
+
+<span class="keyword-face-0005">static</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_targe</span><span class="type-face-0006">t</span> <span class="variable-name-face-0004">dnat_target</span> =
+{
+        EBT_DNAT_TARGET,
+        <span class="keyword-face-0005">sizeof</span>(<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span>),
+        print_help_d,
+        init_d,
+        parse_d,
+        final_check_d,
+        print_d,
+
+        compare,
+        opts_d
+};
+
+<span class="keyword-face-0005">static</span> <span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_u_targe</span><span class="type-face-0006">t</span> <span class="variable-name-face-0004">vnat_target</span> =
+{
+        EBT_VNAT_TARGET,
+        <span class="keyword-face-0005">sizeof</span>(<span class="keyword-face-0005">struct</span> <span class="type-face-0006">ebt_nat_info</span>),
+        print_help_v,
+        init_v,
+        parse_v,
+
+        final_check_v,
+        print_v,
+        compare,
+        opts_v
+};
+
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">_init</span>(<span class="type-face-0006">void</span>) <span class="keyword-face-0005">__attribute__</span> ((constructor));
+<span class="keyword-face-0005">static</span> <span class="type-face-0006">voi</span><span class="type-face-0006">d</span> <span class="function-name-face-0007">_init</span>(<span class="type-face-0006">void</span>)
+{
+        register_target(&amp;snat_target);
+
+        register_target(&amp;dnat_target);
+        register_target(&amp;vnat_target);
+}
+</pre>
+
+ </body></html>
