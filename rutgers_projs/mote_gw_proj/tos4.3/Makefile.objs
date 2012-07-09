@@ -1,0 +1,2 @@
+CUST_OBJS = MOTE_GW.o system/MAIN.o system/PACKETOBJ.o system/RFM.o system/SEC_DED_RADIO_BYTE.o system/UART.o system/UART_PACKET.o 
+HEADER_FILES = MOTE_GW.h system/MAIN.h system/PACKETOBJ.h system/RFM.h system/SEC_DED_RADIO_BYTE.h system/UART.h system/UART_PACKET.h 

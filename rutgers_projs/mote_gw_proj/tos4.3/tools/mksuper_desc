@@ -1,0 +1,333 @@
+#!/usr/bin/perl 
+
+use strict;
+
+
+open(MOD_FILE, "$ARGV[0]") or die "file not found";
+
+my %modules;
+my @mapping_lines;
+
+sub getModuleNames{
+  my %names = @_;
+  while(<FOO>){
+    if(/\};/){
+      return %names;
+    }
+    /(\w+);/; 
+    $names{$1} = "";
+  }
+}
+
+sub is_output{
+  my $names = $_[0];
+  my @parts = split /:/, $names; 
+  if($modules{$parts[0]}{"handles"}{$parts[1]}) {return 1;}
+  if($modules{$parts[0]}{"accepts"}{$parts[1]}) {return 1;}
+  return 0;
+}
+
+
+sub getFuncNames{
+  my %names = @_;
+  while(<MOD_FILE>){
+    if(/\};/){
+      return %names;
+    }
+    /([\w\*]+) (\w+)\((.*)\);/;
+  
+   # $names{$2} = [($1, $3)];
+   $names{$2}{$1} = $3;
+  }
+  
+
+}
+sub getModuleInfo{
+
+  my $mod_name = $_[0];
+  my $comp;
+  if(open(MOD_FILE, $mod_name . ".comp")){
+    1;
+  }elsif(open(MOD_FILE, "system/" . $mod_name . ".comp")){
+    1;
+  }else{
+    die "could not open " . $mod_name . ".comp\n";
+  }
+  while(<MOD_FILE>){  
+    if(/^TOS_MODULE (\w+)/){
+      $comp = $1;
+      if($comp ne $mod_name){ 
+	die $comp . + " is not equal to " . $mod_name. " \n";
+	}
+      last;
+    }
+  }
+  my $imp_by = "";
+  while(<MOD_FILE>){
+    if(/ACCEPTS\{/) {    
+      $modules{$mod_name}{"accepts"} = {getFuncNames($modules{$mod_name}{"accepts"})};
+    }elsif(/HANDLES\{/) {
+      $modules{$mod_name}{"handles"} = {getFuncNames($modules{$mod_name}{"handles"})};
+    } elsif(/SIGNALS\{/) {
+      $modules{$mod_name}{"signal"} = {getFuncNames($modules{$mod_name}{"signal"})};
+    } elsif(/USES\{/) {
+      $modules{$mod_name}{"uses"} = {getFuncNames($modules{$mod_name}{"uses"})};
+    }   
+    if(/JOINTLY IMPLEMENTED_BY (\w+);/){
+	$imp_by = $1;
+  #    getAppInformation($1. ".desc");
+  #    $mod_name = "";
+    }elsif(/IMPLEMENTED_BY (\w+);/){
+      getAppInformation($1. ".desc");
+    }
+  }
+  if($imp_by ne ""){
+	getAppInformation($imp_by. ".desc");
+  }
+  return;
+}
+
+my %mod_seen;
+sub getAppInformation{
+  my $file_name = shift;
+#  print "description file: ". $file_name . "\n";
+  if(open(FOO, $file_name)){
+    1;
+  }elsif(open(FOO, "system/" . $file_name)){
+    1;
+  }else{
+    die "could not open " . $file_name;
+  }
+  while(<FOO>){
+    if(/^include modules\{/){
+      last;
+    }
+  }
+  
+    my %local_mods = getModuleNames();
+    my $comp;
+    while(<FOO>){
+      chop;
+      next if not $_;
+      
+      push @mapping_lines, ($_);
+    }
+    foreach $comp (sort keys %local_mods){
+      #read in the module information
+#      print $comp. "\n";
+	if(not $mod_seen{$comp}){
+		$mod_seen{$comp} = 1;
+      		getModuleInfo($comp);
+	}
+    }
+#    print "done description file: ". $file_name . "\n";
+
+    
+  
+}
+
+getAppInformation($ARGV[0]);
+
+
+#my $a;
+#my $b;
+#my $c;
+#my $d;
+#
+#for $a (keys %modules){
+  #print $a . "\n";
+  #for $b (keys %{$modules{$a}}){
+    #print "\t". $b . "\n";
+    #for $c (keys %{$modules{$a}{$b}}){
+      #print "\t\t". $c . "\n";
+    #}
+  #}
+#}
+##for $a (@mapping_lines){
+##  print $a . "\n";
+##}
+
+
+
+
+ 
+my $net_number = 1;
+my %net_hash;
+my $map_line;
+my %list;
+my $dest_num;
+my $net_num;
+foreach $map_line (@mapping_lines){
+  my $this_net_num = 0;
+#  print $map_line . " " . $this_net_num . "\n";
+#split the lines
+  my @names = split / /, $map_line;
+  my $func;
+  foreach $func (@names){
+#    search for a net number for any of these values
+    if($net_hash{$func}){
+      $this_net_num = $net_hash{$func};
+      last;
+    }
+#    print "\t". $func ."\n";
+  }
+  if($this_net_num == 0){
+    $this_net_num = $net_number;
+    $net_number ++;
+  }
+#  print "got net number " . $this_net_num . "\n";
+#  %net_list =  %{$list{$this_net_num}};
+  foreach $func (@names) {
+    $net_hash{$func} = $this_net_num;
+    $list{$this_net_num}{$func} = 1;
+#    print "net number:" . $this_net_num . "\n";
+#    foreach $val  (keys %{$list{$this_net_num}}){
+#      print "\t" .$val . " \n";
+#    }
+#    print "\n";
+  }
+}
+
+
+print "\#ifndef SUPER_H\n";
+print "\#define SUPER_H\n";
+print "\#include \"tos.h\"\n";
+print "\#include \"MSG.h\"\n";
+
+
+my %outputs;
+
+foreach $net_num  (sort keys %list){
+  my $num_pins_on_net = scalar((keys %{$list{$net_num}}));
+  #print "net: " .$net_num . ":" . scalar((keys %{$list{$net_num}})) . "\n";
+  #my $val;
+  #foreach $val  (keys %{$list{$net_num}}){
+    #print $val . " \n";
+  #}
+  #print "-----\n";
+
+  if($num_pins_on_net <= 1) {next};
+ 
+ my $num_outputs = 0;
+
+  my %outputs;
+  my $val;
+  my $ret_val;
+  my $return_type;
+  my $args_names;
+  my $args = ""; 
+  foreach $val  (keys %{$list{$net_num}}){
+    if(is_output($val) == 1) {
+	#print "OUTPUT: " . $val . "\n";
+      $num_outputs ++;
+      $outputs{$net_num}{$val} = 1;      
+    }
+  }
+
+  my $func_type = "_EVENT";
+#determine if it is an event or a command;
+    foreach $val  (keys %{$outputs{$net_num}}){
+      @_ = split /:/, $val;
+      my $check = $_[1];
+      my $mod = $_[0];
+      
+      foreach $ret_val  (keys %{$modules{$mod}{"accepts"}{$check}}){
+	$func_type = "_COMMAND";
+      }
+    }
+  
+  #print "number of outputs " . $num_outputs . "out of " . $num_pins_on_net ."\n";
+  if($num_outputs <= 1) {
+#      print "define needed \n";
+    foreach $dest_num  (keys %{$outputs{$net_num}}){
+      foreach $val  (keys %{$list{$net_num}}){
+	@_ = split /:/, $val;
+	my $check = $_[1];
+	@_ = split /:/, $dest_num;
+	my $res = $_[1];
+	if($check ne $res){
+	  print "#define " . $check . $func_type . " " . $res . $func_type . "\n";
+	}
+      }
+    }
+  }else{
+      foreach $val  (keys %{$outputs{$net_num}}){
+      
+      @_ = split /:/, $val;
+      my $check = $_[1];
+      my $mod = $_[0];
+      foreach $ret_val  (keys %{$modules{$mod}{"accepts"}{$check}}){
+	print $ret_val . " " . $check . $func_type . "(" . $modules{$mod}{"accepts"}{$check}{$ret_val} . ");\n";
+	 $return_type = $ret_val;
+	 $args = $modules{$mod}{"accepts"}{$check}{$ret_val};
+      }
+    }
+    print "static inline " . $return_type . " dispatch__NET_" . $net_num . $func_type . "(" . $args . "){\n";
+    if($return_type ne "void"){
+      print $return_type . " retval;\n";
+    }
+ 
+      $_ = $args;
+      if(/([\w\*]+)\s([\w\*]+)(,\s([\w\*]+)\s([\w\*]+))?/){
+	
+	$args_names = $2;
+      
+	$_ = $3;
+      }
+    while(/,\s([\w\*]+)\s([\w\*]+)(,\s([\w\*]+)\s([\w\*]+))?/){
+      $args_names .= ", $2";
+      $_ = $3;
+    }
+
+
+    foreach $val  (keys %{$outputs{$net_num}}){
+      
+      @_ = split /:/, $val;
+      my $check = $_[1];
+      my $mod = $_[0];
+      
+      foreach $ret_val  (keys %{$modules{$mod}{"accepts"}{$check}}){
+
+	if($return_type ne "void"){
+	  print "retval = ";
+	}
+	print $check . $func_type . "(" . $args_names. ");\n";
+      }
+    }
+    if($return_type ne "void"){
+      print "return retval;\n";
+    }
+    print "}\n";   
+    foreach $val  (keys %{$list{$net_num}}){
+      @_ = split /:/, $val;
+      my $check = $_[1];
+      @_ = split /:/, $dest_num;
+      my $res = $_[1];
+      if(not($outputs{$net_num}{$val})){
+	print "#define " . $check . $func_type . " dispatch__NET_" . $net_num . $func_type . "\n";
+      }
+    }
+  }
+}
+
+
+#now check wich events are never handled and call them out.....
+my $a;
+my $c;
+my $d;
+for $a (keys %modules){
+    for $c (keys %{$modules{$a}{"signal"}}){
+	if($c ne "") {
+		#check to see if this function was part of a net list.
+    		$d  = $net_hash{$a.":".$c};
+		if($d == "") {
+			print "#define " . $c . "_EVENT ". $a ."_NULL_FUNC_EVENT\n";
+		}
+	}
+   }
+}
+
+print "\#endif;\n"
+
+
+

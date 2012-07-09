@@ -1,0 +1,80 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+</head>
+<body>
+<h1>
+Tiny OS Networked Sensor Device (Mote) Programming Environment</h1>
+<p>Outline:<br>
+<a href="#start">
+Getting Started</a><br>
+<a href="#howto">How To Program</a><br>
+<a href="#available">Available Components</a><br>
+<a href="#running">Running a Data Collection Demo</a></p>
+<a name="start"></a><h3>Getting started
+</h3>
+<p>&nbsp; - What you need: mote, parallel port programming device (cable for weC
+mote, Programming Board for Rene), TOS tools
+(described below)
+<br>&nbsp; Now let's take a look at the steps you need to go through to compile
+and install a simple application.&nbsp; Once you have extracted the TOS source
+and compiled the required tools, go into the tos directory and type make.&nbsp;
+This will generate all of the component header files and then compile the
+application.&nbsp; Next connect the device to your programming cable/board and
+connect the cable/board to the parallel port of the computer.&nbsp; Then type
+make install to have the application programmed into the device.&nbsp; You
+should now be running the blink application and seeing the three lights blink as
+a binary counter.<p>The make file uses the DESC variable to determine which
+application description file to use in compilation.&nbsp; To change the
+application that you want to have compiled and installed, changed the DESC
+variable to point at another application contained in the apps directory.&nbsp;
+Then run &quot;make clean&quot; and repeat the compilation/installation process.
+<a name="howto"></a><h3>How To Program</h3>
+<p>see <a href="TOSprogram.html">How to write programs</a>
+<a name="available"></a><h3>Available Components</h3>
+<p> see <a href="README">README</a>
+ or Component Lists
+<p> &nbsp;
+<p> &nbsp;
+<p> 
+<a name="running"></a><h3>Running a Data Collection Demo</h3>
+<p>Our basic data collection demo contains 4 pieces</p>
+<ol>
+  <li>A TOS application to run on mobile nodes</li>
+  <li>A TOS application to run on the base station</li>
+  <li>A C application to run on the PC connected to the base station that
+    forwards data to the GUI</li>
+  <li>A Java application to run the graphical display</li>
+</ol>
+<p>Starting with a collection of devices, program one of them to be a base
+station by:
+<ol>
+  <li>Change the Makefile so DESC=apps/SGD.desc and so the CFLAGS contains -DBASE_STATION</li>
+  <li>Recompile application</li>
+  <li>Download application into device</li>
+</ol>
+<p>Then program the rest of them to be data collection nodes by:
+<ol>
+  <li>Change the Makefile so DESC=apps/connect.desc and so the CFLAGS&nbsp; DOES
+    NOT contains -DBASE_STATION</li>
+  <li>Modify MAIN.c so that LOCAL_ADDR_BYTE_2 is a unique 8-bit value. (repeat
+    so that every device gets a unique ID)</li>
+  <li>Recompile application</li>
+  <li>Download application into device</li>
+</ol>
+<p>Once you have all of the devices programmed, connect the base station to the
+serial port of your PC.&nbsp; Then start the graphical display by going into the
+surge directory and running 'java surge'.&nbsp; Finally, run the data forwarder
+by running ./forwarder in the surge directory.&nbsp; This program will open the
+UART of the PC and forward data to the graphical display.&nbsp; Each of the
+mobile nodes (that are turned on) will slowly appear on display screen as they
+report their data readings and are discovered by the base station.</p>
+<p>&nbsp;
+<p>FAQs
+<br>&nbsp;
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

@@ -1,0 +1,76 @@
+/*									tab{4
+ *  MAGS.comp
+ *
+ * "Copyright (c) 2000 and The Regents of the University 
+ * of California.  All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the above copyright notice and the following
+ * two paragraphs appear in all copies of this software.
+ * 
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+ * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ * Authors:  Jason Hill
+ * Date:     Oct. 3, 2000
+ *
+ *
+ *  This componet turns the rene mote into a low quality oscillascope.  It was
+ *  originally written to explore the sensitivity of the magnetometer.  It takes
+ *  sensor readings in a 512 samples/second and sends the readings out over the UART.
+ *
+ *  The sensor readings can then be analyzed on the PC. Additionally, the sensor values 
+ *  are sent through a basic low pass filter step on the mote.  If there is a signifinant
+ *  change in the sensor reading, then the mote will blink it led. 
+ * 
+ *  The sensor readings are double buffered on the mote so that while a buffer is being sent 
+ *  out over the UART, a second buffer is being filled with data.  The CPU can perform much 
+ *  more than 512 samples per second. The main limitation is the I/O bandwith out of the device
+ *  in this case, the UART. 
+ *
+ *  There is a DATA_PORT definition that sets the data port that is being read from the ADC.
+ *  If you change this value, make sure that the ADC event for that port is
+ *  wired to the MAGS_DATA_EVENT.
+ *
+ */
+
+TOS_MODULE MAGS;
+
+ACCEPTS{
+	char MAGS_INIT(void);
+	char MAGS_START(void);
+};
+
+SIGNALS{
+};
+
+HANDLES{
+	void MAGS_CLOCK_EVENT(void);
+	char MAGS_DATA_EVENT(int data);
+	char MAGS_SUB_MSG_SEND_DONE(TOS_MsgPtr msg);
+	TOS_MsgPtr mags_msg(TOS_MsgPtr data);
+};
+
+USES{
+	char MAGS_SUB_INIT();
+	char MAGS_CLOCK_INIT(char interval, char scale);
+	char MAGS_SUB_SEND_MSG(char addr,char type, TOS_MsgPtr data);
+	char MAGS_SUB_PWR(char pwr);
+	char MAGS_GET_DATA(char port);
+	char MAGS_LEDy_on();
+	char MAGS_LEDy_off();
+	char MAGS_LEDr_on();
+	char MAGS_LEDr_off();
+	char MAGS_LEDg_on();
+	char MAGS_LEDg_off();
+};
+

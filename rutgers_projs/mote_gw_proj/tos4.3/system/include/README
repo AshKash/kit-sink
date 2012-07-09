@@ -1,0 +1,20 @@
+
+MSG.h -- defines the structure of the TinyOS active Messages.
+AM_DISPATCH.mapping -- A file that is used at compile time to connect message
+handlers to the message arrival.
+
+sched.h -- contains the interface to the basic scheduler.
+tos.h -- contains the definintions for all TOS macros.
+
+
+Virtual Machine Interpreter
+instruc.h -- contains a listing of the vaid opcodes for the TinyOS virtual machine.
+
+hardware.h -- hardware definitions for the rene mote.
+hardware.h.rene -- a back-up copy of hardware.h
+hardware.h.round -- a version of hardware.h for the old weC hardware.
+hardware.h.round_base -- a version of hardware.h for the weC base station.
+
+Full PC support.  
+Fullpc_radio.h -- contains the necessary code to send the radio communications over a socket.
+Fullpc_uart_connect.h -- contains the necessary code to send the UART communications over a socket.

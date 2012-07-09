@@ -1,0 +1,36 @@
+/*
+ *
+ *  This is a generic base station module that listens at the PACKET level
+ *  and forwards any packet that arrives on the radio to the UART of the host
+ *  that it is connected to.  It does not look at the address or handler number.
+ *  However, it does modify the address to be 0x7e before sending it to the host.
+ *  This component does look at the group id field of the packet.
+ *
+ *
+ */
+
+TOS_MODULE MOTE_GW;
+
+ACCEPTS{
+	char MOTE_GW_INIT(void);
+	char MOTE_GW_START(void);
+};
+
+SIGNALS{
+};
+
+HANDLES{
+	TOS_MsgPtr MOTE_GW_RX_PACKET(TOS_MsgPtr data);
+	char MOTE_GW_TX_PACKET_DONE(TOS_MsgPtr data);
+	TOS_MsgPtr MOTE_GW_SUB_UART_RX_PACKET(TOS_MsgPtr data);
+	char MOTE_GW_SUB_UART_TX_PACKET_DONE(TOS_MsgPtr data);
+};
+
+USES{
+	char MOTE_GW_SUB_INIT();
+	void MOTE_GW_SUB_POWER(char state);
+	char MOTE_GW_SUB_UART_INIT();
+	void MOTE_GW_SUB_UART_POWER(char state);
+	char MOTE_GW_SUB_UART_TX_PACKET(TOS_MsgPtr msg);
+};
+

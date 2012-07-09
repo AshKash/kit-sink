@@ -1,0 +1,52 @@
+#!/usr/bin/perl 
+
+use strict;
+my $lma ;
+my $vma ;
+my $addr_addr;
+my $MOTE_ADDRESS = $ARGV[1] % 256;
+open(SECTS, "avr-objdump -h $ARGV[0].exe | grep data|") or die "Cannot extract section information";
+#print "Munging $ARGV[0]\n";
+while(<SECTS>) {
+  my @datainf = split / +/;
+#  print "Section: " . $datainf[2] . " VMA: ". $datainf[4]." LMA: " . $datainf[5]. "\n";
+  $vma = hex($datainf[4]);
+  $lma = hex($datainf[5]);
+}
+close(SECTS);
+
+open(SYMBOL, "avr-objdump -t $ARGV[0].exe | grep TOS_LOCAL_ADDRESS|") or die "Cannot extract symbol information";
+
+while(<SYMBOL>) {
+  my @syminf = split / +/;
+  $addr_addr = hex($syminf[0]);
+}
+
+close(SYMBOL);
+open (SREC_IN, "$ARGV[0].srec") or die "Srec file not found"; 
+open (SREC_OUT, ">out.srec") or die "Cannot create an output file";
+while(<SREC_IN>){
+  my $line = hex(substr($_, 4, 4));
+  if ($line == $lma) {
+    my $len = hex(substr($_, 2,2))-3;
+#    print $len;
+    if ($len < ($addr_addr - $vma)) {
+      print "This should not have happened!";
+      $vma += $len;
+      $lma += $len;
+      print SREC_OUT;
+    } else {
+      my $st = 8 + 2 * ($addr_addr - $vma); 
+      my $sym = hex(substr($_, $st, 2)); 
+      my $csum = hex(substr($_, -4)) + $sym - $MOTE_ADDRESS;
+      #print "The symbol value: $sym\n";
+      print SREC_OUT substr($_, 0, $st);
+      print SREC_OUT uc(sprintf("%02x", $MOTE_ADDRESS));
+      print SREC_OUT substr($_, $st+2, 2*($len-($addr_addr - $vma) -1));
+      print SREC_OUT uc(sprintf("%x",$csum)).substr($_, -2);
+    }
+  } else {
+    print SREC_OUT;
+  }
+    
+}

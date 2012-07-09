@@ -1,0 +1,75 @@
+#!/usr/bin/perl
+
+open(FOO, "$ARGV[0]") or die;
+
+sub getFuncNames{
+  local (%names) = @_;
+  while(<FOO>){
+    if(/\};/){
+      return %names;
+    }
+    $_;
+    /([\w\*]+) (\w+)\((.*)\);*/;
+  
+    $names{$2} = [($1, $3)];
+   
+  }
+  
+
+}
+
+
+while(<FOO>){
+  if(/^TOS_MODULE (\w+)/){
+    $comp = $1;
+    last;
+  }
+}
+
+
+while(<FOO>){
+  if(/ACCEPTS\{/) {    
+    %accepts = getFuncNames(%accepts);
+  }elsif(/HANDLES\{/) {
+    %handles = getFuncNames(%handles);
+  } elsif(/SIGNALS\{/) {
+    %signals = getFuncNames(%signals);
+  } elsif(/USES\{/) {
+    %uses = getFuncNames(%uses);
+  } elsif(/INTERNAL\{/) {
+    %internal = getFuncNames(%internal);
+  }
+  
+}
+
+
+print "#ifndef __" . $comp . "___\n";
+print "#define __" . $comp . "___\n";
+print "#include \"super.h\"\n";
+print "//ACCEPTS\n";
+foreach $comp (sort keys %accepts){
+  print ${accepts{$comp}}[0]  . " TOS_COMMAND(" .$comp .")(". ${accepts{$comp}}[1] . ");\n";
+}
+print "//HANDLES\n";
+foreach $comp (sort keys %handles){
+  print ${handles{$comp}}[0]  . " TOS_EVENT(" .$comp .")(". ${handles{$comp}}[1] . ");\n";
+}
+print "//SIGNALS\n";
+foreach $comp (sort keys %signals){
+  print ${signals{$comp}}[0]  . " TOS_EVENT(" .$comp .")(". ${signals{$comp}}[1] . ");\n";
+
+}
+print "//USES\n";
+foreach $comp (sort keys %uses){
+  print ${uses{$comp}}[0]  . " TOS_COMMAND(" .$comp .")(". ${uses{$comp}}[1] . ");\n"
+
+}
+print "//INTERNAL\n";
+foreach $comp (sort keys %internal){
+  print ${internal{$comp}}[0]  . " " .$comp ."(". ${internal{$comp}}[1] . ");\n"
+
+}
+printf "#endif //__"  . $comp . "___//\n";
+
+
+

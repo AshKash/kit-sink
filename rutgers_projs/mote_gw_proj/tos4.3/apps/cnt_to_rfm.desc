@@ -1,0 +1,107 @@
+/*									tab:4
+ * cnt_to_rfm.desc: component graph for basic messaging application
+ *
+ * "Copyright (c) 2000 and The Regents of the University 
+ * of California.  All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the above copyright notice and the following
+ * two paragraphs appear in all copies of this software.
+ * 
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+ * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ * Authors:  Jason Hill and David Culler
+ * Date:     Jan 29, 2001
+ * History:  1/30/2001 added documentation
+ *
+ * This application extends cnt_to_led to demonstrate the following:
+ *   1. Asynchronous command completion events
+ *   2. Use of a generic communication stack
+ *   3. Sending an Active Message to a named handler
+ *   4. Active Message Handlers (partially)
+ *   5. Buffer management discipline for messages.
+ *
+ * 1. The main application is the same COUNTER component used in cnt_to_led.
+ * The difference here is the output component sends a message over the
+ * radio link, rather than displaying on the LEDs.
+ * In this case, the output command merely initiates activity.
+ * The output completion event indicates that the data has been transferred.
+ *
+ * 2. The other substantial difference in the description graph is the use
+ * of a generic component stack, CRC_COMM.  It is itself a subgraph of 
+ * networking components, described by CRC_COMM.desc, which includes an
+ * active message layer, a packet layer with error checking, and a
+ * data encoding layer.  The CRC_COMM.comp interface provides initialization, 
+ * sending a message to a named handler, and send completion detection.
+ * These are wired to INT_TO_RFM below.  In addition, the active message
+ * handler is called out and bound to a number in AM_DISPATCH.
+ *
+ * The remaining issues are illustrated within INT_TO_RFM.c.
+ *
+ * 3. To initiate messages, a component must provide its msg buffering.
+ * Storage is allocated using TOS_Msg type declaration within the frame.
+ * This macro wraps the user data so that it can be encapsulated without
+ * copying.
+ * The data portion is referenced using the MSG_DATA macro.
+ * A message is sent via the SEND_MSG command providing a destination id,
+ * message handler id, and reference to the full buffer.
+ * Destination 0xFF is the local broadcast address.
+ * The handler id is obtaining using AM_MSG on the name of the corresponding
+ * message event.
+ * The send command may return an error if it is unable to accept the request.
+ * If it returns without error, the send buffer is assumed to be in use
+ * until the MSG_SEND_DONE event is signaled.
+ *
+ * When a transmission occurs, the send message event is delivered to all 
+ * components that generate messages.  This allows them to try to restart
+ * activities.  It also allows them to determine if their own msg was sent,
+ * so the buffer can be freed.
+ *
+ * 4. A handler is identified by the TOS_MSG_EVENT declaration.
+ * It will be fired on arrival of a message of the corresponding type.
+ * It receives a message buffer.
+ * It is permitted to modify this buffer and resend it.
+ *
+ * 5. Components must provide storage for outgoing messages.
+ * If the send is accepted, the buffer is in use until corresponding completion
+ * is signaled.
+ *
+ * The active message layer provides incoming message storage, which
+ * may be used for the duration of the handler.
+ * A buffer must be returned by the handler.  If the buffer was simply
+ * consumed, the same buffer is returned, as shown here.
+ * If the handler resends the buffer, it must provide an alternative
+ * free buffer - to which it gives up ownership.
+ * It gains ownership to the incoming buffer and should monitor its completion.
+ */
+
+
+
+include modules{
+MAIN;
+COUNTER;
+INT_TO_RFM;
+CLOCK;
+};
+
+
+MAIN:MAIN_SUB_INIT COUNTER:COUNTER_INIT 
+MAIN:MAIN_SUB_START COUNTER:COUNTER_START
+
+COUNTER:COUNTER_CLOCK_EVENT CLOCK:CLOCK_FIRE_EVENT
+COUNTER:COUNTER_SUB_CLOCK_INIT CLOCK:CLOCK_INIT
+
+COUNTER:COUNTER_SUB_OUTPUT_INIT INT_TO_RFM:INT_TO_RFM_INIT
+COUNTER:COUNTER_OUTPUT_COMPLETE INT_TO_RFM:INT_TO_RFM_COMPLETE
+COUNTER:COUNTER_OUTPUT INT_TO_RFM:INT_TO_RFM_OUTPUT
+

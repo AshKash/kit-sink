@@ -1,0 +1,280 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+</head>
+<body>
+
+<h1>
+Tiny OS Networked Sensor Device (Mote) Programming</h1>
+
+<p>
+***In progress ***
+
+<p><br>A TinyOS networked sensor device application is described by a graph
+of software components, the lowest of which simply encapsulate the physical
+hardware.&nbsp; Components have <i>state,</i> contained in their TOS frame,
+<i>an
+interface</i>, specifying what commands it implements, what events it signals,
+what commands it uses, and what events it handles, and its internal logic,
+including the functions implementing its interface and additional threads.&nbsp;
+The combination of interface-based composition and internal concurrency
+and state provides a smooth intermixing of hardware and software functionality.
+<p>There are three aspects of programming networked sensor devices using
+TinyOS:
+<ul>
+<li>
+<a href="#compose">composing a collection of components into a complete
+application</a>,</li>
+
+<li>
+<a href="#app-component">developing a high-level application component,</a></li>
+
+<li>
+<a href="#hw-component">developing a low-level hardware-oriented component</a>.</li>
+</ul>
+
+<h2>
+<a NAME="compose"></a>Composing components into an application</h2>
+A complete application is described by a graph of components.&nbsp; A typical
+component has an 'upper-interface', consisting of the commands that it
+implements (or accepts) and the events that it signals, and a 'lower-interface',
+consisting of the commands that it uses and events that it handles.&nbsp;&nbsp;
+Lowest-level components provide only an upper-interface, as they are implemented
+directly by physical hardware modules.&nbsp; They typically describe their
+mapping to specific hardware resource, in lieu of a lower interface. The
+other exception is the MAIN component, which has only a lower interface
+providing the initialization commands into the application.<p>Composing an application involves specifying a collection of components
+and 'wiring ' the command and event relationships between components.&nbsp;
+TOS currently provides a set of tools that allow component composition
+to be described using textual editors.&nbsp; We also have support for using
+schmatic editing tools such as Workview Viewlogic to produce structural VHDL (only a small subset is used).&nbsp;&nbsp;<p>You should start with a working
+.desc file, such as those contained in
+the apps directory.&nbsp; The .desc file has two parts
+<ul>
+<li>
+an includes portion, which lists the components to be used in the applicatoin</li>
+
+<li>
+a body which specifies where to connect each port of each of the
+components.&nbsp; Each of the lines of the body contains a list of component
+ports that are to be logically connected together.&nbsp; The list is space
+separated with the ports listed as COMPONENT:PORT</li>
+
+</ul>
+The sequel describes what is in a <a href="#Basic Component Graph">basic
+component graph</a> and a <a href="#Graph with Communication Components:">graph
+using communication components</a>.
+<br>&nbsp;
+<h3><a NAME="Basic Component Graph"></a>Components</h3>
+<p>Components have two files that describe them 1)A .comp file which contains
+the interface specification for the component. 2)A .c file that contains the
+implementation of the component.&nbsp; The interface description contains 5
+parts.</p>
+<ol>
+  <li>
+    <p class="MsoPlainText" style="margin-left:24.0pt;text-indent:-.25in;mso-list:
+l0 level1 lfo1;tab-stops:list 24.0pt"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;</span>list
+    of commands it ACCEPTS<o:p>
+    </o:p>
+    </span></li>
+  <li>
+    <p class="MsoPlainText" style="margin-left:24.0pt;text-indent:-.25in;mso-list:
+l0 level1 lfo1;tab-stops:list 24.0pt"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;</span>list
+    of events it SIGNALS<o:p>
+    </o:p>
+    </span></li>
+  <li>
+    <p class="MsoPlainText" style="margin-left:24.0pt;text-indent:-.25in;mso-list:
+l0 level1 lfo1;tab-stops:list 24.0pt"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;</span>list
+    of commands it USES<o:p>
+    </o:p>
+    </span></li>
+  <li>
+    <p class="MsoPlainText" style="margin-left:24.0pt;text-indent:-.25in;mso-list:
+l0 level1 lfo1;tab-stops:list 24.0pt"><span style="mso-fareast-font-family:&quot;MS Mincho&quot;"><span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;</span>list
+    of events it HANDLES<o:p>
+    </o:p>
+    </span></li>
+  <li>
+    <p class="MsoPlainText" style="margin-left:24.0pt;text-indent:-.25in;mso-list:
+l0 level1 lfo1;tab-stops:list 24.0pt"><span style="font-size:12.0pt;font-family:&quot;Times New Roman&quot;;mso-fareast-font-family:
+&quot;MS Mincho&quot;;mso-ansi-language:EN-US;mso-fareast-language:EN-US;mso-bidi-language:
+AR-SA">list of INTERNAL methods – not used to compose components but
+    automatically placed in header files</span></li>
+</ol>
+<p>Here is an example of&nbsp; a a component description file.</p>
+<p>/*AM.comp*/<br>
+ACCEPTS{<br>
+        char AM_SEND_MSG(char addr,char type, char* data);<br>
+        char AM_POWER(char mode);<br>
+        char AM_INIT();<br>
+};<br>
+<br>
+<br>
+SIGNALS{<br>
+        char AM_MSG_REC(char type, char* data);<br>
+        char AM_MSG_SEND_DONE(char success);<br>
+};<br>
+<br>
+HANDLES{<br>
+        char AM_TX_PACKET_DONE(char success);<br>
+        char AM_RX_PACKET_DONE(char* packet);<br>
+};<br>
+<br>
+USES{<br>
+        char AM_SUB_TX_PACKET(char* data);<br>
+        void AM_SUB_POWER(char mode);<br>
+        char AM_SUB_INIT();<br>
+};</p>
+<h3><a NAME="Basic Component Graph"></a>Basic Component Graph</h3>
+<p>The following is drawn from the example apps/blink.vhd
+<p>The list of components is simple:</p>
+<p>include modules{<br>
+MAIN;<br>
+BLINK;<br>
+CLOCK;<br>
+LEDS;<br>
+};</p>
+<p>The body shows how the ports are all wired together.&nbsp; The names don't
+matter, but it sure helps to make them meaningful.&nbsp; Here we see that the MAIN_SUB_INIT is wired to BLINK_INIT.&nbsp;
+BLINK_SUB_INIT is wired to CLOCK_INIT.&nbsp; If there
+is more than one IN port on a net, the tools will create the fan-out function
+automatically.
+<p>BLINK:BLINK_INIT MAIN:MAIN_SUB_INIT<br>
+BLINK:BLINK_APP_DONE MAIN:MAIN_SUB_SEND_DONE<br>
+BLINK:BLINK_LEDy_on LEDS:YELLOW_LED_ON<br>
+BLINK:BLINK_LEDy_off LEDS:YELLOW_LED_OFF<br>
+BLINK:BLINK_LEDr_on LEDS:RED_LED_ON<br>
+BLINK:BLINK_LEDr_off LEDS:RED_LED_OFF<br>
+BLINK:BLINK_LEDg_on LEDS:GREEN_LED_ON<br>
+BLINK:BLINK_LEDg_off LEDS:GREEN_LED_OFF<br>
+BLINK:BLINK_SUB_INIT CLOCK:CLOCK_INIT<br>
+BLINK:BLINK_CLOCK_EVENT CLOCK:CLOCK_FIRE_EVENT
+<p>Most lower-level components provide an initialization command and a
+power management command.
+<p>You may have noticed an extra signal, AM_DISP.&nbsp; It is magic and
+described below.&nbsp;&nbsp; If you would rather follow the simple BLINK
+example through, skip to <a href="#app-component">Building a Application
+Component</a>.
+<br>&nbsp;
+<h3>
+<a NAME="Graph with Communication Components:"></a>Graph with Communication
+Components:</h3>
+Application components that do communication will provide active message
+handlers.&nbsp; Currently, in order for the tools to manage the handler
+registration and dispatching, you need to follow some rather kludgy conventions.&nbsp;
+The component port should be of the name AM_MSG_HANDLER_x, where x is a
+number.&nbsp; Note capitalization.&nbsp; No two handlers in the application
+should use the same number.&nbsp; The signal name that is used is AM_DISP(x)
+- same x.&nbsp;&nbsp; The component file provides a function AM_msg_handler_x
+(note change in case), that takes a point to the inbound message buffer
+as argument.<p>These applications also needs a stack of components stretching down from
+AM to the physical media.&nbsp; The AM component is generic to a wide range
+of applications, so you will seldom need to change it. In order to assist with
+the repetitive use of the same set of components, we have the ability to specify
+complex components that are an assembly of basic components.&nbsp; One such component
+is the GENERIC_COMM component which contains a complete RFM radio stack from the
+Active Messages layer down to the bit processing layer.
+<p>
+A high-level application component will typically implement the upper initialization
+commands, forward them to lower components as appropriate and then operate
+in an event driven mode, as defined by the collection of event handlers.&nbsp;
+The rules are these.&nbsp; Component FOO is described by FOO.c.&nbsp; The
+declarations for each of the ports appear in the associated .h file and
+the associated functions appear in the C file.&nbsp; The names used are
+the port names.&nbsp; The C file will provide a function for every IN port.&nbsp;
+It will invoke functions associated with OUT ports, using the port name.&nbsp;
+Commands and events return control information and possibly data.&nbsp;
+0 is treated as failure.&nbsp; Non-zero indicates success.&nbsp; This is
+discussed more with respect to <a href="#datapumps">event-based data pumps</a><b>.</b>
+<p>A component should not need to name functions in other components.&nbsp;
+If it does, the modularity is broken.&nbsp; The tools will translate internal
+names to external names, as specified by the .desc file.<h3>
+<a NAME="app-component"></a>Application Component</h3>
+<p>For the simple BLINK example above, we have the associated include file
+BLINK.h containing:
+<p><tt>#ifndef __blinkHEAD__</tt>
+<br><tt>#define __blinkHEAD__</tt>
+<p><tt>#include &quot;tos.h&quot;<br>
+#include &quot;blink.h&quot;</tt>
+<p><tt>//ACCEPTS:</tt>
+<br><tt>char TOS_COMMAND(BLINK_INIT)();</tt>
+<br><tt>char TOS_COMMAND(BLINK_START)();</tt>
+<p><tt>//SIGNALS:</tt>
+<p><tt>//HANDLES</tt>
+<br><tt>void BLINK_CLOCK_EVENT();</tt>
+<p><tt>//USES</tt>
+<br><tt>char TOS_COMMAND(BLINK_SUB_INIT)(char interval);</tt>
+<p><tt>#endif</tt>
+<p>It must include the tos.h header file.
+<h3><a NAME="FULLPC"></a>PC based TINYOS emulation.</h3>
+<p>MakefilePC provides the hooks for building a emulation version of the
+NSD application for debugging purposes.&nbsp; It even emulates the radio.&nbsp;
+In the future, this support will be incoporated more transparently into
+lower layers.
+<p>It builds up some handy utilty functions, such as:
+<p>void LEDy_on()
+<br>{
+<br>#ifdef FULLPC
+<br>&nbsp; printf("Y");
+<br>#else
+<br>&nbsp; CLR_BLINK_LED1();
+<br>#endif
+<br>}<h3>
+<a NAME="Memory-model"></a>Memory Model -- the FRAME</h3>
+<p>It declares a frame to hold its internal state.&nbsp; Variable state
+is only visible within this component and referenced as VAR(state).
+<br>&nbsp;
+<p>#define TOS_FRAME_TYPE BLINK_frame
+<br>TOS_FRAME_BEGIN(BLINK_frame) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; char state;
+<br>}
+<br>TOS_FRAME_END(BLINK_frame);
+<p>The implementation of the BLINK_INIT turns on all the LEDs and in turn
+initializes the clock component.&nbsp; Notice, it refers to the internal
+name BLINK_SUB_INIT, which is bound to CLOCK_INIT through the vBINIT signal.
+<p>char TOS_COMMAND(BLINK_INIT)(){
+<br>&nbsp; LEDy_on();&nbsp;&nbsp; LEDr_on();&nbsp;&nbsp; LEDg_on();
+<br>&nbsp; TOS_COMMAND(BLINK_SUB_INIT)(0x03);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+/* initialize clock component */
+<br>&nbsp; VAR(state) = 0;
+<br>&nbsp; return 1;
+<br>}
+<p>The BLINK_START command, which is invoked after initialization completes,
+turns all the LEDs off and completes, returning success.
+<p>char TOS_COMMAND(BLINK_START)(){
+<br>&nbsp; LEDy_off();&nbsp; LEDr_off();&nbsp; LEDg_off();
+<br>&nbsp; return 1;
+<br>}
+<p>The TOS scheduler puts the hardware into sleep mode when there is no
+pending tasks.&nbsp; It remains sensitive to interrupts, such as the real-time
+clock.&nbsp; BLINK handles this clock event.&nbsp; It increments a 3-bit
+counter and sets the LEDs accordingly.
+<p>/* Clock Event Handler:
+<br>&nbsp;&nbsp; update LED state as 3-bit counter and set LEDs to match
+<br>&nbsp;*/
+<br>void BLINK_CLOCK_EVENT(){
+<br>&nbsp; char state = VAR(state) = (VAR(state)+1) &amp; 7;
+<br>&nbsp; if (state &amp; 1) LEDy_on();&nbsp; else LEDy_off();
+<br>&nbsp; if (state &amp; 2) LEDg_on();&nbsp; else LEDg_off();
+<br>&nbsp; if (state &amp; 4) LEDr_on();&nbsp; else LEDr_off();
+<p>The BLINK compenent shows the command/event driven control aspect of
+Tiny OS and the component modularity.&nbsp; More sophisticated components
+demonstrate the use of the command/event protocol for data pumps for streaming
+data across one or more component layers and the use of TOS threads to
+provide internal concurrency.&nbsp;&nbsp; In the high-level application
+component, these capabilities are project up simply as Active Message operations:
+send command and arrival handler.&nbsp; These are illustrated by a simple
+example CHIRP that periodically takes a sensor reading and broadcasts it
+on the network.
+<br>&nbsp;
+<br>&nbsp;
+<h2>
+<a NAME="hw-component"></a>Developing a low-level application component</h2>
+
+<p><br><a NAME="datapumps"></a>Event-based Data Pumps
+<p>Internal concurrency
+</body>
+</html>

@@ -1,0 +1,772 @@
+TOS_MsgPtr AM_MSG_REC(char num, TOS_MsgPtr data){
+printf("got messaged number %d for dispatch\n", num);
+if((num & 0xff) == 0){
+        data =  TOS_EVENT(AM_MSG_HANDLER_0)(data);
+}
+if((num & 0xff) == 1){
+        data = TOS_EVENT(AM_MSG_HANDLER_1)(data);
+}
+if((num & 0xff) == 2){
+        data = TOS_EVENT(AM_MSG_HANDLER_2)(data);
+}
+if((num & 0xff) == 3){
+        data = TOS_EVENT(AM_MSG_HANDLER_3)(data);
+}
+if((num & 0xff) == 4){
+        data = TOS_EVENT(AM_MSG_HANDLER_4)(data);
+}
+if((num & 0xff) == 5){
+        data = TOS_EVENT(AM_MSG_HANDLER_5)(data);
+}
+if((num & 0xff) == 6){
+        data = TOS_EVENT(AM_MSG_HANDLER_6)(data);
+}
+if((num & 0xff) == 7){
+        data = TOS_EVENT(AM_MSG_HANDLER_7)(data);
+}
+if((num & 0xff) == 8){
+        data = TOS_EVENT(AM_MSG_HANDLER_8)(data);
+}
+if((num & 0xff) == 9){
+        data = TOS_EVENT(AM_MSG_HANDLER_9)(data);
+}
+if((num & 0xff) == 10){
+        data = TOS_EVENT(AM_MSG_HANDLER_10)(data);
+}
+if((num & 0xff) == 11){
+        data = TOS_EVENT(AM_MSG_HANDLER_11)(data);
+}
+if((num & 0xff) == 12){
+        data = TOS_EVENT(AM_MSG_HANDLER_12)(data);
+}
+if((num & 0xff) == 13){
+        data = TOS_EVENT(AM_MSG_HANDLER_13)(data);
+}
+if((num & 0xff) == 14){
+        data = TOS_EVENT(AM_MSG_HANDLER_14)(data);
+}
+if((num & 0xff) == 15){
+        data = TOS_EVENT(AM_MSG_HANDLER_15)(data);
+}
+if((num & 0xff) == 16){
+        data = TOS_EVENT(AM_MSG_HANDLER_16)(data);
+}
+if((num & 0xff) == 17){
+        data = TOS_EVENT(AM_MSG_HANDLER_17)(data);
+}
+if((num & 0xff) == 18){
+        data = TOS_EVENT(AM_MSG_HANDLER_18)(data);
+}
+if((num & 0xff) == 19){
+        data = TOS_EVENT(AM_MSG_HANDLER_19)(data);
+}
+if((num & 0xff) == 20){
+        data = TOS_EVENT(AM_MSG_HANDLER_20)(data);
+}
+if((num & 0xff) == 21){
+        data = TOS_EVENT(AM_MSG_HANDLER_21)(data);
+}
+if((num & 0xff) == 22){
+        data = TOS_EVENT(AM_MSG_HANDLER_22)(data);
+}
+if((num & 0xff) == 23){
+        data = TOS_EVENT(AM_MSG_HANDLER_23)(data);
+}
+if((num & 0xff) == 24){
+        data = TOS_EVENT(AM_MSG_HANDLER_24)(data);
+}
+if((num & 0xff) == 25){
+        data = TOS_EVENT(AM_MSG_HANDLER_25)(data);
+}
+if((num & 0xff) == 26){
+        data = TOS_EVENT(AM_MSG_HANDLER_26)(data);
+}
+if((num & 0xff) == 27){
+        data = TOS_EVENT(AM_MSG_HANDLER_27)(data);
+}
+if((num & 0xff) == 28){
+        data = TOS_EVENT(AM_MSG_HANDLER_28)(data);
+}
+if((num & 0xff) == 29){
+        data = TOS_EVENT(AM_MSG_HANDLER_29)(data);
+}
+if((num & 0xff) == 30){
+        data = TOS_EVENT(AM_MSG_HANDLER_30)(data);
+}
+if((num & 0xff) == 31){
+        data = TOS_EVENT(AM_MSG_HANDLER_31)(data);
+}
+if((num & 0xff) == 32){
+        data = TOS_EVENT(AM_MSG_HANDLER_32)(data);
+}
+if((num & 0xff) == 33){
+        data = TOS_EVENT(AM_MSG_HANDLER_33)(data);
+}
+if((num & 0xff) == 34){
+        data = TOS_EVENT(AM_MSG_HANDLER_34)(data);
+}
+if((num & 0xff) == 35){
+        data = TOS_EVENT(AM_MSG_HANDLER_35)(data);
+}
+if((num & 0xff) == 36){
+        data = TOS_EVENT(AM_MSG_HANDLER_36)(data);
+}
+if((num & 0xff) == 37){
+        data = TOS_EVENT(AM_MSG_HANDLER_37)(data);
+}
+if((num & 0xff) == 38){
+        data = TOS_EVENT(AM_MSG_HANDLER_38)(data);
+}
+if((num & 0xff) == 39){
+        data = TOS_EVENT(AM_MSG_HANDLER_39)(data);
+}
+if((num & 0xff) == 40){
+        data = TOS_EVENT(AM_MSG_HANDLER_40)(data);
+}
+if((num & 0xff) == 41){
+        data = TOS_EVENT(AM_MSG_HANDLER_41)(data);
+}
+if((num & 0xff) == 42){
+        data = TOS_EVENT(AM_MSG_HANDLER_42)(data);
+}
+if((num & 0xff) == 43){
+        data = TOS_EVENT(AM_MSG_HANDLER_43)(data);
+}
+if((num & 0xff) == 44){
+        data = TOS_EVENT(AM_MSG_HANDLER_44)(data);
+}
+if((num & 0xff) == 45){
+        data = TOS_EVENT(AM_MSG_HANDLER_45)(data);
+}
+if((num & 0xff) == 46){
+        data = TOS_EVENT(AM_MSG_HANDLER_46)(data);
+}
+if((num & 0xff) == 47){
+        data = TOS_EVENT(AM_MSG_HANDLER_47)(data);
+}
+if((num & 0xff) == 48){
+        data = TOS_EVENT(AM_MSG_HANDLER_48)(data);
+}
+if((num & 0xff) == 49){
+        data = TOS_EVENT(AM_MSG_HANDLER_49)(data);
+}
+if((num & 0xff) == 50){
+        data = TOS_EVENT(AM_MSG_HANDLER_50)(data);
+}
+if((num & 0xff) == 51){
+        data = TOS_EVENT(AM_MSG_HANDLER_51)(data);
+}
+if((num & 0xff) == 52){
+        data = TOS_EVENT(AM_MSG_HANDLER_52)(data);
+}
+if((num & 0xff) == 53){
+        data = TOS_EVENT(AM_MSG_HANDLER_53)(data);
+}
+if((num & 0xff) == 54){
+        data = TOS_EVENT(AM_MSG_HANDLER_54)(data);
+}
+if((num & 0xff) == 55){
+        data = TOS_EVENT(AM_MSG_HANDLER_55)(data);
+}
+if((num & 0xff) == 56){
+        data = TOS_EVENT(AM_MSG_HANDLER_56)(data);
+}
+if((num & 0xff) == 57){
+        data = TOS_EVENT(AM_MSG_HANDLER_57)(data);
+}
+if((num & 0xff) == 58){
+        data = TOS_EVENT(AM_MSG_HANDLER_58)(data);
+}
+if((num & 0xff) == 59){
+        data = TOS_EVENT(AM_MSG_HANDLER_59)(data);
+}
+if((num & 0xff) == 60){
+        data = TOS_EVENT(AM_MSG_HANDLER_60)(data);
+}
+if((num & 0xff) == 61){
+        data = TOS_EVENT(AM_MSG_HANDLER_61)(data);
+}
+if((num & 0xff) == 62){
+        data = TOS_EVENT(AM_MSG_HANDLER_62)(data);
+}
+if((num & 0xff) == 63){
+        data = TOS_EVENT(AM_MSG_HANDLER_63)(data);
+}
+if((num & 0xff) == 64){
+        data = TOS_EVENT(AM_MSG_HANDLER_64)(data);
+}
+if((num & 0xff) == 65){
+        data = TOS_EVENT(AM_MSG_HANDLER_65)(data);
+}
+if((num & 0xff) == 66){
+        data = TOS_EVENT(AM_MSG_HANDLER_66)(data);
+}
+if((num & 0xff) == 67){
+        data = TOS_EVENT(AM_MSG_HANDLER_67)(data);
+}
+if((num & 0xff) == 68){
+        data = TOS_EVENT(AM_MSG_HANDLER_68)(data);
+}
+if((num & 0xff) == 69){
+        data = TOS_EVENT(AM_MSG_HANDLER_69)(data);
+}
+if((num & 0xff) == 70){
+        data = TOS_EVENT(AM_MSG_HANDLER_70)(data);
+}
+if((num & 0xff) == 71){
+        data = TOS_EVENT(AM_MSG_HANDLER_71)(data);
+}
+if((num & 0xff) == 72){
+        data = TOS_EVENT(AM_MSG_HANDLER_72)(data);
+}
+if((num & 0xff) == 73){
+        data = TOS_EVENT(AM_MSG_HANDLER_73)(data);
+}
+if((num & 0xff) == 74){
+        data = TOS_EVENT(AM_MSG_HANDLER_74)(data);
+}
+if((num & 0xff) == 75){
+        data = TOS_EVENT(AM_MSG_HANDLER_75)(data);
+}
+if((num & 0xff) == 76){
+        data = TOS_EVENT(AM_MSG_HANDLER_76)(data);
+}
+if((num & 0xff) == 77){
+        data = TOS_EVENT(AM_MSG_HANDLER_77)(data);
+}
+if((num & 0xff) == 78){
+        data = TOS_EVENT(AM_MSG_HANDLER_78)(data);
+}
+if((num & 0xff) == 79){
+        data = TOS_EVENT(AM_MSG_HANDLER_79)(data);
+}
+if((num & 0xff) == 80){
+        data = TOS_EVENT(AM_MSG_HANDLER_80)(data);
+}
+if((num & 0xff) == 81){
+        data = TOS_EVENT(AM_MSG_HANDLER_81)(data);
+}
+if((num & 0xff) == 82){
+        data = TOS_EVENT(AM_MSG_HANDLER_82)(data);
+}
+if((num & 0xff) == 83){
+        data = TOS_EVENT(AM_MSG_HANDLER_83)(data);
+}
+if((num & 0xff) == 84){
+        data = TOS_EVENT(AM_MSG_HANDLER_84)(data);
+}
+if((num & 0xff) == 85){
+        data = TOS_EVENT(AM_MSG_HANDLER_85)(data);
+}
+if((num & 0xff) == 86){
+        data = TOS_EVENT(AM_MSG_HANDLER_86)(data);
+}
+if((num & 0xff) == 87){
+        data = TOS_EVENT(AM_MSG_HANDLER_87)(data);
+}
+if((num & 0xff) == 88){
+        data = TOS_EVENT(AM_MSG_HANDLER_88)(data);
+}
+if((num & 0xff) == 89){
+        data = TOS_EVENT(AM_MSG_HANDLER_89)(data);
+}
+if((num & 0xff) == 90){
+        data = TOS_EVENT(AM_MSG_HANDLER_90)(data);
+}
+if((num & 0xff) == 91){
+        data = TOS_EVENT(AM_MSG_HANDLER_91)(data);
+}
+if((num & 0xff) == 92){
+        data = TOS_EVENT(AM_MSG_HANDLER_92)(data);
+}
+if((num & 0xff) == 93){
+        data = TOS_EVENT(AM_MSG_HANDLER_93)(data);
+}
+if((num & 0xff) == 94){
+        data = TOS_EVENT(AM_MSG_HANDLER_94)(data);
+}
+if((num & 0xff) == 95){
+        data = TOS_EVENT(AM_MSG_HANDLER_95)(data);
+}
+if((num & 0xff) == 96){
+        data = TOS_EVENT(AM_MSG_HANDLER_96)(data);
+}
+if((num & 0xff) == 97){
+        data = TOS_EVENT(AM_MSG_HANDLER_97)(data);
+}
+if((num & 0xff) == 98){
+        data = TOS_EVENT(AM_MSG_HANDLER_98)(data);
+}
+if((num & 0xff) == 99){
+        data = TOS_EVENT(AM_MSG_HANDLER_99)(data);
+}
+if((num & 0xff) == 100){
+        data = TOS_EVENT(AM_MSG_HANDLER_100)(data);
+}
+if((num & 0xff) == 101){
+        data = TOS_EVENT(AM_MSG_HANDLER_101)(data);
+}
+if((num & 0xff) == 102){
+        data = TOS_EVENT(AM_MSG_HANDLER_102)(data);
+}
+if((num & 0xff) == 103){
+        data = TOS_EVENT(AM_MSG_HANDLER_103)(data);
+}
+if((num & 0xff) == 104){
+        data = TOS_EVENT(AM_MSG_HANDLER_104)(data);
+}
+if((num & 0xff) == 105){
+        data = TOS_EVENT(AM_MSG_HANDLER_105)(data);
+}
+if((num & 0xff) == 106){
+        data = TOS_EVENT(AM_MSG_HANDLER_106)(data);
+}
+if((num & 0xff) == 107){
+        data = TOS_EVENT(AM_MSG_HANDLER_107)(data);
+}
+if((num & 0xff) == 108){
+        data = TOS_EVENT(AM_MSG_HANDLER_108)(data);
+}
+if((num & 0xff) == 109){
+        data = TOS_EVENT(AM_MSG_HANDLER_109)(data);
+}
+if((num & 0xff) == 110){
+        data = TOS_EVENT(AM_MSG_HANDLER_110)(data);
+}
+if((num & 0xff) == 111){
+        data = TOS_EVENT(AM_MSG_HANDLER_111)(data);
+}
+if((num & 0xff) == 112){
+        data = TOS_EVENT(AM_MSG_HANDLER_112)(data);
+}
+if((num & 0xff) == 113){
+        data = TOS_EVENT(AM_MSG_HANDLER_113)(data);
+}
+if((num & 0xff) == 114){
+        data = TOS_EVENT(AM_MSG_HANDLER_114)(data);
+}
+if((num & 0xff) == 115){
+        data = TOS_EVENT(AM_MSG_HANDLER_115)(data);
+}
+if((num & 0xff) == 116){
+        data = TOS_EVENT(AM_MSG_HANDLER_116)(data);
+}
+if((num & 0xff) == 117){
+        data = TOS_EVENT(AM_MSG_HANDLER_117)(data);
+}
+if((num & 0xff) == 118){
+        data = TOS_EVENT(AM_MSG_HANDLER_118)(data);
+}
+if((num & 0xff) == 119){
+        data = TOS_EVENT(AM_MSG_HANDLER_119)(data);
+}
+if((num & 0xff) == 120){
+        data = TOS_EVENT(AM_MSG_HANDLER_120)(data);
+}
+if((num & 0xff) == 121){
+        data = TOS_EVENT(AM_MSG_HANDLER_121)(data);
+}
+if((num & 0xff) == 122){
+        data = TOS_EVENT(AM_MSG_HANDLER_122)(data);
+}
+if((num & 0xff) == 123){
+        data = TOS_EVENT(AM_MSG_HANDLER_123)(data);
+}
+if((num & 0xff) == 124){
+        data = TOS_EVENT(AM_MSG_HANDLER_124)(data);
+}
+if((num & 0xff) == 125){
+        data = TOS_EVENT(AM_MSG_HANDLER_125)(data);
+}
+if((num & 0xff) == 126){
+        data = TOS_EVENT(AM_MSG_HANDLER_126)(data);
+}
+if((num & 0xff) == 127){
+        data = TOS_EVENT(AM_MSG_HANDLER_127)(data);
+}
+if((num & 0xff) == 128){
+        data = TOS_EVENT(AM_MSG_HANDLER_128)(data);
+}
+if((num & 0xff) == 129){
+        data = TOS_EVENT(AM_MSG_HANDLER_129)(data);
+}
+if((num & 0xff) == 130){
+        data = TOS_EVENT(AM_MSG_HANDLER_130)(data);
+}
+if((num & 0xff) == 131){
+        data = TOS_EVENT(AM_MSG_HANDLER_131)(data);
+}
+if((num & 0xff) == 132){
+        data = TOS_EVENT(AM_MSG_HANDLER_132)(data);
+}
+if((num & 0xff) == 133){
+        data = TOS_EVENT(AM_MSG_HANDLER_133)(data);
+}
+if((num & 0xff) == 134){
+        data = TOS_EVENT(AM_MSG_HANDLER_134)(data);
+}
+if((num & 0xff) == 135){
+        data = TOS_EVENT(AM_MSG_HANDLER_135)(data);
+}
+if((num & 0xff) == 136){
+        data = TOS_EVENT(AM_MSG_HANDLER_136)(data);
+}
+if((num & 0xff) == 137){
+        data = TOS_EVENT(AM_MSG_HANDLER_137)(data);
+}
+if((num & 0xff) == 138){
+        data = TOS_EVENT(AM_MSG_HANDLER_138)(data);
+}
+if((num & 0xff) == 139){
+        data = TOS_EVENT(AM_MSG_HANDLER_139)(data);
+}
+if((num & 0xff) == 140){
+        data = TOS_EVENT(AM_MSG_HANDLER_140)(data);
+}
+if((num & 0xff) == 141){
+        data = TOS_EVENT(AM_MSG_HANDLER_141)(data);
+}
+if((num & 0xff) == 142){
+        data = TOS_EVENT(AM_MSG_HANDLER_142)(data);
+}
+if((num & 0xff) == 143){
+        data = TOS_EVENT(AM_MSG_HANDLER_143)(data);
+}
+if((num & 0xff) == 144){
+        data = TOS_EVENT(AM_MSG_HANDLER_144)(data);
+}
+if((num & 0xff) == 145){
+        data = TOS_EVENT(AM_MSG_HANDLER_145)(data);
+}
+if((num & 0xff) == 146){
+        data = TOS_EVENT(AM_MSG_HANDLER_146)(data);
+}
+if((num & 0xff) == 147){
+        data = TOS_EVENT(AM_MSG_HANDLER_147)(data);
+}
+if((num & 0xff) == 148){
+        data = TOS_EVENT(AM_MSG_HANDLER_148)(data);
+}
+if((num & 0xff) == 149){
+        data = TOS_EVENT(AM_MSG_HANDLER_149)(data);
+}
+if((num & 0xff) == 150){
+        data = TOS_EVENT(AM_MSG_HANDLER_150)(data);
+}
+if((num & 0xff) == 151){
+        data = TOS_EVENT(AM_MSG_HANDLER_151)(data);
+}
+if((num & 0xff) == 152){
+        data = TOS_EVENT(AM_MSG_HANDLER_152)(data);
+}
+if((num & 0xff) == 153){
+        data = TOS_EVENT(AM_MSG_HANDLER_153)(data);
+}
+if((num & 0xff) == 154){
+        data = TOS_EVENT(AM_MSG_HANDLER_154)(data);
+}
+if((num & 0xff) == 155){
+        data = TOS_EVENT(AM_MSG_HANDLER_155)(data);
+}
+if((num & 0xff) == 156){
+        data = TOS_EVENT(AM_MSG_HANDLER_156)(data);
+}
+if((num & 0xff) == 157){
+        data = TOS_EVENT(AM_MSG_HANDLER_157)(data);
+}
+if((num & 0xff) == 158){
+        data = TOS_EVENT(AM_MSG_HANDLER_158)(data);
+}
+if((num & 0xff) == 159){
+        data = TOS_EVENT(AM_MSG_HANDLER_159)(data);
+}
+if((num & 0xff) == 160){
+        data = TOS_EVENT(AM_MSG_HANDLER_160)(data);
+}
+if((num & 0xff) == 161){
+        data = TOS_EVENT(AM_MSG_HANDLER_161)(data);
+}
+if((num & 0xff) == 162){
+        data = TOS_EVENT(AM_MSG_HANDLER_162)(data);
+}
+if((num & 0xff) == 163){
+        data = TOS_EVENT(AM_MSG_HANDLER_163)(data);
+}
+if((num & 0xff) == 164){
+        data = TOS_EVENT(AM_MSG_HANDLER_164)(data);
+}
+if((num & 0xff) == 165){
+        data = TOS_EVENT(AM_MSG_HANDLER_165)(data);
+}
+if((num & 0xff) == 166){
+        data = TOS_EVENT(AM_MSG_HANDLER_166)(data);
+}
+if((num & 0xff) == 167){
+        data = TOS_EVENT(AM_MSG_HANDLER_167)(data);
+}
+if((num & 0xff) == 168){
+        data = TOS_EVENT(AM_MSG_HANDLER_168)(data);
+}
+if((num & 0xff) == 169){
+        data = TOS_EVENT(AM_MSG_HANDLER_169)(data);
+}
+if((num & 0xff) == 170){
+        data = TOS_EVENT(AM_MSG_HANDLER_170)(data);
+}
+if((num & 0xff) == 171){
+        data = TOS_EVENT(AM_MSG_HANDLER_171)(data);
+}
+if((num & 0xff) == 172){
+        data = TOS_EVENT(AM_MSG_HANDLER_172)(data);
+}
+if((num & 0xff) == 173){
+        data = TOS_EVENT(AM_MSG_HANDLER_173)(data);
+}
+if((num & 0xff) == 174){
+        data = TOS_EVENT(AM_MSG_HANDLER_174)(data);
+}
+if((num & 0xff) == 175){
+        data = TOS_EVENT(AM_MSG_HANDLER_175)(data);
+}
+if((num & 0xff) == 176){
+        data = TOS_EVENT(AM_MSG_HANDLER_176)(data);
+}
+if((num & 0xff) == 177){
+        data = TOS_EVENT(AM_MSG_HANDLER_177)(data);
+}
+if((num & 0xff) == 178){
+        data = TOS_EVENT(AM_MSG_HANDLER_178)(data);
+}
+if((num & 0xff) == 179){
+        data = TOS_EVENT(AM_MSG_HANDLER_179)(data);
+}
+if((num & 0xff) == 180){
+        data = TOS_EVENT(AM_MSG_HANDLER_180)(data);
+}
+if((num & 0xff) == 181){
+        data = TOS_EVENT(AM_MSG_HANDLER_181)(data);
+}
+if((num & 0xff) == 182){
+        data = TOS_EVENT(AM_MSG_HANDLER_182)(data);
+}
+if((num & 0xff) == 183){
+        data = TOS_EVENT(AM_MSG_HANDLER_183)(data);
+}
+if((num & 0xff) == 184){
+        data = TOS_EVENT(AM_MSG_HANDLER_184)(data);
+}
+if((num & 0xff) == 185){
+        data = TOS_EVENT(AM_MSG_HANDLER_185)(data);
+}
+if((num & 0xff) == 186){
+        data = TOS_EVENT(AM_MSG_HANDLER_186)(data);
+}
+if((num & 0xff) == 187){
+        data = TOS_EVENT(AM_MSG_HANDLER_187)(data);
+}
+if((num & 0xff) == 188){
+        data = TOS_EVENT(AM_MSG_HANDLER_188)(data);
+}
+if((num & 0xff) == 189){
+        data = TOS_EVENT(AM_MSG_HANDLER_189)(data);
+}
+if((num & 0xff) == 190){
+        data = TOS_EVENT(AM_MSG_HANDLER_190)(data);
+}
+if((num & 0xff) == 191){
+        data = TOS_EVENT(AM_MSG_HANDLER_191)(data);
+}
+if((num & 0xff) == 192){
+        data = TOS_EVENT(AM_MSG_HANDLER_192)(data);
+}
+if((num & 0xff) == 193){
+        data = TOS_EVENT(AM_MSG_HANDLER_193)(data);
+}
+if((num & 0xff) == 194){
+        data = TOS_EVENT(AM_MSG_HANDLER_194)(data);
+}
+if((num & 0xff) == 195){
+        data = TOS_EVENT(AM_MSG_HANDLER_195)(data);
+}
+if((num & 0xff) == 196){
+        data = TOS_EVENT(AM_MSG_HANDLER_196)(data);
+}
+if((num & 0xff) == 197){
+        data = TOS_EVENT(AM_MSG_HANDLER_197)(data);
+}
+if((num & 0xff) == 198){
+        data = TOS_EVENT(AM_MSG_HANDLER_198)(data);
+}
+if((num & 0xff) == 199){
+        data = TOS_EVENT(AM_MSG_HANDLER_199)(data);
+}
+if((num & 0xff) == 200){
+        data = TOS_EVENT(AM_MSG_HANDLER_200)(data);
+}
+if((num & 0xff) == 201){
+        data = TOS_EVENT(AM_MSG_HANDLER_201)(data);
+}
+if((num & 0xff) == 202){
+        data = TOS_EVENT(AM_MSG_HANDLER_202)(data);
+}
+if((num & 0xff) == 203){
+        data = TOS_EVENT(AM_MSG_HANDLER_203)(data);
+}
+if((num & 0xff) == 204){
+        data = TOS_EVENT(AM_MSG_HANDLER_204)(data);
+}
+if((num & 0xff) == 205){
+        data = TOS_EVENT(AM_MSG_HANDLER_205)(data);
+}
+if((num & 0xff) == 206){
+        data = TOS_EVENT(AM_MSG_HANDLER_206)(data);
+}
+if((num & 0xff) == 207){
+        data = TOS_EVENT(AM_MSG_HANDLER_207)(data);
+}
+if((num & 0xff) == 208){
+        data = TOS_EVENT(AM_MSG_HANDLER_208)(data);
+}
+if((num & 0xff) == 209){
+        data = TOS_EVENT(AM_MSG_HANDLER_209)(data);
+}
+if((num & 0xff) == 210){
+        data = TOS_EVENT(AM_MSG_HANDLER_210)(data);
+}
+if((num & 0xff) == 211){
+        data = TOS_EVENT(AM_MSG_HANDLER_211)(data);
+}
+if((num & 0xff) == 212){
+        data = TOS_EVENT(AM_MSG_HANDLER_212)(data);
+}
+if((num & 0xff) == 213){
+        data = TOS_EVENT(AM_MSG_HANDLER_213)(data);
+}
+if((num & 0xff) == 214){
+        data = TOS_EVENT(AM_MSG_HANDLER_214)(data);
+}
+if((num & 0xff) == 215){
+        data = TOS_EVENT(AM_MSG_HANDLER_215)(data);
+}
+if((num & 0xff) == 216){
+        data = TOS_EVENT(AM_MSG_HANDLER_216)(data);
+}
+if((num & 0xff) == 217){
+        data = TOS_EVENT(AM_MSG_HANDLER_217)(data);
+}
+if((num & 0xff) == 218){
+        data = TOS_EVENT(AM_MSG_HANDLER_218)(data);
+}
+if((num & 0xff) == 219){
+        data = TOS_EVENT(AM_MSG_HANDLER_219)(data);
+}
+if((num & 0xff) == 220){
+        data = TOS_EVENT(AM_MSG_HANDLER_220)(data);
+}
+if((num & 0xff) == 221){
+        data = TOS_EVENT(AM_MSG_HANDLER_221)(data);
+}
+if((num & 0xff) == 222){
+        data = TOS_EVENT(AM_MSG_HANDLER_222)(data);
+}
+if((num & 0xff) == 223){
+        data = TOS_EVENT(AM_MSG_HANDLER_223)(data);
+}
+if((num & 0xff) == 224){
+        data = TOS_EVENT(AM_MSG_HANDLER_224)(data);
+}
+if((num & 0xff) == 225){
+        data = TOS_EVENT(AM_MSG_HANDLER_225)(data);
+}
+if((num & 0xff) == 226){
+        data = TOS_EVENT(AM_MSG_HANDLER_226)(data);
+}
+if((num & 0xff) == 227){
+        data = TOS_EVENT(AM_MSG_HANDLER_227)(data);
+}
+if((num & 0xff) == 228){
+        data = TOS_EVENT(AM_MSG_HANDLER_228)(data);
+}
+if((num & 0xff) == 229){
+        data = TOS_EVENT(AM_MSG_HANDLER_229)(data);
+}
+if((num & 0xff) == 230){
+        data = TOS_EVENT(AM_MSG_HANDLER_230)(data);
+}
+if((num & 0xff) == 231){
+        data = TOS_EVENT(AM_MSG_HANDLER_231)(data);
+}
+if((num & 0xff) == 232){
+        data = TOS_EVENT(AM_MSG_HANDLER_232)(data);
+}
+if((num & 0xff) == 233){
+        data = TOS_EVENT(AM_MSG_HANDLER_233)(data);
+}
+if((num & 0xff) == 234){
+        data = TOS_EVENT(AM_MSG_HANDLER_234)(data);
+}
+if((num & 0xff) == 235){
+        data = TOS_EVENT(AM_MSG_HANDLER_235)(data);
+}
+if((num & 0xff) == 236){
+        data = TOS_EVENT(AM_MSG_HANDLER_236)(data);
+}
+if((num & 0xff) == 237){
+        data = TOS_EVENT(AM_MSG_HANDLER_237)(data);
+}
+if((num & 0xff) == 238){
+        data = TOS_EVENT(AM_MSG_HANDLER_238)(data);
+}
+if((num & 0xff) == 239){
+        data = TOS_EVENT(AM_MSG_HANDLER_239)(data);
+}
+if((num & 0xff) == 240){
+        data = TOS_EVENT(AM_MSG_HANDLER_240)(data);
+}
+if((num & 0xff) == 241){
+        data = TOS_EVENT(AM_MSG_HANDLER_241)(data);
+}
+if((num & 0xff) == 242){
+        data = TOS_EVENT(AM_MSG_HANDLER_242)(data);
+}
+if((num & 0xff) == 243){
+        data = TOS_EVENT(AM_MSG_HANDLER_243)(data);
+}
+if((num & 0xff) == 244){
+        data = TOS_EVENT(AM_MSG_HANDLER_244)(data);
+}
+if((num & 0xff) == 245){
+        data = TOS_EVENT(AM_MSG_HANDLER_245)(data);
+}
+if((num & 0xff) == 246){
+        data = TOS_EVENT(AM_MSG_HANDLER_246)(data);
+}
+if((num & 0xff) == 247){
+        data = TOS_EVENT(AM_MSG_HANDLER_247)(data);
+}
+if((num & 0xff) == 248){
+        data = TOS_EVENT(AM_MSG_HANDLER_248)(data);
+}
+if((num & 0xff) == 249){
+        data = TOS_EVENT(AM_MSG_HANDLER_249)(data);
+}
+if((num & 0xff) == 250){
+        data = TOS_EVENT(AM_MSG_HANDLER_250)(data);
+}
+if((num & 0xff) == 251){
+        data = TOS_EVENT(AM_MSG_HANDLER_251)(data);
+}
+if((num & 0xff) == 252){
+        data = TOS_EVENT(AM_MSG_HANDLER_252)(data);
+}
+if((num & 0xff) == 253){
+        data = TOS_EVENT(AM_MSG_HANDLER_253)(data);
+}
+if((num & 0xff) == 254){
+        data = TOS_EVENT(AM_MSG_HANDLER_254)(data);
+}
+if((num & 0xff) == 255){
+        data = TOS_EVENT(AM_MSG_HANDLER_255)(data);
+}
+return data;
+}

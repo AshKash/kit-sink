@@ -1,0 +1,70 @@
+#!/usr/bin/perl -w
+
+use strict;
+my %names;
+
+sub getModuleNames{
+  
+  my $file_name = shift;
+  #print "val: " . $file_name . "\n";
+  open(FFILE, "$file_name") or die;
+  while(<FFILE>){
+    if(/^include modules\{/){
+      last;
+    }
+  }
+  my @lines;
+  while(<FFILE>){
+    if(/\};/){
+	last;
+    }
+    	/(\w+);/; 
+    	if($1 . ".desc" ne $file_name){
+		 push @lines, $_;
+	}
+  }
+  #print @lines;
+  for (@lines){
+	#print "$_";
+   
+    /(\w+);/; 
+my $mod_name = $1;
+  if(open(MOD_FILE, $mod_name . ".comp")){
+	1;	
+   }elsif(open(MOD_FILE, "system/" . $mod_name . ".comp")){
+	$mod_name = "system/" . $mod_name;
+   }else{
+	die "could not find " . $mod_name . ".comp\n";
+   }
+   #print "looking for " . $mod_name . "\n";
+   while(<MOD_FILE>){
+	if(/^IMPLEMENTED_BY (\w+);/){
+		#print "found " . $mod_name . "\n";
+		getModuleNames($mod_name. ".desc");
+		$mod_name = "";
+	}elsif(/JOINTLY IMPLEMENTED_BY (\w+);/){
+                #print "found " . $mod_name . "\n";
+                getModuleNames($mod_name. ".desc");
+	}
+    }
+    $names{$mod_name} = "";
+  }
+}
+getModuleNames($ARGV[0]);
+
+print "CUST_OBJS = "; 
+my $comp;
+foreach $comp (sort keys %names){
+    next if not $comp;
+    print $comp . ".o ";
+}	
+print "\n";
+
+print "HEADER_FILES = "; 
+foreach $comp (sort keys %names){
+    next if not $comp;
+    print $comp . ".h ";
+}	
+print "\n";
+
+

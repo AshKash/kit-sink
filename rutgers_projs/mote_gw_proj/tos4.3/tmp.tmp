@@ -1,0 +1,88 @@
+Makefile:67: Makefile.objs: No such file or directory
+./tools/desc2objs apps/MOTE_GW.desc > Makefile.objs
+./tools/mksuper_desc apps/MOTE_GW.desc > super.h
+./tools/mk_amdisp > am_dispatch.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1   -c -o system/sched.o system/sched.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/sched.c:29:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+./tools/mkheader MOTE_GW.comp > MOTE_GW.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o MOTE_GW.o MOTE_GW.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from MOTE_GW.c:10:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from MOTE_GW.h:3,
+                 from MOTE_GW.c:11:
+super.h:38:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/MAIN.comp > system/MAIN.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o system/MAIN.o system/MAIN.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/MAIN.c:28:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from system/MAIN.h:3,
+                 from system/MAIN.c:29:
+super.h:38:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/PACKETOBJ.comp > system/PACKETOBJ.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o system/PACKETOBJ.o system/PACKETOBJ.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/PACKETOBJ.c:28:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from system/PACKETOBJ.h:3,
+                 from system/PACKETOBJ.c:30:
+super.h:38:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/RFM.comp > system/RFM.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o system/RFM.o system/RFM.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/RFM.c:41:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from system/RFM.h:3,
+                 from system/RFM.c:42:
+super.h:38:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/SEC_DED_RADIO_BYTE.comp > system/SEC_DED_RADIO_BYTE.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o system/SEC_DED_RADIO_BYTE.o system/SEC_DED_RADIO_BYTE.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/SEC_DED_RADIO_BYTE.c:31:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from system/SEC_DED_RADIO_BYTE.h:3,
+                 from system/SEC_DED_RADIO_BYTE.c:32:
+super.h:38:7: warning: extra tokens at end of #endif directive
+system/SEC_DED_RADIO_BYTE.c:48: warning: const declaration for `TOS_LOCAL_ADDRESS' follows non-const
+./tools/mkheader system/UART.comp > system/UART.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o system/UART.o system/UART.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/UART.c:28:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from system/UART.h:3,
+                 from system/UART.c:29:
+super.h:38:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/UART_PACKET.comp > system/UART_PACKET.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o system/UART_PACKET.o system/UART_PACKET.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/UART_PACKET.c:30:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from system/UART_PACKET.h:3,
+                 from system/UART_PACKET.c:31:
+super.h:38:7: warning: extra tokens at end of #endif directive
+./tools/desc2hdrs MOTE_GW.h system/MAIN.h system/PACKETOBJ.h system/RFM.h system/SEC_DED_RADIO_BYTE.h system/UART.h system/UART_PACKET.h  > All_headers.c
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1   -c -o All_headers.o All_headers.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from super.h:3,
+                 from MOTE_GW.h:3,
+                 from All_headers.c:1:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from MOTE_GW.h:3,
+                 from All_headers.c:1:
+super.h:38:7: warning: extra tokens at end of #endif directive
+avr-gcc -Xlinker -M -o main.exe  -m avr85xx -mmcu=at90s8535 system/sched.o MOTE_GW.o system/MAIN.o system/PACKETOBJ.o system/RFM.o system/SEC_DED_RADIO_BYTE.o system/UART.o system/UART_PACKET.o   > img.file
+MOTE_GW.o: In function `MOTE_GW_START_COMMAND':
+MOTE_GW.o(.text+0x22): undefined reference to `MOTE_GW_SEND_MSG_COMMAND'
+make: *** [main.exe] Error 1

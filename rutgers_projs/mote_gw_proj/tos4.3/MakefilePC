@@ -1,0 +1,83 @@
+LOCAL_GROUP = 0x13
+AS     = as
+LD     = gcc
+CC     = gcc -g
+FULLCC = gcc -g
+CFLAGS = -c -O3 -g -Wall -I. -I./system -I./system/include -DFULLPC -DLOCAL_GROUP=$(LOCAL_GROUP)
+TOOLS  = ./tools
+
+#------------------------------------------------------
+# Set DESC to point to the structural description
+# of the graph of components.  The C files associated
+# with those components and the interconnections are generated
+# from the .desc description
+#--------------------------------------
+
+# Simple blinking LED example
+#DESC = apps/blink.desc
+#DESC = apps/wave.desc
+#DESC = apps/connect.desc
+#DESC = apps/connect_base.desc
+#DESC = apps/sens_to_leds.desc
+#DESC = apps/cnt_to_leds.desc
+DESC = apps/cnt_to_rfm.desc
+#DESC = apps/sens_to_rfm.desc
+#DESC = apps/chirp.desc
+#DESC = apps/uart_chirp.desc
+#DESC = apps/mags.desc
+#DESC = apps/LOGGER_TEST.desc
+#DESC = apps/MOTE_GW.desc
+#DESC = apps/rfm_to_leds.desc
+#DESC = apps/generic_base.desc
+
+#--------------------------------------------
+# Remainder is common to all mote applications
+#-------------------------------------------
+
+all: Makefile.objs super.h  am_dispatch.h main
+
+super.h: $(DESC)
+	$(TOOLS)/mksuper_desc $(DESC) > super.h
+
+Makefile.objs: $(DESC)
+	$(TOOLS)/desc2objs $(DESC) > Makefile.objs
+
+All_headers.c: $(HEADER_FILES) Makefile.objs
+	$(TOOLS)/desc2hdrs $(HEADER_FILES) > All_headers.c
+
+am_dispatch.h: super.h
+	$(TOOLS)/mk_amdisp > am_dispatch.h
+
+system/AMdispatch.c: $(OBJS) system/AM.h system/AMdispatch.template
+	(cpp -I. -Isystem/include system/AMdispatch.template | grep -v NULL_FUNC > system/AMdispatch.c)>& /dev/null
+
+
+include Makefile.objs
+
+OBJS = system/sched.o $(CUST_OBJS) 
+
+%.s: %.S
+	cpp $< $@ 
+
+%.o : %.s
+	$(AS) $< -o $@ 
+
+%.s : %.c
+	$(CC) $(SFLAGS) -o $@ $<
+
+%.o : %.c %.h
+	$(CC) $(CFLAGS) -o $@ $<
+
+%.h : %.comp
+	$(TOOLS)/mkheader $< > $@
+
+%: %.o
+	$(LD) $< -o $@ $(LIBS)
+
+main: $(OBJS) $(HEADER_FILES)
+	$(LD) -o $@ $(OBJS) 
+
+clean:
+	rm -f *.o system/*.o main main.srec Makefile.objs super.h *.h system/*.h img.file main system/AMdispatch.c All_headers.c
+
+

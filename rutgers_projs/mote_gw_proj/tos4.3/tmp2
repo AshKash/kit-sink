@@ -1,0 +1,288 @@
+Makefile:67: Makefile.objs: No such file or directory
+./tools/desc2objs apps/MOTE_GW.desc > Makefile.objs
+./tools/mksuper_desc apps/MOTE_GW.desc > super.h
+./tools/mk_amdisp > am_dispatch.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1   -c -o system/sched.o system/sched.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/sched.c:29:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+./tools/mkheader MOTE_GW.comp > MOTE_GW.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o MOTE_GW.o MOTE_GW.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from MOTE_GW.c:10:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from MOTE_GW.h:3,
+                 from MOTE_GW.c:11:
+super.h:295:7: warning: extra tokens at end of #endif directive
+./tools/mkheader system/AM.comp > system/AM.h
+avr-gcc  -c -Os -Wall -I. -I./system/include -mmcu=at90s8535 -DLOCAL_GROUP=0x1 -o system/AM.o system/AM.c
+In file included from system/include/hardware.h:45,
+                 from system/include/tos.h:71,
+                 from system/AM.c:43:
+/usr/local/avr/include/signal.h:7:2: warning: #warning "please include sig-avr.h instead"
+In file included from system/AM.h:3,
+                 from system/AM.c:44:
+super.h:295:7: warning: extra tokens at end of #endif directive
+In file included from system/AM.c:44:
+system/AM.h:268: conflicting types for `AM_NULL_FUNC_EVENT'
+system/include/MSG.h:21: previous declaration of `AM_NULL_FUNC_EVENT'
+In file included from system/AM.c:153:
+system/AMdispatch.template: In function `AM_MSG_REC':
+system/AMdispatch.template:4: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:7: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:10: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:13: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:16: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:19: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:22: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:25: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:28: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:31: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:34: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:37: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:40: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:46: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:49: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:52: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:55: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:58: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:61: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:64: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:67: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:70: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:73: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:76: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:79: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:82: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:85: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:88: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:91: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:94: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:97: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:100: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:103: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:106: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:109: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:112: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:115: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:118: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:121: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:124: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:127: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:130: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:133: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:136: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:139: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:142: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:145: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:148: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:151: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:154: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:157: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:160: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:163: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:166: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:169: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:172: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:175: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:178: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:181: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:184: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:187: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:190: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:193: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:196: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:199: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:202: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:205: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:208: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:211: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:214: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:217: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:220: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:223: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:226: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:229: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:232: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:235: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:238: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:241: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:244: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:247: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:250: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:253: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:256: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:259: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:262: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:265: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:268: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:271: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:274: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:277: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:280: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:283: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:286: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:289: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:292: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:295: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:298: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:301: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:304: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:307: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:310: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:313: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:316: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:319: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:322: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:325: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:328: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:331: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:334: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:337: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:340: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:343: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:346: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:349: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:352: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:355: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:358: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:361: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:364: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:367: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:370: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:373: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:376: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:379: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:382: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:385: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:388: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:391: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:394: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:397: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:400: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:403: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:406: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:409: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:412: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:415: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:418: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:421: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:424: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:427: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:430: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:433: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:436: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:439: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:442: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:445: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:448: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:451: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:454: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:457: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:460: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:463: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:466: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:469: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:472: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:475: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:478: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:481: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:484: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:487: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:490: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:493: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:496: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:499: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:502: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:505: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:508: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:511: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:514: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:517: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:520: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:523: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:526: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:529: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:532: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:535: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:538: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:541: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:544: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:547: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:550: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:553: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:556: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:559: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:562: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:565: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:568: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:571: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:574: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:577: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:580: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:583: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:586: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:589: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:592: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:595: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:598: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:601: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:604: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:607: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:610: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:613: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:616: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:619: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:622: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:625: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:628: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:631: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:634: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:637: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:640: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:643: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:646: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:649: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:652: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:655: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:658: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:661: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:664: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:667: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:670: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:673: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:676: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:679: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:682: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:685: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:688: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:691: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:694: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:697: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:700: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:703: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:706: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:709: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:712: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:715: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:718: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:721: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:724: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:727: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:730: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:733: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:736: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:739: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:742: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:745: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:748: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:751: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:754: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:757: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:760: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:763: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:766: warning: assignment makes pointer from integer without a cast
+system/AMdispatch.template:769: warning: assignment makes pointer from integer without a cast
+make: *** [system/AM.o] Error 1

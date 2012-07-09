@@ -1,0 +1,64 @@
+/*									tab:4
+ *
+ *
+ * "Copyright (c) 2000 and The Regents of the University 
+ * of California.  All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the above copyright notice and the following
+ * two paragraphs appear in all copies of this software.
+ * 
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+ * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ * Authors:		Jason Hill
+ *
+ * This module performs the FOUR_B_SIX radio encoding for the RFM.  The RFM radio
+ * requires the the signal be DC Balanced.  This encoder takes each four bit nibble 
+ * and encoded it into a 6 bit code word.  The bits are then handed down to the 
+ * RFM layer one at a time.
+ *
+ *
+ */
+
+
+TOS_MODULE FOUR_B_RADIO_BYTE;
+
+ACCEPTS{
+	char RADIO_BYTE_INIT(void);
+	char RADIO_BYTE_TX_BYTES(char data);
+	char RADIO_BYTE_PWR(char mode);
+};
+
+SIGNALS{
+	char RADIO_BYTE_RX_BYTE_READY(char data, char error);
+	char RADIO_BYTE_TX_BYTE_READY(char success);
+	char RADIO_BYTE_TX_DONE(void);
+};
+HANDLES{
+	char RADIO_BYTE_TX_BIT_EVENT(void);
+	char RADIO_BYTE_RX_BIT_EVENT(char data);
+};
+
+USES{
+	char RADIO_SUB_INIT(void);
+	char RADIO_SUB_TX_MODE(void);
+	char RADIO_SUB_TX_BIT(char data);
+	char RADIO_SUB_RX_MODE(void);
+	char RADIO_SUB_PWR(char mode);
+	char RADIO_SUB_SET_BIT_RATE(char level);
+};
+
+INTERNAL{
+	char decodeNibbles(char first, char second);
+	char encodeNibble(char in);
+};

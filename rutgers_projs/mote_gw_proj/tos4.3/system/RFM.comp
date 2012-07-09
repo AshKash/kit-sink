@@ -1,0 +1,50 @@
+/*									tab:4
+ *
+ *
+ * "Copyright (c) 2000 and The Regents of the University 
+ * of California.  All rights reserved.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation for any purpose, without fee, and without written agreement is
+ * hereby granted, provided that the above copyright notice and the following
+ * two paragraphs appear in all copies of this software.
+ * 
+ * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR
+ * DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT
+ * OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+ * CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+ * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+ * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+ * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS."
+ *
+ * Authors:		Jason Hill
+ *
+ *
+ * This module controls the RFM radio. It accepts bits from the BYTE layer and
+ * sends them out to the RFM. It uses an internal clock to set the bit rate
+ * and to signal when a bit communication is complete.
+ * 
+ *
+ */
+
+
+TOS_MODULE RFM;
+ACCEPTS{
+	char RFM_INIT(void);
+	char RFM_TX_MODE(void);
+	char RFM_TX_BIT(char data);
+	char RFM_RX_MODE(void);
+	char RFM_PWR(char mode);
+	char RFM_SET_BIT_RATE(char level);
+};
+SIGNALS{
+	char RFM_TX_BIT_EVENT(void);
+	char RFM_RX_BIT_EVENT(char data);
+};
+INTERNAL{
+	void SetReceiveMode(void); 
+	void SetTransmitMode(void);
+};
